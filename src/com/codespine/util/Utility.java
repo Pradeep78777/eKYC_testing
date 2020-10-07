@@ -1,9 +1,62 @@
 package com.codespine.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.cert.CertStore;
+import java.security.cert.Certificate;
+import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Properties;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.util.encoders.Base64;
+
+import com.codespine.util.APIBased.DummyHostnameVerifier;
+import com.codespine.util.APIBased.DummyTrustManager;
 
 public class Utility {
 
@@ -18,6 +71,24 @@ public class Utility {
 		int randomPin = (int) (Math.random() * 9000) + 1000;
 		String otp = String.valueOf(randomPin);
 		return otp;
+	}
+
+	/**
+	 * To create the random Alpha numeric String for sending the email
+	 * Verification Link
+	 * 
+	 * @author GOWRI SANKAR R
+	 */
+	private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+	public static String randomAlphaNumeric() {
+		StringBuilder builder = new StringBuilder();
+		int count1 = 16;
+		while (count1-- != 0) {
+			int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
+			builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+		}
+		return builder.toString();
 	}
 
 	/**
@@ -56,4 +127,395 @@ public class Utility {
 		}
 	}
 
+	public static String sentEmailVerificationLink(String email, String activationLink) {
+		StringBuilder builder = new StringBuilder();
+		String status = eKYCConstant.FAILED_MSG;
+		try {
+			Properties properties = new Properties();
+			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
+			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
+			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.auth", "true");
+			properties.put("mail.smtp.debug", "true");
+			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
+							CSEnvVariables.getProperty(eKYCConstant.PASSWORD));
+				}
+			});
+			try {
+				String hs = "<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n"
+						+ "<head><title>Zebull E-Kyc</title>\r\n"
+						+ "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\r\n"
+						+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+						+ "<style type=\"text/css\">\r\n" + "\r\n"
+						+ "    @media only screen and (max-width:375px) and (min-width:374px){\r\n"
+						+ "      .gmail-fix{\r\n" + "        min-width:374px !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:414px) and (min-width:413px){\r\n"
+						+ "      .gmail-fix{\r\n" + "        min-width:413px !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .flexible{\r\n"
+						+ "        width:100% !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .table-center{\r\n"
+						+ "        float:none !important;\r\n" + "        margin:0 auto !important;\r\n" + "      }\r\n"
+						+ "\r\n" + "    }	@media only screen and (max-width:500px){\r\n" + "      .img-flex img{\r\n"
+						+ "        width:100% !important;\r\n" + "        height:auto !important;\r\n" + "      }\r\n"
+						+ "\r\n" + "    }	@media only screen and (max-width:500px){\r\n" + "      .aligncenter{\r\n"
+						+ "        text-align:center !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .table-holder{\r\n"
+						+ "        display:table !important;\r\n" + "        width:100% !important;\r\n" + "      }\r\n"
+						+ "\r\n" + "    }	@media only screen and (max-width:500px){\r\n" + "      .thead{\r\n"
+						+ "        display:table-header-group !important;\r\n" + "        width:100% !important;\r\n"
+						+ "      }\r\n" + "\r\n" + "    }	@media only screen and (max-width:500px){\r\n"
+						+ "      .trow{\r\n" + "        display:table-row !important;\r\n"
+						+ "        width:100% !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .tfoot{\r\n"
+						+ "        display:table-footer-group !important;\r\n" + "        width:100% !important;\r\n"
+						+ "      }\r\n" + "\r\n" + "    }	@media only screen and (max-width:500px){\r\n"
+						+ "      .flex{\r\n" + "        display:block !important;\r\n"
+						+ "        width:100% !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .hide{\r\n"
+						+ "        display:none !important;\r\n" + "        width:0 !important;\r\n"
+						+ "        height:0 !important;\r\n" + "        padding:0 !important;\r\n"
+						+ "        font-size:0 !important;\r\n" + "        line-height:0 !important;\r\n"
+						+ "      }\r\n" + "\r\n" + "    }	@media only screen and (max-width:500px){\r\n"
+						+ "      .plr-0{\r\n" + "        padding-left:0 !important;\r\n"
+						+ "        padding-right:0 !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .plr-10{\r\n"
+						+ "        padding-left:10px !important;\r\n" + "        padding-right:10px !important;\r\n"
+						+ "      }\r\n" + "\r\n" + "    }	@media only screen and (max-width:500px){\r\n"
+						+ "      .pl-0{\r\n" + "        padding-left:0 !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .pb-10{\r\n"
+						+ "        padding-bottom:10px !important;\r\n" + "      }\r\n" + "\r\n"
+						+ "    }	@media only screen and (max-width:500px){\r\n" + "      .pb-30{\r\n"
+						+ "        padding-bottom:30px !important;\r\n" + "      }\r\n" + "\r\n" + "    }\r\n"
+						+ "    </style>\r\n" + "	<style>a:hover{text-decoration:none !important}\r\n"
+						+ ".h-u a:hover{text-decoration:underline !important}\r\n"
+						+ "a[href^=tel]:hover{text-decoration:none !important}\r\n"
+						+ ".active-i a:hover{opacity:.8}\r\n" + ".active-t:hover{opacity:.8}</style>\r\n"
+						+ "<meta name=\"robots\" content=\"noindex, follow\"></head>\r\n"
+						+ "<body bgcolor=\"white\" style=\"margin:0; padding:0; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;\">\r\n"
+						+ "  <table class=\"gmail-fix\" bgcolor=\"#ffffff\" width=\"100%\" style=\"min-width:320px;\" cellspacing=\"0\" cellpadding=\"0\">\r\n"
+						+ "  <tbody>\r\n" + "  <tr>\r\n"
+						+ "  <td style=\"mso-line-height-rule:exactly;display: none;font-size:\r\n"
+						+ " 0;line-height: 0;mso-line-height-rule: exactly;\">      \r\n" + "  </td>\r\n"
+						+ "  </tr>\r\n" + "  <tr>\r\n"
+						+ "  <td bgcolor=\"white\" style=\"mso-line-height-rule:exactly;padding: 9px 0 0;mso-line-height-rule: exactly;\">\r\n"
+						+ "<table class=\"flexible\" width=\"600\" align=\"center\" style=\"margin:0 auto;\" cellpadding=\"0\" cellspacing=\"0\">\r\n"
+						+ "  <tbody>\r\n"
+						+ "  <tr><td class=\"aligncenter h-u\" align=\"right\" style=\"mso-line-height-rule:exactly;padding: 0 12px 31px;font: 12px/16px Avenir, Verdana,\r\n"
+						+ " sans-serif;color: #d0c087;mso-line-height-rule: exactly;\">\r\n"
+						+ " <span style=\"text-decoration:none\"><span style=\"color:rgb(128, 128, 128);text-decoration:none\"></span></span>\r\n"
+						+ " </td>\r\n" + " </tr>\r\n" + " <tr>\r\n"
+						+ " <td class=\"pb-30\" align=\"center\" style=\"mso-line-height-rule:exactly;padding: 0 0 40px;mso-line-height-rule: exactly;\">\r\n"
+						+ " <a href=\"https://s3.amazonaws.com/assets.mailcharts.com/emails/50d0815b-d855-a5da-0799-518e471d57ac/#\" style=\"outline:none;color:#5ab1a0;text-decoration:underline;text-decoration: none;outline: none;color: #424242;\">\r\n"
+						+ " \r\n"
+						+ " <!-- <img style=\"width:250px\" src=\"data:image/png;base64,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\" align=\"left\" /> -->\r\n"
+						+ " \r\n" + "  </tr></tbody>\r\n" + " </tr></tbody>\r\n" + " </table>\r\n" + "\r\n"
+						+ " <table class=\"flexible\" width=\"600\" align=\"center\" style=\"border-radius: 5px; background-color: #6a61ab;padding : 2%\" cellpadding=\"0\" cellspacing=\"0\"><tbody><tr>\r\n"
+						+ " <td class=\"pb-30 plr-10\" style=\"mso-line-height-rule:exactly;padding: 35px 41px 25px;mso-line-height-rule: exactly;\">\r\n"
+						+ " <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\r\n" + " <tbody>\r\n"
+						+ " <tr><center>\r\n" + " </center>\r\n" + "    </tr>\r\n"
+						+ " <tr><td style=\"mso-line-height-rule:exactly;padding: 0;font: 15px/25px Avenir, Verdana, sans-serif;color: #ffffff;letter-spacing: 0px;mso-line-height-rule: exactly;\">\r\n"
+						+ " <p style=\"margin:0 0 15px\"></p>\r\n" + " <p style=\"margin:0 0 15px \">Hi, </p>\r\n"
+						+ " <p style=\"margin:0 0 15px \">Click here to activate your email:</p>\r\n";
+				builder.append(hs);
+				builder.append(
+						"<center><a style=\"padding:2%;color:white;background-color:black;text-decoration:none;margin:2%\" href= "
+								+ activationLink
+								+ " class='link' width='20%'><span>Activate email </span></a></center><br><br>\r\n"
+								+ " or copy and paste the below link in new tab");
+
+				builder.append(" <p style=\"margin:0 0 15px \"><a href= " + activationLink
+						+ " class='link' width='20%' style=\"outline:none;color:#0a0a09;text-decoration:underline\">"
+						+ activationLink + "</a></p>\r\n"
+						+ " <p style=\"margin:0 0 15px \">Thank you! <br>ZEBULL E-Kyc</p>\r\n" + " </td>\r\n"
+						+ " </tr></tbody>\r\n" + " </table>\r\n" + " </td>\r\n" + " </tr></tbody>\r\n" + " </table>\r\n"
+						+ " \r\n" + "</tr><tr>\r\n"
+						+ "<td bgcolor=\"#ffffff\" style=\"mso-line-height-rule:exactly;mso-line-height-rule: exactly;\">\r\n"
+						+ "</td>\r\n" + "</tr></tbody></table>\r\n" + "</body></html>");
+
+				MimeMessage message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
+				message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.trim()));
+				message.setSubject("Email Verification");
+				BodyPart messageBodyPart1 = new MimeBodyPart();
+				messageBodyPart1.setContent(builder.toString(), "text/html");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(messageBodyPart1);
+				message.setContent(multipart);
+				Transport.send(message);
+				status = eKYCConstant.SUCCESS_MSG;
+			} catch (MessagingException ex) {
+				ex.printStackTrace();
+				status = eKYCConstant.FAILED_MSG;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+
+	/**
+	 * To create the pfx to jks File
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 */
+	public static void pfx2JksFile(int applicationId) {
+		try {
+			/*
+			 * set the pfx location , pfxPassword , password
+			 * 
+			 * 
+			 * Set Location to save the jks file to given user
+			 */
+			String pfxFileLocation = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
+			String pfxPassword = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
+			String userJksFileLocation = CSEnvVariables.getProperty(eKYCConstant.USER_JKS_LOCATION) + applicationId
+					+ "\\" + applicationId + ".jks";
+			String args1[] = { pfxFileLocation, pfxPassword, userJksFileLocation };
+			File dir = new File(CSEnvVariables.getProperty(eKYCConstant.USER_JKS_LOCATION) + applicationId);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			if (args1.length < 1) {
+				System.out.println("usage: java p2j certi.pfx pfxpswd oupt.jks");
+				System.exit(1);
+			}
+			File fileIn = new File(args1[0]);
+			File fileOut = null;
+			if (args1.length == 3) {
+				fileOut = new File(args1[2]);
+			} else {
+				System.out.println("usage: java p2j certi.pfx pfxpswd oupt.jks");
+				System.exit(1);
+			}
+			if (!fileIn.canRead()) {
+				System.out.println("Unable to access input keystore: " + fileIn.getPath());
+				System.exit(2);
+			}
+			if (fileOut.exists() && !fileOut.canWrite()) {
+				System.out.println("Output file is not writable: " + fileOut.getPath());
+				System.exit(2);
+			}
+			KeyStore kspkcs12 = KeyStore.getInstance("pkcs12");
+			KeyStore ksjks = KeyStore.getInstance("jks");
+			char inphrase[] = args1[1].toCharArray();
+			char outphrase[] = args1[1].toCharArray();
+			kspkcs12.load(new FileInputStream(fileIn), inphrase);
+			ksjks.load(fileOut.exists() ? ((java.io.InputStream) (new FileInputStream(fileOut))) : null, outphrase);
+			Enumeration eAliases = kspkcs12.aliases();
+			int n = 0;
+			do {
+				if (!eAliases.hasMoreElements())
+					break;
+				String strAlias = (String) eAliases.nextElement();
+				if (kspkcs12.isKeyEntry(strAlias)) {
+					java.security.Key key = kspkcs12.getKey(strAlias, inphrase);
+					Certificate chain[] = kspkcs12.getCertificateChain(strAlias);
+					ksjks.setKeyEntry(strAlias, key, outphrase, chain);
+				}
+			} while (true);
+			OutputStream out = new FileOutputStream(fileOut);
+			ksjks.store(out, outphrase);
+			out.close();
+			System.out.println("Java Key Store created successfully");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * To generate the Pkcs genaration for the given user
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @param panCard
+	 */
+	public static void pkcs7Generate(int applicationId, String panCard) {
+		try {
+			/**
+			 * Get the jks file for the given user and create the siganture file
+			 * for the given user
+			 */
+			String data = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_USERNAME) + "^" + panCard;
+			String jksFileLocation = CSEnvVariables.getProperty(eKYCConstant.USER_JKS_LOCATION) + applicationId + "\\"
+					+ applicationId + ".jks";
+			String pfxPassword = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
+			String signatureFile = CSEnvVariables.getProperty(eKYCConstant.USER_JKS_LOCATION) + applicationId
+					+ "\\output.sig";
+			String args1[] = { jksFileLocation, pfxPassword, data, signatureFile };
+			if (args1.length < 3) {
+				System.out.println("java pkcs7gen D:\\output.jks pfxpswd dataToBeSigned D:\\oupt.sig");
+				System.exit(1);
+			}
+
+			KeyStore keystore = KeyStore.getInstance("jks");
+			InputStream input = new FileInputStream(args1[0]);
+			try {
+				char[] password = args1[1].toCharArray();
+				keystore.load(input, password);
+			} catch (IOException e) {
+			} finally {
+
+			}
+			Enumeration e = keystore.aliases();
+			String alias = "";
+
+			if (e != null) {
+				while (e.hasMoreElements()) {
+					String n = (String) e.nextElement();
+					if (keystore.isKeyEntry(n)) {
+						alias = n;
+					}
+				}
+			}
+			PrivateKey privateKey = (PrivateKey) keystore.getKey(alias, args1[1].toCharArray());
+			X509Certificate myPubCert = (X509Certificate) keystore.getCertificate(alias);
+			byte[] dataToSign = args1[2].getBytes();
+			CMSSignedDataGenerator sgen = new CMSSignedDataGenerator();
+			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+			sgen.addSigner(privateKey, myPubCert, CMSSignedDataGenerator.DIGEST_SHA1);
+			Certificate[] certChain = keystore.getCertificateChain(alias);
+			ArrayList certList = new ArrayList();
+			CertStore certs = null;
+			for (int i = 0; i < certChain.length; i++)
+				certList.add(certChain[i]);
+			sgen.addCertificatesAndCRLs(
+					CertStore.getInstance("Collection", new CollectionCertStoreParameters(certList), "BC"));
+			CMSSignedData csd = sgen.generate(new CMSProcessableByteArray(dataToSign), true, "BC");
+			byte[] signedData = csd.getEncoded();
+			byte[] signedData64 = Base64.encode(signedData);
+			FileOutputStream out = new FileOutputStream(args1[3]);
+			out.write(signedData64);
+			out.close();
+			System.out.println("Signature file written to " + args1[3]);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Api call for PAN verification (NSDL)
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @param panCard
+	 */
+	public static void apiCallForPanVerififcation(int applicationId, String panCard) {
+		try {
+			String urlOfNsdl = CSEnvVariables.getProperty(eKYCConstant.NSDL_PAN_VERIFICATION_URL);
+			String data = null;
+			String signature = null;
+			final String version = CSEnvVariables.getProperty(eKYCConstant.NSDL_PAN_VERIFICATION_VERSION);
+			Date startTime = null;
+			Calendar c1 = Calendar.getInstance();
+			startTime = c1.getTime();
+			Date connectionStartTime = null;
+			String logMsg = "\n-";
+			BufferedWriter out = null;
+			BufferedWriter out1 = null;
+			FileWriter fstream = null;
+			FileWriter fstream1 = null;
+			Calendar c = Calendar.getInstance();
+			long nonce = c.getTimeInMillis();
+
+			Properties prop = new Properties();
+			try {
+				// prop.load(new FileInputStream("params.properties"));
+				data = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_USERNAME) + "^" + panCard;
+				/**
+				 * read the signature file for the user and assign for the user
+				 */
+				signature = new String(Files.readAllBytes(Paths.get(
+						CSEnvVariables.getProperty(eKYCConstant.USER_JKS_LOCATION) + applicationId + "\\output.sig")));
+				// signature = CSEnvVariables.getProperty("signature");
+			} catch (Exception e) {
+				logMsg += "::Exception: " + e.getMessage() + " ::Program Start Time:" + startTime + "::nonce= " + nonce;
+			}
+			try {
+				fstream = new FileWriter("API_PAN_verification.logs", true);
+				out = new BufferedWriter(fstream);
+			} catch (Exception e) {
+				logMsg += "::Exception: " + e.getMessage() + " ::Program Start Time:" + startTime + "::nonce= " + nonce;
+				out.write(logMsg);
+				out.close();
+			}
+			SSLContext sslcontext = null;
+			try {
+				sslcontext = SSLContext.getInstance("SSL");
+				sslcontext.init(new KeyManager[0], new TrustManager[] { new DummyTrustManager() }, new SecureRandom());
+			} catch (NoSuchAlgorithmException e) {
+				logMsg += "::Exception: " + e.getMessage() + " ::Program Start Time:" + startTime + "::nonce= " + nonce;
+				e.printStackTrace(System.err);
+				out.write(logMsg);
+				out.close();
+			} catch (KeyManagementException e) {
+				logMsg += "::Exception: " + e.getMessage() + " ::Program Start Time:" + startTime + "::nonce= " + nonce;
+				e.printStackTrace(System.err);
+				out.write(logMsg);
+				out.close();
+			}
+			SSLSocketFactory factory = sslcontext.getSocketFactory();
+			String urlParameters = "data=";
+			try {
+				urlParameters = urlParameters + URLEncoder.encode(data, "UTF-8") + "&signature="
+						+ URLEncoder.encode(signature, "UTF-8") + "&version=" + URLEncoder.encode(version, "UTF-8");
+			} catch (Exception e) {
+				logMsg += "::Exception: " + e.getMessage() + " ::Program Start Time:" + startTime + "::nonce= " + nonce;
+				e.printStackTrace();
+				out.write(logMsg);
+				out.close();
+			}
+			try {
+				URL url;
+				HttpsURLConnection connection;
+				InputStream is = null;
+				String ip = urlOfNsdl;
+				url = new URL(ip);
+				System.out.println("URL " + ip);
+				connection = (HttpsURLConnection) url.openConnection();
+				connection.setRequestMethod("POST");
+				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+				connection.setRequestProperty("Content-Language", "en-US");
+				connection.setUseCaches(false);
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+				connection.setSSLSocketFactory(factory);
+				connection.setHostnameVerifier(new DummyHostnameVerifier());
+				OutputStream os = connection.getOutputStream();
+				OutputStreamWriter osw = new OutputStreamWriter(os);
+				osw.write(urlParameters);
+				osw.flush();
+				connectionStartTime = new Date();
+				logMsg += "::Request Sent At: " + connectionStartTime;
+				logMsg += "::Request Data: " + data;
+				logMsg += "::Version: " + version;
+				osw.close();
+				is = connection.getInputStream();
+				BufferedReader in = new BufferedReader(new InputStreamReader(is));
+				String line = null;
+				line = in.readLine();
+				System.out.println("Output: " + line);
+				is.close();
+				in.close();
+			} catch (ConnectException e) {
+				logMsg += "::Exception: " + e.getMessage() + "::Program Start Time:" + startTime + "::nonce= " + nonce;
+				out.write(logMsg);
+				out.close();
+			} catch (Exception e) {
+				logMsg += "::Exception: " + e.getMessage() + "::Program Start Time:" + startTime + "::nonce= " + nonce;
+				out.write(logMsg);
+				out.close();
+				e.printStackTrace();
+			}
+			out.write(logMsg);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
