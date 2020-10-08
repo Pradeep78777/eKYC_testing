@@ -1,169 +1,19 @@
 package com.codespine.service;
 
+import org.json.simple.JSONObject;
+
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
+import com.codespine.restservice.NsdlPanVerificationRestService;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 public class eKYCService {
 	eKYCDAO peKYCDao = new eKYCDAO();
-
-	// /**
-	// * Method insert the personal details and send back the Application id to
-	// * front end
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	//
-	// public ResponseDTO personalDetails(PersonalDetailsDTO pDto) {
-	// ResponseDTO response = new ResponseDTO();
-	// JSONObject resp = new JSONObject();
-	// PersonalDetailsDTO checkUser = new PersonalDetailsDTO();
-	// checkUser = peKYCDao.checkAlreadyRegistred(pDto);
-	// if (checkUser.getId() > 0) {
-	// response.setStatus(eKYCConstant.FAILED_STATUS);
-	// response.setMessage(eKYCConstant.FAILED_MSG);
-	// response.setReason(eKYCConstant.USER_REGISTERED);
-	// } else {
-	// String stringOtp = Utility.generateOTP();
-	// int otp = Integer.parseInt(stringOtp);
-	// pDto.setOtp(otp);
-	// int applicationID = peKYCDao.personalDetails(pDto);
-	// if (applicationID > 0) {
-	// Utility.sendSms(otp + "", pDto.getMobile_number() + "");
-	// resp.put("applicationID", applicationID);
-	// response.setStatus(eKYCConstant.SUCCESS_STATUS);
-	// response.setMessage(eKYCConstant.SUCCESS_MSG);
-	// response.setReason(eKYCConstant.PERSONAL_DETAILS_INSERTED_SUCESS);
-	// response.setResult(resp);
-	// } else {
-	// response.setStatus(eKYCConstant.FAILED_STATUS);
-	// response.setMessage(eKYCConstant.FAILED_MSG);
-	// response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-	// }
-	// }
-	// return response;
-	// }
-	//
-	// /**
-	// * Method to inseert the pan card details
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public ResponseDTO panCardDetails(PanCardDetailsDTO pDto) {
-	// ResponseDTO response = new ResponseDTO();
-	// // Change the given date to sql date format
-	// String strDate = pDto.getDob();
-	// String finalDate = "";
-	// try {
-	// Date date = new SimpleDateFormat("dd/MM/yyyy").parse(strDate);
-	// SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	// finalDate = formatter.format(date);
-	// } catch (ParseException e) {
-	// e.printStackTrace();
-	// }
-	// pDto.setDob(finalDate);
-	// /**
-	// * insert the pan card details
-	// */
-	// boolean isSuccess = peKYCDao.insertPanCardDetails(pDto);
-	// if (isSuccess) {
-	// response.setStatus(eKYCConstant.SUCCESS_STATUS);
-	// response.setMessage(eKYCConstant.SUCCESS_MSG);
-	// response.setReason(eKYCConstant.PAN_CARD_DETAILS_INSERTED_SUCCESS);
-	// } else {
-	// response.setStatus(eKYCConstant.FAILED_STATUS);
-	// response.setMessage(eKYCConstant.FAILED_MSG);
-	// response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-	// }
-	// return response;
-	// }
-	//
-	// /**
-	// * Method to insert the personal Details
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public ResponseDTO insertPersonalInfoDetails(PersonalDetailsDTO pDto) {
-	// ResponseDTO response = new ResponseDTO();
-	// boolean isSuccess = peKYCDao.insertPersonalInfoDetails(pDto);
-	// if (isSuccess) {
-	// response.setStatus(eKYCConstant.SUCCESS_STATUS);
-	// response.setMessage(eKYCConstant.SUCCESS_MSG);
-	// response.setReason(eKYCConstant.PERSONAL_INFO_INSERTED_SUCCESS);
-	// } else {
-	// response.setStatus(eKYCConstant.FAILED_STATUS);
-	// response.setMessage(eKYCConstant.FAILED_MSG);
-	// response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-	// }
-	// return response;
-	// }
-	//
-	// /**
-	// * Mathod to insert bank Details
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public ResponseDTO bankDetails(BankDetailsDTO pDto) {
-	// ResponseDTO response = new ResponseDTO();
-	// boolean isSuccess = peKYCDao.bankDetails(pDto);
-	// if (isSuccess) {
-	// response.setStatus(eKYCConstant.SUCCESS_STATUS);
-	// response.setMessage(eKYCConstant.SUCCESS_MSG);
-	// response.setReason(eKYCConstant.BANK_DETAILS_INSERTED_SUCCESS);
-	// } else {
-	// response.setStatus(eKYCConstant.FAILED_STATUS);
-	// response.setMessage(eKYCConstant.FAILED_MSG);
-	// response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-	// }
-	// return response;
-	// }
-	//
-	// /**
-	// * Method to send the Otp to the user
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public ResponseDTO sendOTP(PersonalDetailsDTO pDto) {
-	// ResponseDTO response = new ResponseDTO();
-	// PersonalDetailsDTO checkUser = new PersonalDetailsDTO();
-	// checkUser = peKYCDao.checkAlreadyRegistred(pDto);
-	// if (checkUser.getId() > 0) {
-	// String stringOtp = Utility.generateOTP();
-	// int otp = Integer.parseInt(stringOtp);
-	// pDto.setOtp(otp);
-	// boolean update = peKYCDao.updateOTP(pDto);
-	// if (update) {
-	// Utility.sendSms(otp + "", pDto.getMobile_number() + "");
-	// response.setStatus(eKYCConstant.SUCCESS_STATUS);
-	// response.setMessage(eKYCConstant.SUCCESS_MSG);
-	// response.setReason(eKYCConstant.PERSONAL_DETAILS_INSERTED_SUCESS);
-	// } else {
-	// response.setStatus(eKYCConstant.FAILED_STATUS);
-	// response.setMessage(eKYCConstant.FAILED_MSG);
-	// response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-	// }
-	// } else {
-	// response.setStatus(eKYCConstant.FAILED_STATUS);
-	// response.setMessage(eKYCConstant.FAILED_MSG);
-	// response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-	// }
-	// return response;
-	// }
 
 	/**
 	 * To check the given mobile and email number in the data base
@@ -190,21 +40,33 @@ public class eKYCService {
 				if (checkUser.getMobile_number_verified() == 0) {
 					String otp = Utility.generateOTP();
 					peKYCDao.updateOtpForApplicationId(Integer.parseInt(otp), checkUser.getApplication_id());
+					Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
+					if (checkUser.getApplicationStatus() >= 3) {
+						String panCardName = peKYCDao.getApplicantName(checkUser.getApplication_id());
+						result.setApplicant_name(panCardName);
+					}
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.OTP_SENT_SUCESSFULLY);
 					response.setResult(result);
 				} else {
+					if (checkUser.getApplicationStatus() >= 3) {
+						String panCardName = peKYCDao.getApplicantName(checkUser.getApplication_id());
+						result.setApplicant_name(panCardName);
+					}
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setResult(result);
 				}
 			} else {
+				result.setApplicationStatus(0);
+				result.setApplication_id(0);
 				result.setEmail(checkUser.getEmail());
-				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setResult(result);
 			}
 		} else {
+			result = new PersonalDetailsDTO();
 			/**
 			 * if there is no result create the new application with given
 			 * mobile number and email
@@ -213,9 +75,12 @@ public class eKYCService {
 			pDto.setOtp(Integer.parseInt(otp));
 			int newApplicationId = peKYCDao.createNewApplication(pDto);
 			if (newApplicationId != 0 && newApplicationId > 0) {
+				result.setApplication_id(newApplicationId);
+				Utility.sendMessage(pDto.getMobile_number(), Integer.parseInt(otp));
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
 				response.setReason(eKYCConstant.NEW_USER_SUCESS);
+				response.setResult(result);
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);
@@ -276,6 +141,63 @@ public class eKYCService {
 	 * @return
 	 */
 	public ResponseDTO verifyPan(PanCardDetailsDTO pDto) {
+		PanCardDetailsDTO dummResult = new PanCardDetailsDTO();
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			/**
+			 * To create the create the jks file for the given application id
+			 */
+			NsdlPanVerificationRestService.pfx2JksFile(pDto.getApplication_id());
+			/**
+			 * To create the sig file from the jks file
+			 */
+			NsdlPanVerificationRestService.pkcs7Generate(pDto.getApplication_id(), pDto.getPan_card());
+			/**
+			 * TO get the result from the NSDL
+			 */
+			String result = NsdlPanVerificationRestService.apiCallForPanVerififcation(pDto.getApplication_id(),
+					pDto.getPan_card());
+			if (result != null && !result.equalsIgnoreCase("")) {
+				JSONObject tempResult = Utility.stringToJson(result);
+				String panStatus = (String) tempResult.get("panCardStatus");
+				if (panStatus != null && !panStatus.equalsIgnoreCase(" ") && panStatus.equalsIgnoreCase("E")) {
+					String panCardname = (String) tempResult.get("nameOnCard");
+					dummResult.setApplicant_name(panCardname);
+					pDto.setApplicant_name(panCardname);
+					ResponseDTO topResult = new ResponseDTO();
+					topResult = updatePanCard(pDto);
+					if (topResult.getStatus() == eKYCConstant.SUCCESS_STATUS) {
+						response.setStatus(eKYCConstant.SUCCESS_STATUS);
+						response.setMessage(eKYCConstant.SUCCESS_MSG);
+						response.setReason(eKYCConstant.PAN_CARD_DETAILS_SAVED);
+						response.setResult(dummResult);
+					} else {
+						response.setStatus(eKYCConstant.FAILED_STATUS);
+						response.setMessage(eKYCConstant.FAILED_MSG);
+						response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+					}
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+					response.setReason(eKYCConstant.INVALID_PANCARD);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return response;
+	}
+
+	/**
+	 * Update pan card Details
+	 */
+	public ResponseDTO updatePanCard(PanCardDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
 			PanCardDetailsDTO checkApplicationId = peKYCDao.checkPanCardUpdated(pDto.getApplication_id());
@@ -285,7 +207,7 @@ public class eKYCService {
 					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PAN_CARD_UPDATED);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.OTP_VERIFIED_SUCCESS);
+					response.setReason(eKYCConstant.PAN_CARD_DETAILS_SAVED);
 				} else {
 					response.setStatus(eKYCConstant.FAILED_STATUS);
 					response.setMessage(eKYCConstant.FAILED_MSG);
@@ -310,6 +232,29 @@ public class eKYCService {
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
 		return response;
+	}
+
+	/**
+	 * 
+	 * @param applicationId
+	 * @param panCard
+	 */
+	public static void panVerification(int applicationId, String panCard) {
+		/**
+		 * To create the create the jks file for the given application id
+		 */
+		NsdlPanVerificationRestService.pfx2JksFile(applicationId);
+		/**
+		 * To create the sig file from the jks file
+		 */
+		NsdlPanVerificationRestService.pkcs7Generate(applicationId, panCard);
+		/**
+		 * TO get the result from the NSDL
+		 */
+		String respone = NsdlPanVerificationRestService.apiCallForPanVerififcation(applicationId, panCard);
+		/**
+		 * Make the String to json Object
+		 */
 	}
 
 	/**
@@ -535,6 +480,49 @@ public class eKYCService {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return response;
+	}
+
+	/**
+	 * To update the email for the given mobilenumber
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO updateEmail(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		boolean isSuccessfull = peKYCDao.updateEmail(pDto);
+		if (isSuccessfull) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setReason(eKYCConstant.EMAIL_ID_UPDATED_SUCESSFULLY);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+		}
+		return response;
+	}
+
+	/**
+	 * Mark the application as the deleted
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO deleteOldOne(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		boolean isSuccessfull = peKYCDao.deleteOldOne(pDto);
+		if (isSuccessfull) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 		}
 		return response;
 	}
