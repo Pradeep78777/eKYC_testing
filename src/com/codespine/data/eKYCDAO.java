@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Calendar;
 
+import com.codespine.dto.AccountHolderDetailsDTO;
 import com.codespine.dto.AddressDTO;
+import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
@@ -16,6 +18,13 @@ import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 public class eKYCDAO {
+	public static eKYCDAO eKYCDAO = null;
+	public static eKYCDAO getInstance() {
+		if(eKYCDAO == null) {
+			eKYCDAO = new eKYCDAO();
+		}
+		return eKYCDAO;
+	}
 	// /**
 	// * Methos to insert the personal details and get the application Id back
 	// *
@@ -672,7 +681,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id, mothersName, fathersName, gender, marital_status, annual_income, "
+					" SELECT id,application_id,applicant_name, mothersName, fathersName, gender, marital_status, annual_income, "
 							+ "trading_experience, occupation, politically_exposed "
 							+ " FROM tbl_account_holder_personal_details where application_id = ? ");
 			pStmt.setLong(paromPos++, applicationId);
@@ -680,8 +689,17 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PersonalDetailsDTO();
+					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setApplicant_name(rSet.getString("applicant_name"));
 					result.setMothersName(rSet.getString("mothersName"));
+					result.setFathersName(rSet.getString("fathersName"));
+					result.setGender(rSet.getString("gender"));
+					result.setMarital_status(rSet.getString("marital_status"));
+					result.setAnnual_income(rSet.getString("annual_income"));
+					result.setTrading_experience(rSet.getString("trading_experience"));
+					result.setOccupation(rSet.getString("occupation"));
+					result.setPolitically_exposed(rSet.getString("politically_exposed"));
 				}
 			}
 		} catch (Exception e) {
@@ -760,13 +778,19 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id  FROM tbl_communication_address where application_id = ? ");
+					" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_communication_address where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setFlat_no(rSet.getString("flat_no"));
+					result.setStreet(rSet.getString("street"));
+					result.setPin(rSet.getInt("pin"));
+					result.setCity(rSet.getString("city"));
+					result.setDistrict(rSet.getString("district"));
+					result.setState(rSet.getString("state"));
 				}
 			}
 		} catch (Exception e) {
@@ -799,13 +823,19 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn
-					.prepareStatement(" SELECT application_id  FROM tbl_permanent_address where application_id = ? ");
+					.prepareStatement(" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_permanent_address where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setFlat_no(rSet.getString("flat_no"));
+					result.setStreet(rSet.getString("street"));
+					result.setPin(rSet.getInt("pin"));
+					result.setCity(rSet.getString("city"));
+					result.setDistrict(rSet.getString("district"));
+					result.setState(rSet.getString("state"));
 				}
 			}
 		} catch (Exception e) {
@@ -997,13 +1027,23 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id  FROM tbl_bank_account_details where application_id = ? ");
+					" SELECT id,application_id,account_holder_name,ifsc_code,"
+					+ "bank_account_no,account_type,verified_on,verified,verification_count "
+					+ "  FROM tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new BankDetailsDTO();
+					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setAccount_holder_name(rSet.getString("account_holder_name"));
+					result.setIfsc_code(rSet.getString("ifsc_code"));
+					result.setBank_account_no(rSet.getInt("bank_account_no"));
+					result.setAccount_type(rSet.getString("account_type"));
+					result.setVerified_on(rSet.getString("verified_on"));
+					result.setVerified(rSet.getInt("verified"));
+					result.setVerification_count(rSet.getInt("verification_count"));
 				}
 			}
 		} catch (Exception e) {
@@ -1108,13 +1148,20 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT application_id  FROM tbl_pancard_details where application_id = ? ");
+			pStmt = conn.prepareStatement(" SELECT application_id,pan_card,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PanCardDetailsDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setPan_card(rSet.getString("pan_card"));
+					result.setDob(rSet.getString("dob"));
+					result.setMothersName(rSet.getString("mothersName"));
+					result.setFathersName(rSet.getString("fathersName"));
+					result.setPan_card_verified(rSet.getInt("pan_card_verified"));
+					result.setNsdl_name(rSet.getString("nsdl_name"));
+					result.setNsdl_dob(rSet.getString("nsdl_dob"));
 				}
 			}
 		} catch (Exception e) {
@@ -1166,5 +1213,100 @@ public class eKYCDAO {
 			}
 		}
 		return isSuccessFull;
+	}
+	/**
+	 * Method to get Application Detail For PDF Print
+	 * 
+	 * @author Pradeep R
+	 * @param ApplicationMasterDTO
+	 * @return
+	 */
+	public ApplicationMasterDTO getApplicationMasterDetails(ApplicationMasterDTO pDto) {
+		ApplicationMasterDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT application_id,mobile_number,mobile_no_verified,mob_owner,mobile_otp,"
+					+ "email_id,email_owner,email_activation_code,email_activated,otp_verified_on,"
+					+ "email_activated_on,application_status,last_updated,created_date"
+							+ " FROM tbl_application_master where mobile_number = ? ");
+			pStmt.setInt(paromPos++, pDto.getApplication_id());
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new ApplicationMasterDTO();
+					result.setApplication_id(rSet.getInt("application_id"));
+					result.setMobile_number(rSet.getString("mobile_number"));
+					result.setMobile_no_verified(rSet.getInt("mobile_no_verified"));
+					result.setMob_owner(rSet.getString("mob_owner"));
+					result.setMobile_otp(rSet.getString("mobile_otp")); 
+					result.setEmail_id(rSet.getString("email_id"));
+					result.setEmail_owner(rSet.getString("email_owner"));
+					result.setEmail_activation_code(rSet.getString("email_activation_code"));
+					result.setEmail_activated(rSet.getInt("email_activated"));
+					result.setOtp_verified_on(rSet.getDate("otp_verified_on"));
+					result.setEmail_activated_on(rSet.getDate("email_activated_on"));
+					result.setApplication_status(rSet.getInt("application_status"));
+					result.setLast_updated(rSet.getDate("last_updated"));
+					result.setCreated_date(rSet.getDate("created_date"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	public AccountHolderDetailsDTO getAccountHolderDetail(int applicationId) {
+		AccountHolderDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT  id,name,mobile_number,email,otp,email_verified,verified,verification_key,verified_on,created_on,application_id"
+							+ " FROM tbl_application_master where application_id = ? ");
+			pStmt.setInt(paromPos++,applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new AccountHolderDetailsDTO();
+					result.setId(rSet.getInt("id"));
+					result.setMobile_number(rSet.getInt("mobile_number"));
+					result.setEmail(rSet.getString("email"));
+					result.setOtp(rSet.getInt("otp"));
+					result.setEmail_verified(rSet.getInt("email_verified"));
+					result.setVerified(rSet.getInt("verified"));
+					result.setVerification_key(rSet.getString("verification_key"));
+					result.setVerified_on(rSet.getDate("verified_on"));
+					result.setCreated_on(rSet.getDate("created_on"));
+					result.setApplication_id(rSet.getInt("application_id"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 }

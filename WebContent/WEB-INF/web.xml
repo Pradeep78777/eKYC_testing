@@ -10,17 +10,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>com.codespine.controller,com.codespine.filter, com.fasterxml.jackson.jaxrs.json</param-value>
+			<param-value>com.codespine.controller, com.fasterxml.jackson.jaxrs.json</param-value>
 		</init-param>
-		<init-param>
+	<!-- 	<init-param>
 			<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
 			<param-value>com.codespine.filter.AuthenticationFilter</param-value>
-		</init-param>
+		</init-param> -->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>jersey-serlvet</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
 	<filter>

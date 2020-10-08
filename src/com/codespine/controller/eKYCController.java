@@ -14,8 +14,10 @@ import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
+import com.codespine.dto.eKYCDTO;
 import com.codespine.service.eKYCService;
 import com.codespine.util.CSEnvVariables;
+import com.codespine.util.FinalPDFGenerator;
 import com.codespine.util.eKYCConstant;
 
 @Path("/eKYC")
@@ -272,5 +274,17 @@ public class eKYCController {
 		ResponseDTO response = new ResponseDTO();
 		response = pService.updateBankAccountDetails(pDto);
 		return response;
+	}
+	
+	@GET
+	@Path("/finalPDFGenerator")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void finalPDFGenerator() throws Exception {
+		int applicationId = 1;
+		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
+		if(eKYCdto != null) {
+			FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
+		}
 	}
 }

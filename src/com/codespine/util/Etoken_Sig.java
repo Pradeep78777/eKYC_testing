@@ -1,24 +1,24 @@
 package com.codespine.util;
 
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.util.encoders.Base64;
 import java.io.FileOutputStream;
+import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Security;
-import java.security.KeyStore;
 import java.security.cert.CertStore;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.util.encoders.Base64;
+
 public class Etoken_Sig {
-	private static final Provider UserProvider = new sun.security.pkcs11.SunPKCS11(
-			"C:\\Users\\GOWRI SANKAR R\\Desktop\\zebu_ekyc\\Etoken1\\pkcs11.cfg");
+//	private static final Provider UserProvider = new sun.security.pkcs11.SunPKCS11(
+//			"C:\\Users\\GOWRI SANKAR R\\Desktop\\zebu_ekyc\\Etoken1\\pkcs11.cfg");
 	private static final X509Certificate myPubCert = null;
 	private static KeyStore ks = null;
 	private static X509Certificate UserCert = null;
@@ -37,14 +37,14 @@ public class Etoken_Sig {
 	public static void loginToken() {
 
 		// Adding Security Provider for PKCS 11
-		Security.addProvider(UserProvider);
+//		Security.addProvider(UserProvider);
 
 		try {
 
 			// Setting password for the e-Token
 
 			// logging into token
-			ks = KeyStore.getInstance("PKCS11", UserProvider);
+//			ks = KeyStore.getInstance("PKCS11", UserProvider);
 
 			// Loading Keystore
 			ks.load(null, Password);
