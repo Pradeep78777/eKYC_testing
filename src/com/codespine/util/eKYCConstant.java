@@ -46,15 +46,25 @@ public class eKYCConstant {
 	public static final String BANK_DETAILS_SAVED = "Bank Deatails saved Sucessfully";
 	public static final String PAN_CARD_DETAILS_SAVED = "Pan Card Details saved Sucessfully";
 
+	public static final String EMAIL_ID_UPDATED_SUCESSFULLY = "Email updated sucessfully";
+
+	public static final String INVALID_PANCARD = "Your pan Card is invalid";
+
 	/**
 	 * Application Status
 	 */
-	public static final int OTP_VERIFIED = 1;
-	public static final int OTP_NOT_VERIFIED = 0;
-	public static final int PAN_CARD_UPDATED = 2;
-	public static final int BASIC_DETAILS_UPDATED = 3;
-	public static final int COMMUNICATION_ADDRESS_UPDATED = 4;
-	public static final int PERMANENT_ADDRESS_UPDATED = 5;
-	public static final int BANK_DETAILS_UPDATED = 6;
-	public static final int EXCH_UPDATED = 7;
+	public static final int OTP_NOT_VERIFIED = 1;
+	public static final int OTP_VERIFIED = 2;
+	public static final int PAN_CARD_UPDATED = 3;
+	public static final int BASIC_DETAILS_UPDATED = 4;
+	public static final int COMMUNICATION_ADDRESS_UPDATED = 5;
+	public static final int PERMANENT_ADDRESS_UPDATED = 6;
+	public static final int BANK_DETAILS_UPDATED = 7;
+	public static final int EXCH_UPDATED = 8;
+
+	public static final String MESSAGE_URL = "messageURl";
+	public static final String MESSAGE_USERNAME = "messageUserName";
+	public static final String MESSAGE_PASSWORD = "messagePassword";
+	public static final String MESSAGE_SENDER = "messageFrom";
+	public static final String MESSAGE_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins";
 }

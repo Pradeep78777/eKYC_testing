@@ -21,6 +21,7 @@ public class PersonalDetailsDTO {
 	private String email_owner;
 	private String mothersName;
 	private String fathersName;
+	private String applicant_name;
 
 	public int getId() {
 		return id;
@@ -172,6 +173,14 @@ public class PersonalDetailsDTO {
 
 	public void setFathersName(String fathersName) {
 		this.fathersName = fathersName;
+	}
+
+	public String getApplicant_name() {
+		return applicant_name;
+	}
+
+	public void setApplicant_name(String applicant_name) {
+		this.applicant_name = applicant_name;
 	}
 
 }
