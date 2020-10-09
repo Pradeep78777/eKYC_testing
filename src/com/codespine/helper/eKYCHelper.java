@@ -32,36 +32,42 @@ public class eKYCHelper {
 			AccountHolderDetailsDTO accountHolderDetailsDTO = eKYCDAO.getInstance().getAccountHolderDetail(applicationId);
 			if(accountHolderDetailsDTO != null) {
 				eKYCDTO.setAccountHolderDetailsDTO(accountHolderDetailsDTO);
+				eKYCDTO.getForPDFKeyValue().putAll(accountHolderDetailsDTO.getForPDFKeyValue());
 			}
 		}
 		if(applicationMasterDTO.isAccHolderPersonalDtlRequired()) {
 			PersonalDetailsDTO personalDetailsDTO = eKYCDAO.getInstance().CheckBasicInformation(applicationId);
 			if(personalDetailsDTO != null) {
 				eKYCDTO.setPersonalDetailsDTO(personalDetailsDTO);
+				eKYCDTO.getForPDFKeyValue().putAll(personalDetailsDTO.getForPDFKeyValue());
 			}
 		}
 		if(applicationMasterDTO.isBankAccDtlRequired()) {
 			BankDetailsDTO bankDetailsDTO= eKYCDAO.getInstance().checkBankDetailsUpdated(applicationId);
 			if(bankDetailsDTO != null) {
 				eKYCDTO.setBankDetailsDTO(bankDetailsDTO);
+				eKYCDTO.getForPDFKeyValue().putAll(bankDetailsDTO.getForPDFKeyValue());
 			}
 		}
 		if(applicationMasterDTO.isCommunicationAddressRequired()) {
 			AddressDTO addressDTO=  eKYCDAO.getInstance().checkCommunicationAddress(applicationId);
 			if(addressDTO != null) {
 				eKYCDTO.setAddressDTO(addressDTO);
+				eKYCDTO.getForPDFKeyValue().putAll(addressDTO.getForPDFKeyValue());
 			}
 		}
 		if(applicationMasterDTO.isPanCardDetailRequired()) {
 			PanCardDetailsDTO panCardDetailsDTO = eKYCDAO.getInstance().checkPanCardUpdated(applicationId);
 			if(panCardDetailsDTO != null) {
 				eKYCDTO.setPanCardDetailsDTO(panCardDetailsDTO);
+				eKYCDTO.getForPDFKeyValue().putAll(panCardDetailsDTO.getForPDFKeyValue());
 			}
 		}
 		if(applicationMasterDTO.isPermanentAddressRequired()) {
 			AddressDTO addressDTO=  eKYCDAO.getInstance().checkPermanentAddress(applicationId);
 			if(addressDTO != null) {
 				eKYCDTO.setPermanentAddressDTO(addressDTO);
+				eKYCDTO.getForPDFKeyValue().putAll(addressDTO.getForPDFKeyValue());
 			}
 		}
 		return eKYCDTO;

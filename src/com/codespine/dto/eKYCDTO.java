@@ -1,6 +1,7 @@
 package com.codespine.dto;
 
 import java.util.List;
+import java.util.Map;
 
 public class eKYCDTO {
 		private ApplicationMasterDTO applicationMasterDTO;
@@ -19,6 +20,7 @@ public class eKYCDTO {
 		private List<ResponseDTO> responseDTOs;
 		private AccountHolderDetailsDTO accountHolderDetailsDTO;
 		private List<AccountHolderDetailsDTO> accountHolderDetailsDTOs;
+		private Map<String,String>  forPDFKeyValue; 
 		public ApplicationMasterDTO getApplicationMasterDTO() {
 			return applicationMasterDTO;
 		}
@@ -114,6 +116,12 @@ public class eKYCDTO {
 		}
 		public void setPermanentAddressDTOs(List<AddressDTO> permanentAddressDTOs) {
 			PermanentAddressDTOs = permanentAddressDTOs;
+		}
+		public Map<String, String> getForPDFKeyValue() {
+			return forPDFKeyValue;
+		}
+		public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
+			this.forPDFKeyValue = forPDFKeyValue;
 		}
 		
 }

@@ -4,13 +4,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 import com.codespine.dto.AccountHolderDetailsDTO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
+import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.DBUtil;
@@ -676,6 +680,7 @@ public class eKYCDAO {
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -689,17 +694,28 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PersonalDetailsDTO();
+					json = new  HashMap<String,String>();
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setApplicant_name(rSet.getString("applicant_name"));
+					json.put("applicant_name",rSet.getString("applicant_name"));
 					result.setMothersName(rSet.getString("mothersName"));
+					json.put("mothersName",rSet.getString("mothersName"));
 					result.setFathersName(rSet.getString("fathersName"));
+					json.put("fathersName",rSet.getString("fathersName"));
 					result.setGender(rSet.getString("gender"));
+					json.put("gender",rSet.getString("gender"));
 					result.setMarital_status(rSet.getString("marital_status"));
+					json.put("marital_status",rSet.getString("marital_status"));
 					result.setAnnual_income(rSet.getString("annual_income"));
+					json.put("annual_income",rSet.getString("annual_income"));
 					result.setTrading_experience(rSet.getString("trading_experience"));
+					json.put("trading_experience",rSet.getString("trading_experience"));
 					result.setOccupation(rSet.getString("occupation"));
+					json.put("occupation",rSet.getString("occupation"));
 					result.setPolitically_exposed(rSet.getString("politically_exposed"));
+					json.put("politically_exposed",rSet.getString("politically_exposed"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -773,6 +789,7 @@ public class eKYCDAO {
 		AddressDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -784,13 +801,21 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
+					json = new  HashMap<String,String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setFlat_no(rSet.getString("flat_no"));
+					json.put("flat_no", rSet.getString("flat_no"));
 					result.setStreet(rSet.getString("street"));
+					json.put("street", rSet.getString("street"));
 					result.setPin(rSet.getInt("pin"));
+					json.put("pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
+					json.put("city", rSet.getString("city"));
 					result.setDistrict(rSet.getString("district"));
+					json.put("district", rSet.getString("district"));
 					result.setState(rSet.getString("state"));
+					json.put("state", rSet.getString("state"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -818,6 +843,7 @@ public class eKYCDAO {
 		AddressDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -829,13 +855,22 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
+					json = new  HashMap<String,String>();
 					result.setApplication_id(rSet.getInt("application_id"));
+					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
 					result.setFlat_no(rSet.getString("flat_no"));
+					json.put("flat_no", rSet.getString("flat_no"));
 					result.setStreet(rSet.getString("street"));
+					json.put("street", rSet.getString("street"));
 					result.setPin(rSet.getInt("pin"));
+					json.put("pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
+					json.put("city", rSet.getString("city"));
 					result.setDistrict(rSet.getString("district"));
+					json.put("district", rSet.getString("district"));
 					result.setState(rSet.getString("state"));
+					json.put("state", rSet.getString("state"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -1022,6 +1057,7 @@ public class eKYCDAO {
 		BankDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -1035,15 +1071,21 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new BankDetailsDTO();
+					json = new  HashMap<String,String>();
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
+					json.put("account_holder_name", rSet.getString("account_holder_name"));
 					result.setIfsc_code(rSet.getString("ifsc_code"));
+					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no(rSet.getInt("bank_account_no"));
+					json.put("bank_account_no", Integer.toString(rSet.getInt("bank_account_no")));
 					result.setAccount_type(rSet.getString("account_type"));
+					json.put("account_type", rSet.getString("account_type"));
 					result.setVerified_on(rSet.getString("verified_on"));
 					result.setVerified(rSet.getInt("verified"));
 					result.setVerification_count(rSet.getInt("verification_count"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -1144,6 +1186,7 @@ public class eKYCDAO {
 		PanCardDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -1154,14 +1197,20 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PanCardDetailsDTO();
+					json = new  HashMap<String,String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setPan_card(rSet.getString("pan_card"));
+					json.put("pan_card", rSet.getString("pan_card"));
 					result.setDob(rSet.getString("dob"));
+					json.put("dob", rSet.getString("dob"));
 					result.setMothersName(rSet.getString("mothersName"));
 					result.setFathersName(rSet.getString("fathersName"));
 					result.setPan_card_verified(rSet.getInt("pan_card_verified"));
 					result.setNsdl_name(rSet.getString("nsdl_name"));
+					json.put("nsdl_name", rSet.getString("nsdl_name"));
 					result.setNsdl_dob(rSet.getString("nsdl_dob"));
+					json.put("nsdl_dob", rSet.getString("nsdl_dob"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -1226,6 +1275,7 @@ public class eKYCDAO {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rSet = null;
+		 HashMap<String,String> json =null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
@@ -1233,19 +1283,25 @@ public class eKYCDAO {
 					" SELECT application_id,mobile_number,mobile_no_verified,mob_owner,mobile_otp,"
 					+ "email_id,email_owner,email_activation_code,email_activated,otp_verified_on,"
 					+ "email_activated_on,application_status,last_updated,created_date"
-							+ " FROM tbl_application_master where mobile_number = ? ");
+							+ " FROM tbl_application_master where application_id = ?  ");
 			pStmt.setInt(paromPos++, pDto.getApplication_id());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
+					json = new  HashMap<String,String>();
 					result = new ApplicationMasterDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
+					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
 					result.setMobile_number(rSet.getString("mobile_number"));
+					json.put("mobile_number", rSet.getString("mobile_number"));
 					result.setMobile_no_verified(rSet.getInt("mobile_no_verified"));
 					result.setMob_owner(rSet.getString("mob_owner"));
+					json.put("mob_owner", rSet.getString("mob_owner"));
 					result.setMobile_otp(rSet.getString("mobile_otp")); 
 					result.setEmail_id(rSet.getString("email_id"));
+					json.put("email_id", rSet.getString("email_id"));
 					result.setEmail_owner(rSet.getString("email_owner"));
+					json.put("email_owner", rSet.getString("email_owner"));
 					result.setEmail_activation_code(rSet.getString("email_activation_code"));
 					result.setEmail_activated(rSet.getInt("email_activated"));
 					result.setOtp_verified_on(rSet.getDate("otp_verified_on"));
@@ -1253,6 +1309,8 @@ public class eKYCDAO {
 					result.setApplication_status(rSet.getInt("application_status"));
 					result.setLast_updated(rSet.getDate("last_updated"));
 					result.setCreated_date(rSet.getDate("created_date"));
+					result.setForPDFKeyValue(json);
+					
 				}
 			}
 		} catch (Exception e) {
@@ -1278,7 +1336,7 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					" SELECT  id,name,mobile_number,email,otp,email_verified,verified,verification_key,verified_on,created_on,application_id"
-							+ " FROM tbl_application_master where application_id = ? ");
+							+ " FROM tbl_account_holder_details where application_id = ? ");
 			pStmt.setInt(paromPos++,applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1309,4 +1367,70 @@ public class eKYCDAO {
 		}
 		return result;
 	}
+	public List<PdfCoordinationsDTO> getPdfCoordinations() {
+		List<PdfCoordinationsDTO> pdfCoordinationsDTOs = null;
+		PdfCoordinationsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT id,column_name,coordinates,data_type FROM tbl_pdf_coordinations ");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PdfCoordinationsDTO();
+					result.setId(rSet.getInt("id"));
+					result.setColumn_name(rSet.getString("column_name"));
+					result.setCoordinates(rSet.getString("coordinates"));
+					result.setData_type(rSet.getString("data_type"));
+					if(pdfCoordinationsDTOs == null) {
+						pdfCoordinationsDTOs = new ArrayList<PdfCoordinationsDTO>();
+					}
+					pdfCoordinationsDTOs.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return pdfCoordinationsDTOs;
+	}
+	public List<String> getPdfTotalColumns() {
+		List<String> pdfColumns = new ArrayList<String>();
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT column_name FROM tbl_pdf_coordinations ");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					pdfColumns.add(rSet.getString("column_name"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return pdfColumns;
+	}
+	
 }

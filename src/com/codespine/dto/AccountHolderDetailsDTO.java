@@ -1,6 +1,7 @@
 package com.codespine.dto;
 
 import java.util.Date;
+import java.util.Map;
 
 public class AccountHolderDetailsDTO {
 	private int id;
@@ -14,6 +15,13 @@ public class AccountHolderDetailsDTO {
 	private Date verified_on;
 	private Date created_on;
 	private int application_id;
+	private Map<String,String>  forPDFKeyValue;
+	public Map<String, String> getForPDFKeyValue() {
+		return forPDFKeyValue;
+	}
+	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
+		this.forPDFKeyValue = forPDFKeyValue;
+	}
 	public int getId() {
 		return id;
 	}

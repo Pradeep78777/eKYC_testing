@@ -1,6 +1,7 @@
 package com.codespine.dto;
 
 import java.util.Date;
+import java.util.Map;
 
 
 public class ApplicationMasterDTO {
@@ -26,6 +27,13 @@ public class ApplicationMasterDTO {
 	private boolean isPanCardDetailRequired;
 	private boolean isPermanentAddressRequired;
 	private boolean isTPAccessLogRequired;
+	private Map<String,String>  forPDFKeyValue;
+	public Map<String, String> getForPDFKeyValue() {
+		return forPDFKeyValue;
+	}
+	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
+		this.forPDFKeyValue = forPDFKeyValue;
+	}
 	public int getApplication_id() {
 		return application_id;
 	}
@@ -158,6 +166,5 @@ public class ApplicationMasterDTO {
 	public void setTPAccessLogRequired(boolean isTPAccessLogRequired) {
 		this.isTPAccessLogRequired = isTPAccessLogRequired;
 	}
-	
 
 }

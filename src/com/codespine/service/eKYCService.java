@@ -1,5 +1,7 @@
 package com.codespine.service;
 
+import java.util.HashMap;
+
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
@@ -558,7 +560,11 @@ public class eKYCService {
 		applicationMasterDTO = eKYCDAO.getInstance().getApplicationMasterDetails(applicationMasterDTO);
 		if(applicationMasterDTO != null) {
 			eKYCDTO = new eKYCDTO();
+			if(eKYCDTO.getForPDFKeyValue() == null) {
+				eKYCDTO.setForPDFKeyValue(new HashMap<String,String>());
+			}
 			eKYCDTO.setApplicationMasterDTO(applicationMasterDTO);
+			eKYCDTO.getForPDFKeyValue().putAll(applicationMasterDTO.getForPDFKeyValue());
 			applicationMasterDTO.setAccHolderPersonalDtlRequired(true);
 			applicationMasterDTO.setBankAccDtlRequired(true);
 			applicationMasterDTO.setCommunicationAddressRequired(true);

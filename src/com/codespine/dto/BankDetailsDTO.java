@@ -1,5 +1,7 @@
 package com.codespine.dto;
 
+import java.util.Map;
+
 public class BankDetailsDTO {
 
 	private int id;
@@ -11,6 +13,13 @@ public class BankDetailsDTO {
 	private String verified_on;
 	private int verified;
 	private int verification_count;
+	private Map<String,String>  forPDFKeyValue;
+	public Map<String, String> getForPDFKeyValue() {
+		return forPDFKeyValue;
+	}
+	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
+		this.forPDFKeyValue = forPDFKeyValue;
+	}
 	public int getId() {
 		return id;
 	}

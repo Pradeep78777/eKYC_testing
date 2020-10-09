@@ -278,10 +278,8 @@ public class eKYCController {
 	
 	@GET
 	@Path("/finalPDFGenerator")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	public void finalPDFGenerator() throws Exception {
-		int applicationId = 1;
+		int applicationId = 2;
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if(eKYCdto != null) {
 			FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);

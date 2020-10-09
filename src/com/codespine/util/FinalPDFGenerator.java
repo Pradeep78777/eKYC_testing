@@ -2,22 +2,24 @@ package com.codespine.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import com.codespine.data.eKYCDAO;
+import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.eKYCDTO;
 
 public class FinalPDFGenerator {
-	static String sourceFile = "/home/stoneage-sas2/Downloads/KYC_V6.pdf";
-	static String destinationFile = "/home/stoneage-sas2/Downloads/new1.pdf";
+	static String sourceFile = "C:\\Users\\user\\Downloads\\KYC_V6.pdf";
+	static String destinationFile = "C:\\Users\\user\\Downloads\\new1.pdf";
 	public static void main(String[] args) throws Exception {
-		
 		File file = new File(sourceFile);
 		PDDocument document = PDDocument.load(file);
 		pdfInserter(document,2,"PRADEEP KUPPUSAMY",105,752);//name
@@ -41,7 +43,7 @@ public class FinalPDFGenerator {
 		pdfInserter(document,2,"X",104,594);//Status -- other proof
 		pdfInserter(document,2,"STONEAGE",157,594);// -- other proof letter 
 		pdfInserter(document,2,"STONEA",379,594);// -- other proof letter
-		pdfimageInserter(document,2,490,668,"/home/stoneage-sas2/Pictures/11.jpg");
+		pdfimageInserter(document,2,490,600,"C:\\Users\\user\\Downloads\\1.jpg");
 		pdfInserter(document,2,"X",123,556);//address present
 		pdfInserter(document,2,"X",226,556);//office address
 		pdfInserter(document,2,"STONEAGE",104,538);//residence
@@ -222,7 +224,6 @@ public class FinalPDFGenerator {
 		pdfInserter(document,3,"STONEAGE",77,278);//FINANCIAL DETAIL 3st Holder name
 		pdfInserter(document,3,"STONEAGE",77,265);//FINANCIAL DETAIL 3st Holder place
 		pdfInserter(document,3,"STONEAGE",216,265);//FINANCIAL DETAIL 3st Holder date
-		
 		pdfInserter(document,3,"STONEAGE",480,328);//FINANCIAL DETAIL 1st Holder sign
 		pdfInserter(document,3,"STONEAGE",480,300);//FINANCIAL DETAIL 2st Holder sign
 		pdfInserter(document,3,"STONEAGE",480,273);//FINANCIAL DETAIL 3st Holder sign
@@ -243,13 +244,55 @@ public class FinalPDFGenerator {
 	public static void pdfInserterRequiredValues(eKYCDTO eKYCdto) throws Exception {
 		File file = new File(sourceFile);
 		PDDocument document = PDDocument.load(file);
-		
+		HashMap<String,String> keyAndCoordinates = constructkeyAndItsCoordinates(eKYCDAO.getInstance().getPdfCoordinations());
+		List<String> columnsNames = eKYCDAO.getInstance().getPdfTotalColumns();
+		for(int i=0;i<columnsNames.size();i++) {
+			String coordinates = keyAndCoordinates.get(columnsNames.get(i));
+			String[] orgs = coordinates.split(",");
+			int pageNumber = Integer.parseInt(orgs[0]);
+			int xValue = Integer.parseInt(orgs[1]);
+			int yValue = Integer.parseInt(orgs[2]);
+			String dataType = orgs[3]; 
+			if(dataType.equals("String")) {
+				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
+					pdfInserter(document,pageNumber,eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)),xValue,yValue);	
+				}
+			}else if(dataType.equals("img")) {
+				pdfimageInserter(document, pageNumber,xValue,yValue,"C:\\Users\\user\\Downloads\\1.jpg");
+//				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
+//					pdfimageInserter(document, pageNumber,xValue,yValue, eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)));
+//				}
+			}
+			else if(dataType.equals("tick")) {
+				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
+					String value = eKYCdto.getForPDFKeyValue().get(columnsNames.get(i));
+					String tickcoordinates = keyAndCoordinates.get(value);
+					String[] tickorgs = tickcoordinates.split(",");
+					int tickpageNumber = Integer.parseInt(tickorgs[0]);
+					int tickxValue = Integer.parseInt(tickorgs[1]);
+					int tickyValue = Integer.parseInt(tickorgs[2]);
+					pdfInserter(document,tickpageNumber,"X",tickxValue,tickyValue);	
+				}
+				
+			}
+			
+		}
 		// Saving the document
 		document.save(new File(destinationFile));
+		System.out.println("pdf Generated");
 		// Closing the document
 		document.close();
 	}
 	
+	private static HashMap<String, String> constructkeyAndItsCoordinates(List<PdfCoordinationsDTO> pdfCoordinationsDTOs) {
+		HashMap<String,String> keyAndCoordinates = new HashMap<String,String>();
+		if(pdfCoordinationsDTOs != null) {
+			for(PdfCoordinationsDTO DTO:pdfCoordinationsDTOs) {
+				keyAndCoordinates.put(DTO.getColumn_name(), DTO.getCoordinates());
+			}
+		}
+		return keyAndCoordinates;
+	}
 	public static void pdfInserter(PDDocument document ,int pageNumber,String insertValue,int xValue, int yValue) throws Exception {
 		PDPage page = document.getPage(pageNumber);
 		PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, false);
