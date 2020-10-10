@@ -49,6 +49,7 @@ public class eKYCConstant {
 	public static final String BANK_DETAILS_SAVED = "Bank Deatails saved Sucessfully";
 	public static final String PAN_CARD_DETAILS_SAVED = "Pan Card Details saved Sucessfully";
 	public static final String PDF_GENERATED_SUCESSFULLY = "PDF Generated Sucessfully";
+	public static final String PDF_GENERATED_FAILED = "PDF Generated Failed";
 
 	public static final String EMAIL_ID_UPDATED_SUCESSFULLY = "Email updated sucessfully";
 
