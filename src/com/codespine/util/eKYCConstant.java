@@ -62,5 +62,6 @@ public class eKYCConstant {
 	public static final String TICK = "TICK";
 	public static final String COMMA_SEPERATOR = ",";
 	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
+	public static final String GITCHECK = "";
 	
 }
