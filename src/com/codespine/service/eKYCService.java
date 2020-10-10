@@ -8,19 +8,30 @@ import java.io.OutputStream;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.json.simple.JSONObject;
+import java.util.HashMap;
 
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
+import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.restservice.NsdlPanVerificationRestService;
+import com.codespine.dto.eKYCDTO;
+import com.codespine.helper.eKYCHelper;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 public class eKYCService {
+	public static eKYCService eKYCService = null;
+	public static eKYCService getInstance() {
+		if(eKYCService == null) {
+			eKYCService = new eKYCService();
+		}
+		return eKYCService;
+	}
 	eKYCDAO peKYCDao = new eKYCDAO();
 
 	/**
@@ -662,6 +673,29 @@ public class eKYCService {
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
 		return response;
+	}
+	public eKYCDTO finalPDFGenerator(int applicationId) {
+		ApplicationMasterDTO applicationMasterDTO = new ApplicationMasterDTO();
+		eKYCDTO eKYCDTO = null;
+		if(applicationId != 0 && applicationId > 0 ) {
+			applicationMasterDTO.setApplication_id(applicationId);
+		}
+		applicationMasterDTO = eKYCDAO.getInstance().getApplicationMasterDetails(applicationMasterDTO);
+		if(applicationMasterDTO != null) {
+			eKYCDTO = new eKYCDTO();
+			if(eKYCDTO.getForPDFKeyValue() == null) {
+				eKYCDTO.setForPDFKeyValue(new HashMap<String,String>());
+			}
+			eKYCDTO.setApplicationMasterDTO(applicationMasterDTO);
+			eKYCDTO.getForPDFKeyValue().putAll(applicationMasterDTO.getForPDFKeyValue());
+			applicationMasterDTO.setAccHolderPersonalDtlRequired(true);
+			applicationMasterDTO.setBankAccDtlRequired(true);
+			applicationMasterDTO.setCommunicationAddressRequired(true);
+			applicationMasterDTO.setPanCardDetailRequired(true);
+			applicationMasterDTO.setPermanentAddressRequired(true);
+			eKYCDTO = eKYCHelper.getInstance().populateRerquiredFields(applicationMasterDTO,eKYCDTO);
+		}
+		return eKYCDTO;
 	}
 
 }

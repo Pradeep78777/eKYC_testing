@@ -1,5 +1,7 @@
 package com.codespine.dto;
 
+import java.util.Map;
+
 public class AddressDTO {
 	private int application_id;
 	private String flat_no;
@@ -8,7 +10,13 @@ public class AddressDTO {
 	private String city;
 	private String district;
 	private String state;
-
+	private Map<String,String>  forPDFKeyValue;
+	public Map<String, String> getForPDFKeyValue() {
+		return forPDFKeyValue;
+	}
+	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
+		this.forPDFKeyValue = forPDFKeyValue;
+	}
 	public int getApplication_id() {
 		return application_id;
 	}

@@ -18,8 +18,10 @@ import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
+import com.codespine.dto.eKYCDTO;
 import com.codespine.service.eKYCService;
 import com.codespine.util.CSEnvVariables;
+import com.codespine.util.FinalPDFGenerator;
 import com.codespine.util.eKYCConstant;
 
 @Path("/eKYC")
@@ -260,6 +262,21 @@ public class eKYCController {
 	public ResponseDTO getXmlEncode(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		response = pService.getXmlEncode(pDto);
+		return response;
+	}
+	
+	@POST
+	@Path("/finalPDFGenerator")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO finalPDFGenerator(int applicationId) throws Exception {
+		ResponseDTO response = new ResponseDTO();
+		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
+		if(eKYCdto != null) {
+			FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setReason(eKYCConstant.PDF_GENERATED_SUCESSFULLY);
+		}
 		return response;
 	}
 }

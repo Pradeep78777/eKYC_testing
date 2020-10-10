@@ -1,5 +1,7 @@
 package com.codespine.dto;
 
+import java.util.Map;
+
 public class PersonalDetailsDTO {
 
 	private int id;
@@ -23,7 +25,13 @@ public class PersonalDetailsDTO {
 	private String fathersName;
 	private String applicant_name;
 	private String esign_Xml;
-
+	private Map<String,String>  forPDFKeyValue;
+	public Map<String, String> getForPDFKeyValue() {
+		return forPDFKeyValue;
+	}
+	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
+		this.forPDFKeyValue = forPDFKeyValue;
+	}
 	public int getId() {
 		return id;
 	}
@@ -191,5 +199,4 @@ public class PersonalDetailsDTO {
 	public void setEsign_Xml(String esign_Xml) {
 		this.esign_Xml = esign_Xml;
 	}
-
 }

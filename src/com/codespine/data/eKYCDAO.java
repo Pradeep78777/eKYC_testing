@@ -4,19 +4,344 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
+import com.codespine.dto.AccountHolderDetailsDTO;
 import com.codespine.dto.AddressDTO;
+import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
+import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.DBUtil;
+import com.codespine.util.DateUtil;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 public class eKYCDAO {
+	public static eKYCDAO eKYCDAO = null;
+	public static eKYCDAO getInstance() {
+		if(eKYCDAO == null) {
+			eKYCDAO = new eKYCDAO();
+		}
+		return eKYCDAO;
+	}
+	// /**
+	// * Methos to insert the personal details and get the application Id back
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param pDto
+	// * @return
+	// */
+	// public int personalDetails(PersonalDetailsDTO pDto) {
+	// java.sql.Timestamp timestamp = new
+	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+	// Connection conn = null;
+	// PreparedStatement pStmt = null;
+	// ResultSet rSet = null;
+	// int count = 0;
+	// try {
+	// int paromPos = 1;
+	// conn = DBUtil.getConnection();
+	// pStmt = conn.prepareStatement(
+	// "INSERT INTO tbl_account_holder_details(name, mobile_number, email, otp,
+	// verified ,created_on)"
+	// + " VALUES (?,?,?,?,?,?) ",
+	// Statement.RETURN_GENERATED_KEYS);
+	// pStmt.setString(paromPos++, pDto.getName());
+	// pStmt.setLong(paromPos++, pDto.getMobile_number());
+	// pStmt.setString(paromPos++, pDto.getEmail());
+	// pStmt.setInt(paromPos++, pDto.getOtp());
+	// pStmt.setInt(paromPos++, 0);
+	// pStmt.setTimestamp(paromPos++, timestamp);
+	// pStmt.executeUpdate();
+	// rSet = pStmt.getGeneratedKeys();
+	// if (rSet != null) {
+	// while (rSet.next()) {
+	// count = rSet.getInt(1);
+	// }
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// DBUtil.closeResultSet(rSet);
+	// DBUtil.closeStatement(pStmt);
+	// DBUtil.closeConnection(conn);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return count;
+	// }
+	//
+	// /**
+	// * Check user already registred
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param pDto
+	// * @return
+	// */
+	// public PersonalDetailsDTO checkAlreadyRegistred(PersonalDetailsDTO pDto)
+	// {
+	// PersonalDetailsDTO dto = new PersonalDetailsDTO();
+	// Connection conn = null;
+	// PreparedStatement pStmt = null;
+	// ResultSet rSet = null;
+	// try {
+	// int paromPos = 1;
+	// conn = DBUtil.getConnection();
+	// pStmt = conn.prepareStatement(
+	// " SELECT id , otp , verified FROM tbl_account_holder_details where
+	// mobile_number = ? ");
+	// pStmt.setLong(paromPos++, pDto.getMobile_number());
+	// rSet = pStmt.executeQuery();
+	// if (rSet != null) {
+	// while (rSet.next()) {
+	// dto.setId(rSet.getInt("id"));
+	// dto.setOtp(rSet.getInt("otp"));
+	// dto.setVerified(rSet.getInt("verified"));
+	// }
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// DBUtil.closeResultSet(rSet);
+	// DBUtil.closeStatement(pStmt);
+	// DBUtil.closeConnection(conn);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return dto;
+	// }
+	//
+	// /**
+	// * Make the profile as verified
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param pDto
+	// * @return
+	// */
+	// public boolean updateAsVerified(PersonalDetailsDTO pDto) {
+	// PreparedStatement pStmt = null;
+	// Connection conn = null;
+	// boolean issuccess = false;
+	// int count = 0;
+	// java.sql.Timestamp timestamp = new
+	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+	// try {
+	// conn = DBUtil.getConnection();
+	// pStmt = conn.prepareStatement(
+	// "UPDATE tbl_account_holder_details SET verified = ?, verified_on = ?
+	// WHERE mobile_number =? ");
+	// int paramPos = 1;
+	// pStmt.setInt(paramPos++, 1);
+	// pStmt.setTimestamp(paramPos++, timestamp);
+	// pStmt.setLong(paramPos++, pDto.getMobile_number());
+	// count = pStmt.executeUpdate();
+	// if (count > 0) {
+	// issuccess = true;
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// DBUtil.closeStatement(pStmt);
+	// DBUtil.closeConnection(conn);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return issuccess;
+	// }
+	//
+	// /**
+	// * Make the profile as verified
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param pDto
+	// * @return
+	// */
+	// public boolean updateOTP(PersonalDetailsDTO pDto) {
+	// PreparedStatement pStmt = null;
+	// Connection conn = null;
+	// boolean issuccess = false;
+	// int count = 0;
+	// try {
+	// conn = DBUtil.getConnection();
+	// pStmt = conn.prepareStatement("UPDATE tbl_account_holder_details SET otp
+	// = ? WHERE mobile_number =? ");
+	// int paramPos = 1;
+	// pStmt.setInt(paramPos++, pDto.getOtp());
+	// pStmt.setLong(paramPos++, pDto.getMobile_number());
+	// count = pStmt.executeUpdate();
+	// if (count > 0) {
+	// issuccess = true;
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// DBUtil.closeStatement(pStmt);
+	// DBUtil.closeConnection(conn);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return issuccess;
+	// }
+	//
+	// /**
+	// * Method inser the pan card details into data base
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param pDto
+	// * @return
+	// */
+	// public boolean insertPanCardDetails(PanCardDetailsDTO pDto) {
+	// PreparedStatement pStmt = null;
+	// Connection conn = null;
+	// boolean isSuccessful = false;
+	// int count = 0;
+	// java.sql.Timestamp timestamp = new
+	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+	// try {
+	// conn = DBUtil.getConnection();
+	// pStmt = conn.prepareStatement(
+	// "INSERT INTO tbl_pancard_details(application_id, pan_card, dob,
+	// mothersName ,fathersName, "
+	// + "pan_card_verified, verification_count, created_on) " + "VALUES
+	// (?,?,?,?,?,?,?,?)");
+	// int paramPos = 1;
+	// pStmt.setInt(paramPos++, pDto.getApplication_id());
+	// pStmt.setString(paramPos++, pDto.getPan_card());
+	// pStmt.setString(paramPos++, pDto.getDob());
+	// pStmt.setString(paramPos++, pDto.getMothersName());
+	// pStmt.setString(paramPos++, pDto.getFathersName());
+	// pStmt.setInt(paramPos++, 0);
+	// pStmt.setInt(paramPos++, 0);
+	// pStmt.setTimestamp(paramPos++, timestamp);
+	// count = pStmt.executeUpdate();
+	// if (count > 0) {
+	// isSuccessful = true;
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// DBUtil.closeStatement(pStmt);
+	// DBUtil.closeConnection(conn);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return isSuccessful;
+	//
+	// }
+	//
+	// /**
+	// * Method to inser the personal info Details in to data base
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param pDto
+	// * @return
+	// */
+	// public boolean insertPersonalInfoDetails(PersonalDetailsDTO pDto) {
+	// PreparedStatement pStmt = null;
+	// Connection conn = null;
+	// boolean isSuccessful = false;
+	// int count = 0;
+	// java.sql.Timestamp timestamp = new
+	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+	// try {
+	// conn = DBUtil.getConnection();
+	// pStmt = conn.prepareStatement(
+	// "INSERT INTO tbl_account_holder_personal_details(application_id,gender
+	// ,marital_status, annual_income, "
+	// + "trading_experience, occupation, politically_exposed, created_on) "
+	// + "VALUES (?,?,?,?,?,?,?,?)");
+	// int paramPos = 1;
+	// pStmt.setInt(paramPos++, pDto.getApplication_id());
+	// pStmt.setString(paramPos++, pDto.getGender());
+	// pStmt.setString(paramPos++, pDto.getMarital_status());
+	// pStmt.setString(paramPos++, pDto.getAnnual_income());
+	// pStmt.setInt(paramPos++, pDto.getTrading_experience());
+	// pStmt.setString(paramPos++, pDto.getOccupation());
+	// pStmt.setInt(paramPos++, pDto.getPolitically_exposed());
+	// pStmt.setTimestamp(paramPos++, timestamp);
+	// count = pStmt.executeUpdate();
+	// if (count > 0) {
+	// isSuccessful = true;
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// DBUtil.closeStatement(pStmt);
+	// DBUtil.closeConnection(conn);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return isSuccessful;
+	//
+	// }
+	//
+	// /**
+	// * Method to insert the bank account Details in to data base
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param pDto
+	// * @return
+	// */
+	// public boolean bankDetails(BankDetailsDTO pDto) {
+	// PreparedStatement pStmt = null;
+	// Connection conn = null;
+	// boolean isSuccessful = false;
+	// int count = 0;
+	// java.sql.Timestamp timestamp = new
+	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+	// try {
+	// conn = DBUtil.getConnection();
+	// pStmt = conn.prepareStatement(
+	// "INSERT INTO tbl_bank_account_details(application_id,
+	// account_holder_name, ifsc_code, "
+	// + "bank_account_no, account_type, verified, verification_count,
+	// created_on) "
+	// + "VALUES (?,?,?,?,?,?,?,?)");
+	// int paramPos = 1;
+	// pStmt.setInt(paramPos++, pDto.getApplication_id());
+	// pStmt.setString(paramPos++, pDto.getAccount_holder_name());
+	// pStmt.setString(paramPos++, pDto.getIfsc_code());
+	// pStmt.setLong(paramPos++, pDto.getBank_account_no());
+	// pStmt.setString(paramPos++, pDto.getAccount_type());
+	// pStmt.setInt(paramPos++, 0);
+	// pStmt.setInt(paramPos++, 0);
+	// pStmt.setTimestamp(paramPos++, timestamp);
+	// count = pStmt.executeUpdate();
+	// if (count > 0) {
+	// isSuccessful = true;
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// try {
+	// DBUtil.closeStatement(pStmt);
+	// DBUtil.closeConnection(conn);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// return isSuccessful;
+	//
+	// }
 
 	/**
 	 * Check the profile for given mobile number and take the profile details
@@ -359,12 +684,13 @@ public class eKYCDAO {
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id, mothersName, fathersName, gender, marital_status, annual_income, "
+					" SELECT id,application_id,applicant_name, mothersName, fathersName, gender, marital_status, annual_income, "
 							+ "trading_experience, occupation, politically_exposed "
 							+ " FROM tbl_account_holder_personal_details where application_id = ? ");
 			pStmt.setLong(paromPos++, applicationId);
@@ -372,8 +698,28 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PersonalDetailsDTO();
+					json = new  HashMap<String,String>();
+					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setApplicant_name(rSet.getString("applicant_name"));
+					json.put("applicant_name",rSet.getString("applicant_name"));
 					result.setMothersName(rSet.getString("mothersName"));
+					json.put("mothersName",rSet.getString("mothersName"));
+					result.setFathersName(rSet.getString("fathersName"));
+					json.put("fathersName",rSet.getString("fathersName"));
+					result.setGender(rSet.getString("gender"));
+					json.put("gender",rSet.getString("gender"));
+					result.setMarital_status(rSet.getString("marital_status"));
+					json.put("marital_status",rSet.getString("marital_status"));
+					result.setAnnual_income(rSet.getString("annual_income"));
+					json.put("annual_income",rSet.getString("annual_income"));
+					result.setTrading_experience(rSet.getString("trading_experience"));
+					json.put("trading_experience",rSet.getString("trading_experience"));
+					result.setOccupation(rSet.getString("occupation"));
+					json.put("occupation",rSet.getString("occupation"));
+					result.setPolitically_exposed(rSet.getString("politically_exposed"));
+					json.put("politically_exposed",rSet.getString("politically_exposed"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -447,18 +793,33 @@ public class eKYCDAO {
 		AddressDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id  FROM tbl_communication_address where application_id = ? ");
+					" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_communication_address where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
+					json = new  HashMap<String,String>();
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setFlat_no(rSet.getString("flat_no"));
+					json.put("flat_no", rSet.getString("flat_no"));
+					result.setStreet(rSet.getString("street"));
+					json.put("street", rSet.getString("street"));
+					result.setPin(rSet.getInt("pin"));
+					json.put("pin", Integer.toString(rSet.getInt("pin")));
+					result.setCity(rSet.getString("city"));
+					json.put("city", rSet.getString("city"));
+					result.setDistrict(rSet.getString("district"));
+					json.put("district", rSet.getString("district"));
+					result.setState(rSet.getString("state"));
+					json.put("state", rSet.getString("state"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -486,18 +847,34 @@ public class eKYCDAO {
 		AddressDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn
-					.prepareStatement(" SELECT application_id  FROM tbl_permanent_address where application_id = ? ");
+					.prepareStatement(" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_permanent_address where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
+					json = new  HashMap<String,String>();
 					result.setApplication_id(rSet.getInt("application_id"));
+					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
+					result.setFlat_no(rSet.getString("flat_no"));
+					json.put("flat_no", rSet.getString("flat_no"));
+					result.setStreet(rSet.getString("street"));
+					json.put("street", rSet.getString("street"));
+					result.setPin(rSet.getInt("pin"));
+					json.put("pin", Integer.toString(rSet.getInt("pin")));
+					result.setCity(rSet.getString("city"));
+					json.put("city", rSet.getString("city"));
+					result.setDistrict(rSet.getString("district"));
+					json.put("district", rSet.getString("district"));
+					result.setState(rSet.getString("state"));
+					json.put("state", rSet.getString("state"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -684,18 +1061,35 @@ public class eKYCDAO {
 		BankDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id  FROM tbl_bank_account_details where application_id = ? ");
+					" SELECT id,application_id,account_holder_name,ifsc_code,"
+					+ "bank_account_no,account_type,verified_on,verified,verification_count "
+					+ "  FROM tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new BankDetailsDTO();
+					json = new  HashMap<String,String>();
+					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setAccount_holder_name(rSet.getString("account_holder_name"));
+					json.put("account_holder_name", rSet.getString("account_holder_name"));
+					result.setIfsc_code(rSet.getString("ifsc_code"));
+					json.put("ifsc_code", rSet.getString("ifsc_code"));
+					result.setBank_account_no(rSet.getInt("bank_account_no"));
+					json.put("bank_account_no", Integer.toString(rSet.getInt("bank_account_no")));
+					result.setAccount_type(rSet.getString("account_type"));
+					json.put("account_type", rSet.getString("account_type"));
+					result.setVerified_on(rSet.getString("verified_on"));
+					result.setVerified(rSet.getInt("verified"));
+					result.setVerification_count(rSet.getInt("verification_count"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -797,17 +1191,31 @@ public class eKYCDAO {
 		PanCardDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		 HashMap<String,String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT application_id  FROM tbl_pancard_details where application_id = ? ");
+			pStmt = conn.prepareStatement(" SELECT application_id,pan_card,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PanCardDetailsDTO();
+					json = new  HashMap<String,String>();
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setPan_card(rSet.getString("pan_card"));
+					json.put("pan_card", rSet.getString("pan_card"));
+					result.setDob(rSet.getString("dob"));
+					json.put("dob", DateUtil.parseDateStringForDOB(rSet.getString("dob")));
+					result.setMothersName(rSet.getString("mothersName"));
+					result.setFathersName(rSet.getString("fathersName"));
+					result.setPan_card_verified(rSet.getInt("pan_card_verified"));
+					result.setNsdl_name(rSet.getString("nsdl_name"));
+					json.put("nsdl_name", rSet.getString("nsdl_name"));
+					result.setNsdl_dob(rSet.getString("nsdl_dob"));
+					json.put("nsdl_dob", rSet.getString("nsdl_dob"));
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {
@@ -1177,4 +1585,174 @@ public class eKYCDAO {
 		}
 		return count;
 	}
+	/**
+	 * Method to get Application Detail For PDF Print
+	 * 
+	 * @author Pradeep R
+	 * @param ApplicationMasterDTO
+	 * @return
+	 */
+	public ApplicationMasterDTO getApplicationMasterDetails(ApplicationMasterDTO pDto) {
+		ApplicationMasterDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		 HashMap<String,String> json =null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT application_id,mobile_number,mobile_no_verified,mob_owner,mobile_otp,"
+					+ "email_id,email_owner,email_activation_code,email_activated,otp_verified_on,"
+					+ "email_activated_on,application_status,last_updated,created_date"
+							+ " FROM tbl_application_master where application_id = ?  ");
+			pStmt.setInt(paromPos++, pDto.getApplication_id());
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					json = new  HashMap<String,String>();
+					result = new ApplicationMasterDTO();
+					result.setApplication_id(rSet.getInt("application_id"));
+					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
+					result.setMobile_number(rSet.getString("mobile_number"));
+					json.put("mobile_number", rSet.getString("mobile_number"));
+					result.setMobile_no_verified(rSet.getInt("mobile_no_verified"));
+					result.setMob_owner(rSet.getString("mob_owner"));
+					json.put("mob_owner", rSet.getString("mob_owner"));
+					result.setMobile_otp(rSet.getString("mobile_otp")); 
+					result.setEmail_id(rSet.getString("email_id"));
+					json.put("email_id", rSet.getString("email_id"));
+					result.setEmail_owner(rSet.getString("email_owner"));
+					json.put("email_owner", rSet.getString("email_owner"));
+					result.setEmail_activation_code(rSet.getString("email_activation_code"));
+					result.setEmail_activated(rSet.getInt("email_activated"));
+					result.setOtp_verified_on(rSet.getDate("otp_verified_on"));
+					result.setEmail_activated_on(rSet.getDate("email_activated_on"));
+					result.setApplication_status(rSet.getInt("application_status"));
+					result.setLast_updated(rSet.getDate("last_updated"));
+					result.setCreated_date(rSet.getDate("created_date"));
+					result.setForPDFKeyValue(json);
+					
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	public AccountHolderDetailsDTO getAccountHolderDetail(int applicationId) {
+		AccountHolderDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT  id,name,mobile_number,email,otp,email_verified,verified,verification_key,verified_on,created_on,application_id"
+							+ " FROM tbl_account_holder_details where application_id = ? ");
+			pStmt.setInt(paromPos++,applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new AccountHolderDetailsDTO();
+					result.setId(rSet.getInt("id"));
+					result.setMobile_number(rSet.getInt("mobile_number"));
+					result.setEmail(rSet.getString("email"));
+					result.setOtp(rSet.getInt("otp"));
+					result.setEmail_verified(rSet.getInt("email_verified"));
+					result.setVerified(rSet.getInt("verified"));
+					result.setVerification_key(rSet.getString("verification_key"));
+					result.setVerified_on(rSet.getDate("verified_on"));
+					result.setCreated_on(rSet.getDate("created_on"));
+					result.setApplication_id(rSet.getInt("application_id"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+	public List<PdfCoordinationsDTO> getPdfCoordinations() {
+		List<PdfCoordinationsDTO> pdfCoordinationsDTOs = null;
+		PdfCoordinationsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT id,column_name,coordinates,data_type FROM tbl_pdf_coordinations ");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PdfCoordinationsDTO();
+					result.setId(rSet.getInt("id"));
+					result.setColumn_name(rSet.getString("column_name"));
+					result.setCoordinates(rSet.getString("coordinates"));
+					result.setData_type(rSet.getString("data_type"));
+					if(pdfCoordinationsDTOs == null) {
+						pdfCoordinationsDTOs = new ArrayList<PdfCoordinationsDTO>();
+					}
+					pdfCoordinationsDTOs.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return pdfCoordinationsDTOs;
+	}
+	public List<String> getPdfTotalColumns() {
+		List<String> pdfColumns = new ArrayList<String>();
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT column_name FROM tbl_pdf_coordinations ");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					pdfColumns.add(rSet.getString("column_name"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return pdfColumns;
+	}
+	
 }

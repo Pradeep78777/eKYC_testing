@@ -68,7 +68,7 @@ public class TestNSDL {
         p7.encodeSignedData(bOut);
         byte[] encodedPKCS7 = bOut.toByteArray();
         System.out.println(encodedPKCS7);
-        String s = new sun.misc.BASE64Encoder().encode(encodedPKCS7);
-        System.out.println(s);
+//        String s = new sun.misc.BASE64Encoder().encode(encodedPKCS7);
+//        System.out.println(s);
     }
 }

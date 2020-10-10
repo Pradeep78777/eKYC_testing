@@ -48,6 +48,7 @@ public class eKYCConstant {
 	public static final String ADDRESS_SAVED_SUCESSFULLY = "Address saved sucessfully";
 	public static final String BANK_DETAILS_SAVED = "Bank Deatails saved Sucessfully";
 	public static final String PAN_CARD_DETAILS_SAVED = "Pan Card Details saved Sucessfully";
+	public static final String PDF_GENERATED_SUCESSFULLY = "PDF Generated Sucessfully";
 
 	public static final String EMAIL_ID_UPDATED_SUCESSFULLY = "Email updated sucessfully";
 
@@ -78,4 +79,10 @@ public class eKYCConstant {
 	public static final String UPLOADS_DIR = "file//uploads//";
 
 	public static final String FILE_UPLOAD_SUCESSFULL = "Document uploaded Sucessfully";
+	public static final String STRING = "STRING";
+	public static final String IMAGE ="IMG";
+	public static final String TICK = "TICK";
+	public static final String COMMA_SEPERATOR = ",";
+	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
+	
 }
