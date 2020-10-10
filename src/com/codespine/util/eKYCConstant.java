@@ -45,6 +45,7 @@ public class eKYCConstant {
 	public static final String ADDRESS_SAVED_SUCESSFULLY = "Address saved sucessfully";
 	public static final String BANK_DETAILS_SAVED = "Bank Deatails saved Sucessfully";
 	public static final String PAN_CARD_DETAILS_SAVED = "Pan Card Details saved Sucessfully";
+	public static final String PDF_GENERATED_SUCESSFULLY = "PDF Generated Sucessfully";
 
 	/**
 	 * Application Status
@@ -56,5 +57,10 @@ public class eKYCConstant {
 	public static final int COMMUNICATION_ADDRESS_UPDATED = 4;
 	public static final int PERMANENT_ADDRESS_UPDATED = 5;
 	public static final int BANK_DETAILS_UPDATED = 6;
-	public static final int EXCH_UPDATED = 7;
+	public static final String STRING = "STRING";
+	public static final String IMAGE ="IMG";
+	public static final String TICK = "TICK";
+	public static final String COMMA_SEPERATOR = ",";
+	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
+	
 }

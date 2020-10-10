@@ -1,9 +1,12 @@
 package com.codespine.util;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -11,6 +14,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.imgscalr.Scalr;
 
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.PdfCoordinationsDTO;
@@ -43,13 +47,14 @@ public class FinalPDFGenerator {
 		pdfInserter(document,2,"X",104,594);//Status -- other proof
 		pdfInserter(document,2,"STONEAGE",157,594);// -- other proof letter 
 		pdfInserter(document,2,"STONEA",379,594);// -- other proof letter
-		pdfimageInserter(document,2,490,600,"C:\\Users\\user\\Downloads\\1.jpg");
+		pdfimageInserter(document,2,490,600,"13.jpg");
 		pdfInserter(document,2,"X",123,556);//address present
 		pdfInserter(document,2,"X",226,556);//office address
 		pdfInserter(document,2,"STONEAGE",104,538);//residence
 		pdfInserter(document,2,"STONEAGE",104,526);//residence second line
 		pdfInserter(document,2,"STONEAGE",104,514);//landmark
 		pdfInserter(document,2,"STONEAGE",104,502);//city
+		pdfInserter(document,2,"XXX",520,502);//pin mandatory
 		pdfInserter(document,2,"STONEAGE",104,491);//state
 		pdfInserter(document,2,"1235",462,490);//pin
 		pdfInserter(document,2,"1235",546,490);//residence
@@ -232,10 +237,16 @@ public class FinalPDFGenerator {
 		// Closing the document
 		document.close();
 	}
-	private static void pdfimageInserter(PDDocument document, int pageNumber,int xValue, int yValue, String imagePath) throws IOException {
+	private static void pdfimageInserter(PDDocument document, int pageNumber,int xValue, int yValue, String image) throws IOException {
+		File file1 = new File(eKYCConstant.IMAGE_FILEPATH+image);
+		BufferedImage img = ImageIO.read(file1);
+		BufferedImage scaledImg = Scalr.resize(img, 100, 100);
+		String resizeImageName =StringUtil.isImageReSizeExist(eKYCConstant.IMAGE_FILEPATH,image); 
+		File file = new File(eKYCConstant.IMAGE_FILEPATH,resizeImageName);
+		ImageIO.write(scaledImg, "JPG", file);
 		PDPage page = document.getPage(pageNumber);
 		PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-		PDImageXObject pdImage = PDImageXObject.createFromFile(imagePath, document);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(eKYCConstant.IMAGE_FILEPATH+resizeImageName, document);
 		contentStream.drawImage(pdImage, xValue, yValue);
 		contentStream.close();
 
@@ -248,26 +259,25 @@ public class FinalPDFGenerator {
 		List<String> columnsNames = eKYCDAO.getInstance().getPdfTotalColumns();
 		for(int i=0;i<columnsNames.size();i++) {
 			String coordinates = keyAndCoordinates.get(columnsNames.get(i));
-			String[] orgs = coordinates.split(",");
+			String[] orgs = StringUtil.split(coordinates,eKYCConstant.COMMA_SEPERATOR);
 			int pageNumber = Integer.parseInt(orgs[0]);
 			int xValue = Integer.parseInt(orgs[1]);
 			int yValue = Integer.parseInt(orgs[2]);
 			String dataType = orgs[3]; 
-			if(dataType.equals("String")) {
-				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
+			if(StringUtil.isEqual(dataType,eKYCConstant.STRING)) {
+				if(StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)))) {
 					pdfInserter(document,pageNumber,eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)),xValue,yValue);	
 				}
-			}else if(dataType.equals("img")) {
-				pdfimageInserter(document, pageNumber,xValue,yValue,"C:\\Users\\user\\Downloads\\1.jpg");
+			}else if(StringUtil.isEqual(dataType,eKYCConstant.IMAGE)) {
+				pdfimageInserter(document, pageNumber,xValue,yValue,"13.jpg");
 //				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
 //					pdfimageInserter(document, pageNumber,xValue,yValue, eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)));
 //				}
 			}
-			else if(dataType.equals("tick")) {
-				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
-					String value = eKYCdto.getForPDFKeyValue().get(columnsNames.get(i));
-					String tickcoordinates = keyAndCoordinates.get(value);
-					String[] tickorgs = tickcoordinates.split(",");
+			else if(StringUtil.isEqual(dataType,eKYCConstant.TICK)) {
+				if(StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)))) {
+					String tickcoordinates = keyAndCoordinates.get(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)).toLowerCase());
+					String[] tickorgs = StringUtil.split(tickcoordinates,eKYCConstant.COMMA_SEPERATOR);
 					int tickpageNumber = Integer.parseInt(tickorgs[0]);
 					int tickxValue = Integer.parseInt(tickorgs[1]);
 					int tickyValue = Integer.parseInt(tickorgs[2]);

@@ -276,13 +276,18 @@ public class eKYCController {
 		return response;
 	}
 	
-	@GET
+	@POST
 	@Path("/finalPDFGenerator")
-	public void finalPDFGenerator() throws Exception {
-		int applicationId = 2;
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO finalPDFGenerator(int applicationId) throws Exception {
+		ResponseDTO response = new ResponseDTO();
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if(eKYCdto != null) {
 			FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setReason(eKYCConstant.PDF_GENERATED_SUCESSFULLY);
 		}
+		return response;
 	}
 }

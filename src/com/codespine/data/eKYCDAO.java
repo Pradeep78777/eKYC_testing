@@ -18,6 +18,7 @@ import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.DBUtil;
+import com.codespine.util.DateUtil;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
@@ -1202,7 +1203,7 @@ public class eKYCDAO {
 					result.setPan_card(rSet.getString("pan_card"));
 					json.put("pan_card", rSet.getString("pan_card"));
 					result.setDob(rSet.getString("dob"));
-					json.put("dob", rSet.getString("dob"));
+					json.put("dob", DateUtil.parseDateStringForDOB(rSet.getString("dob")));
 					result.setMothersName(rSet.getString("mothersName"));
 					result.setFathersName(rSet.getString("fathersName"));
 					result.setPan_card_verified(rSet.getInt("pan_card_verified"));
