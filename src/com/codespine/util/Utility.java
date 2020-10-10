@@ -18,6 +18,8 @@ import javax.mail.internet.MimeMultipart;
 
 import org.json.simple.JSONObject;
 
+import com.nsdl.esign.preverifiedNo.controller.EsignApplication;
+
 @SuppressWarnings("unchecked")
 public class Utility {
 
@@ -222,7 +224,7 @@ public class Utility {
 		} else {
 			resp = nsdlResponse.split("\\^");
 		}
-		if(resp.length > 3){
+		if (resp.length > 3) {
 			response.put("responseCode", resp[0]);
 			response.put("panCard", resp[1]);
 			response.put("panCardStatus", resp[2]);
@@ -233,10 +235,59 @@ public class Utility {
 			response.put("lastUpdatedDate", resp[7]);
 			response.put("nameOnCard", resp[8]);
 			response.put("aadhaar seeding status", resp[9]);
-		}else{
+		} else {
 			response.put("responseCode", resp[0]);
 			response.put("panCard", resp[1]);
 			response.put("panCardStatus", resp[2]);
+		}
+		return response;
+	}
+
+	/**
+	 * To get the XML code for getting esign
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	public static String getXmlForEsign() {
+		String response = "";
+		try {
+			String pathToPDF = "C:\\Users\\GOWRI SANKAR R\\Desktop\\zebu_ekyc\\Ekyc_document\\Trading & Demat KYC_V6.pdf";
+			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
+			String authMode = "1";
+			String responseUrl = "https://zebull.in";
+			String p12CertificatePath = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
+			String p12CertiPwd = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
+			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
+			int serverTime = 10;
+			String alias = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ALIAS);
+			int pageNumberToInsertSignatureStamp = 1;
+			String nameToShowOnSignatureStamp = "Test";
+			String locationToShowOnSignatureStamp = "Test";
+			String reasonForSign = "";
+			int xCo_ordinates = 100;
+			int yCo_ordinates = 100;
+			int signatureWidth = 20;
+			int signatureHeight = 5;
+			String pdfPassword = "";
+			String txn = "";
+			try {
+				EsignApplication eSignApp = new EsignApplication();
+				// eSignApp.getSignOnDocument(eSignResp, PdfSigneture,
+				// tickImagePath, serverTime, pageNumberToInsertSignatureStamp,
+				// nameToShowOnSignatureStamp, locationToShowOnSignatureStamp,
+				// reasonForSign, xCo_ordinates, yCo_ordinates, signatureWidth,
+				// signatureHeight, pdfPassword, outputFinalPdfPath)
+				response = eSignApp.getEsignRequestXml("", pathToPDF, aspID, authMode, responseUrl, p12CertificatePath,
+						p12CertiPwd, tickImagePath, serverTime, alias, pageNumberToInsertSignatureStamp,
+						nameToShowOnSignatureStamp, locationToShowOnSignatureStamp, reasonForSign, xCo_ordinates,
+						yCo_ordinates, signatureWidth, signatureHeight, pdfPassword, txn);
+				System.out.println(response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return response;
 	}

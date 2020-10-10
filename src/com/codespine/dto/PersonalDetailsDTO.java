@@ -22,6 +22,7 @@ public class PersonalDetailsDTO {
 	private String mothersName;
 	private String fathersName;
 	private String applicant_name;
+	private String esign_Xml;
 
 	public int getId() {
 		return id;
@@ -181,6 +182,14 @@ public class PersonalDetailsDTO {
 
 	public void setApplicant_name(String applicant_name) {
 		this.applicant_name = applicant_name;
+	}
+
+	public String getEsign_Xml() {
+		return esign_Xml;
+	}
+
+	public void setEsign_Xml(String esign_Xml) {
+		this.esign_Xml = esign_Xml;
 	}
 
 }
