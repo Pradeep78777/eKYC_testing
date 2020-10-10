@@ -21,8 +21,8 @@ import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.eKYCDTO;
 
 public class FinalPDFGenerator {
-	static String sourceFile = "C:\\Users\\user\\Downloads\\KYC_V6.pdf";
-	static String destinationFile = "C:\\Users\\user\\Downloads\\new1.pdf";
+	static String sourceFile =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)+eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
+	static String destinationFile =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)+"new1.pdf";
 	public static void main(String[] args) throws Exception {
 		File file = new File(sourceFile);
 		PDDocument document = PDDocument.load(file);
@@ -238,15 +238,16 @@ public class FinalPDFGenerator {
 		document.close();
 	}
 	private static void pdfimageInserter(PDDocument document, int pageNumber,int xValue, int yValue, String image) throws IOException {
-		File file1 = new File(eKYCConstant.IMAGE_FILEPATH+image);
+		String File_path = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
+		File file1 = new File(File_path+image);
 		BufferedImage img = ImageIO.read(file1);
 		BufferedImage scaledImg = Scalr.resize(img, 100, 100);
-		String resizeImageName =StringUtil.isImageReSizeExist(eKYCConstant.IMAGE_FILEPATH,image); 
-		File file = new File(eKYCConstant.IMAGE_FILEPATH,resizeImageName);
+		String resizeImageName =StringUtil.isImageReSizeExist(File_path,image); 
+		File file = new File(File_path,resizeImageName);
 		ImageIO.write(scaledImg, "JPG", file);
 		PDPage page = document.getPage(pageNumber);
 		PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-		PDImageXObject pdImage = PDImageXObject.createFromFile(eKYCConstant.IMAGE_FILEPATH+resizeImageName, document);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(File_path+resizeImageName, document);
 		contentStream.drawImage(pdImage, xValue, yValue);
 		contentStream.close();
 
