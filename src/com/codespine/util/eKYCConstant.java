@@ -35,6 +35,9 @@ public class eKYCConstant {
 	public static final String PFX_FILE_LOCATION = "pfxLocation";
 	public static final String PFX_FILE_USERNAME = "pfxUserId";
 	public static final String PFX_FILE_PASSWORD = "pfxPassword";
+	public static final String E_SIGN_ASP_ID = "aspId";
+	public static final String E_SIGN_ALIAS = "e_sign_alias";
+	public static final String E_SIGN_TICK_IMAGE = "e_sign_tick_image";
 	public static final String USER_JKS_LOCATION = "userJksLocation";
 
 	public static final String NSDL_PAN_VERIFICATION_URL = "nsdlPanVerification";
@@ -49,6 +52,7 @@ public class eKYCConstant {
 	public static final String EMAIL_ID_UPDATED_SUCESSFULLY = "Email updated sucessfully";
 
 	public static final String INVALID_PANCARD = "Your pan Card is invalid";
+	public static final String EXCH_DETAILS_UPDATED_SUCESSFULLY = "Exch deatils are updated sucessfully";
 
 	/**
 	 * Application Status
@@ -61,10 +65,17 @@ public class eKYCConstant {
 	public static final int PERMANENT_ADDRESS_UPDATED = 6;
 	public static final int BANK_DETAILS_UPDATED = 7;
 	public static final int EXCH_UPDATED = 8;
+	public static final int ATTACHEMENT_UPLOADED = 9;
 
 	public static final String MESSAGE_URL = "messageURl";
 	public static final String MESSAGE_USERNAME = "messageUserName";
 	public static final String MESSAGE_PASSWORD = "messagePassword";
 	public static final String MESSAGE_SENDER = "messageFrom";
 	public static final String MESSAGE_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins";
+
+	public static final String PROJ_DIR = "C://apache-tomcat-8.5.35//webapps//e_sign//";
+	public static final String SITE_URL_FILE = "http://rest.irongates.in//e_sign/";
+	public static final String UPLOADS_DIR = "file//uploads//";
+
+	public static final String FILE_UPLOAD_SUCESSFULL = "Document uploaded Sucessfully";
 }

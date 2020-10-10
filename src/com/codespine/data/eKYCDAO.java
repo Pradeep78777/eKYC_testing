@@ -8,6 +8,7 @@ import java.util.Calendar;
 
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.CSEnvVariables;
@@ -764,7 +765,7 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_pancard_details(application_id, pan_card,applicant_name ,  dob , created_on) VALUES (?,?,?,?,?)");
+					"INSERT INTO tbl_pancard_details(application_id, pan_card,applicant_name , dob , created_on) VALUES (?,?,?,?,?)");
 			int paramPos = 1;
 			pStmt.setInt(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getPan_card());
@@ -842,6 +843,7 @@ public class eKYCDAO {
 			int paramPos = 1;
 			pStmt.setString(paramPos++, pDto.getPan_card());
 			pStmt.setString(paramPos++, pDto.getApplicant_name());
+			// pStmt.setString(paramPos++, pDto.getFathersName());
 			pStmt.setString(paramPos++, pDto.getDob());
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			count = pStmt.executeUpdate();
@@ -944,20 +946,22 @@ public class eKYCDAO {
 	 * @param application_id
 	 * @return
 	 */
-	public String getApplicantName(int application_id) {
+	public PanCardDetailsDTO getApplicantName(int application_id) {
+		PanCardDetailsDTO result = new PanCardDetailsDTO();
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rSet = null;
-		String panCardName = "";
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT applicant_name  FROM tbl_pancard_details where application_id = ? ");
+			pStmt = conn.prepareStatement(
+					" SELECT applicant_name , fathersName  FROM tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
-					panCardName = rSet.getString("applicant_name");
+					result.setApplicant_name(rSet.getString("applicant_name"));
+					result.setFathersName(rSet.getString("fathersName"));
 				}
 			}
 		} catch (Exception e) {
@@ -971,6 +975,206 @@ public class eKYCDAO {
 				e.printStackTrace();
 			}
 		}
-		return panCardName;
+		return result;
+	}
+
+	/**
+	 * Method to check the exch segments for application id is updated or not
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param application_id
+	 * @return
+	 */
+	public ExchDetailsDTO checkExchUpdatedStatus(int application_id) {
+		ExchDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(" SELECT application_id  FROM tbl_exch_segments where application_id = ? ");
+			pStmt.setLong(paromPos++, application_id);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new ExchDetailsDTO();
+					result.setApplication_id(rSet.getInt("application_id"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * To insert the exch details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public int insertExchDetails(ExchDetailsDTO pDto) {
+		int count = 0;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		try {
+			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"INSERT INTO tbl_exch_segments(application_id, nse_eq, bse_eq, mf, nse_fo, bse_fo, cds, "
+							+ "bcd, mcx, icex, nse_com, bse_com, last_updated, created_on) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, pDto.getApplication_id());
+			pStmt.setInt(paramPos++, pDto.getNse_eq());
+			pStmt.setInt(paramPos++, pDto.getBse_eq());
+			pStmt.setInt(paramPos++, pDto.getMf());
+			pStmt.setInt(paramPos++, pDto.getNse_fo());
+			pStmt.setInt(paramPos++, pDto.getBse_fo());
+			pStmt.setInt(paramPos++, pDto.getCds());
+			pStmt.setInt(paramPos++, pDto.getBcd());
+			pStmt.setInt(paramPos++, pDto.getMcx());
+			pStmt.setInt(paramPos++, pDto.getIcex());
+			pStmt.setInt(paramPos++, pDto.getNse_com());
+			pStmt.setInt(paramPos++, pDto.getBse_com());
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			count = pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * To update the exch details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public boolean updateExchDetails(ExchDetailsDTO pDto) {
+		int count = 0;
+		boolean isSuccessFull = false;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_exch_segments SET nse_eq = ? , bse_eq = ? , mf = ? , nse_fo = ? , bse_fo = ? , cds = ? , bcd = ? , mcx = ? , "
+							+ "icex = ? , nse_com = ? , bse_com = ? , last_updated = ? where application_id = ? ");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, pDto.getNse_eq());
+			pStmt.setInt(paramPos++, pDto.getBse_eq());
+			pStmt.setInt(paramPos++, pDto.getMf());
+			pStmt.setInt(paramPos++, pDto.getNse_fo());
+			pStmt.setInt(paramPos++, pDto.getBse_fo());
+			pStmt.setInt(paramPos++, pDto.getCds());
+			pStmt.setInt(paramPos++, pDto.getBcd());
+			pStmt.setInt(paramPos++, pDto.getMcx());
+			pStmt.setInt(paramPos++, pDto.getIcex());
+			pStmt.setInt(paramPos++, pDto.getNse_com());
+			pStmt.setInt(paramPos++, pDto.getBse_com());
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setLong(paramPos++, pDto.getApplication_id());
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				isSuccessFull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return isSuccessFull;
+	}
+
+	/**
+	 * To delete the attachements for given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public void deleteProof(int applicationId) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement("delete from tbl_application_attachements where application_id = ?");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * To insert the attachement details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param proofUrl
+	 * @param proofType
+	 * @param applicationId
+	 * @return
+	 */
+	public int insertAttachementDetails(String proofUrl, String proofType, int applicationId) {
+		int count = 0;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		try {
+			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"INSERT INTO tbl_application_attachements(application_id, attachement_type, attachement_url ,last_update, created_on) "
+							+ "VALUES (?,?,?,?,?)");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setString(paramPos++, proofType);
+			pStmt.setString(paramPos++, proofUrl);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			count = pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
 	}
 }

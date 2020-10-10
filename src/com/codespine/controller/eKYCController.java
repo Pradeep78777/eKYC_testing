@@ -9,8 +9,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
@@ -21,14 +25,6 @@ import com.codespine.util.eKYCConstant;
 @Path("/eKYC")
 public class eKYCController {
 	eKYCService pService = new eKYCService();
-
-	/**
-	 * 
-	 * Starting with the new KYC
-	 * 
-	 * @author GOWRI SANKAR R
-	 * 
-	 */
 
 	/**
 	 * To check the given mobile and email, proceed to next step
@@ -220,6 +216,50 @@ public class eKYCController {
 	public ResponseDTO deleteOldOne(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		response = pService.deleteOldOne(pDto);
+		return response;
+	}
+
+	/**
+	 * To update the exchange details for the application id
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/updateExchDetails")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO updateExchDetails(ExchDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.updateExchDetails(pDto);
+		return response;
+	}
+
+	/**
+	 * To upload the file into the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param proof
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/fileUpload")
+	public ResponseDTO uploadProof(@FormDataParam("proof") FormDataBodyPart proof,
+			@FormDataParam("proofType") String proofType, @FormDataParam("applicationId") int applicationId) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.uploadProof(proof, proofType, applicationId);
+		return response;
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getEsignXml")
+	public ResponseDTO getXmlEncode(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getXmlEncode(pDto);
 		return response;
 	}
 }
