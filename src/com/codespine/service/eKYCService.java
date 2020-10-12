@@ -714,7 +714,7 @@ public class eKYCService {
 		PersonalDetailsDTO result = null;
 		if (pDto.getApplication_id() > 0) {
 			result = new PersonalDetailsDTO();
-			String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(), "E-Sign Document");
+			String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(), eKYCConstant.EKYC_DOCUMENT);
 			result.setEsign_document(documentLink);
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
