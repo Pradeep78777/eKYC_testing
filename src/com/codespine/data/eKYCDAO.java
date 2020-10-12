@@ -1754,5 +1754,35 @@ public class eKYCDAO {
 		}
 		return pdfColumns;
 	}
+	public String getFileLocation(String key) {
+		String fileLocation = "";
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT Value FROM tbl_keyvaluepair where MasterkeyDesc = ? ");
+			pStmt.setString(paromPos++,key);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					fileLocation = rSet.getString("Value");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return fileLocation;
+	}
 	
 }
