@@ -609,14 +609,12 @@ public class eKYCService {
 		ResponseDTO response = new ResponseDTO();
 		try {
 			if (applicationId > 0) {
-				/**
-				 * Delete all the proof and proof type and insert the new one
-				 */
-				peKYCDao.deleteProof(applicationId);
+				int checkId = 0;
 				FormDataBodyPart formDataBodyPart = proof;
 				FormDataContentDisposition contentDisposition = formDataBodyPart.getFormDataContentDisposition();
 				String fileName = "";
 				if (contentDisposition.getFileName() != null) {
+					checkId = eKYCDAO.getInstance().checkFileUploaded(applicationId, proofType);
 					fileName = contentDisposition.getFileName();
 					InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
 					int read = 0;
@@ -635,15 +633,28 @@ public class eKYCService {
 					out.close();
 					String proofUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//"
 							+ proofType + "//" + fileName;
-					int insertCount = peKYCDao.insertAttachementDetails(proofUrl, proofType, applicationId);
-					if (insertCount > 0) {
-						response.setStatus(eKYCConstant.SUCCESS_STATUS);
-						response.setMessage(eKYCConstant.SUCCESS_MSG);
-						response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
+					if (checkId > 0) {
+						int insertCount = peKYCDao.insertAttachementDetails(proofUrl, proofType, applicationId);
+						if (insertCount > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						}
 					} else {
-						response.setStatus(eKYCConstant.FAILED_STATUS);
-						response.setMessage(eKYCConstant.FAILED_MSG);
-						response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						boolean isSucessFull = peKYCDao.updateAttachementDetails(proofUrl, proofType, applicationId);
+						if (isSucessFull) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						}
 					}
 				}
 			} else {
@@ -714,7 +725,8 @@ public class eKYCService {
 		PersonalDetailsDTO result = null;
 		if (pDto.getApplication_id() > 0) {
 			result = new PersonalDetailsDTO();
-			String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(), eKYCConstant.EKYC_DOCUMENT);
+			String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(),
+					eKYCConstant.EKYC_DOCUMENT);
 			result.setEsign_document(documentLink);
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
@@ -751,7 +763,7 @@ public class eKYCService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
-		return null;
+		return response;
 	}
 
 	public ResponseDTO getBasicInformation(PersonalDetailsDTO pDto) {
@@ -771,7 +783,7 @@ public class eKYCService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
-		return null;
+		return response;
 	}
 
 	public ResponseDTO getCommunicationAddress(PersonalDetailsDTO pDto) {
@@ -791,7 +803,7 @@ public class eKYCService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
-		return null;
+		return response;
 	}
 
 	public ResponseDTO getPermanentAddress(PersonalDetailsDTO pDto) {
@@ -811,7 +823,7 @@ public class eKYCService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
-		return null;
+		return response;
 	}
 
 	public ResponseDTO getBankDetails(PersonalDetailsDTO pDto) {
@@ -831,7 +843,7 @@ public class eKYCService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
-		return null;
+		return response;
 	}
 
 	public ResponseDTO getExchDetails(PersonalDetailsDTO pDto) {
@@ -851,7 +863,7 @@ public class eKYCService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
-		return null;
+		return response;
 	}
 
 	public ResponseDTO getUploadedFile(PersonalDetailsDTO pDto) {
@@ -871,7 +883,7 @@ public class eKYCService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
-		return null;
+		return response;
 	}
 
 }
