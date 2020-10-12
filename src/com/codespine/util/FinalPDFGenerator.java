@@ -237,7 +237,7 @@ public class FinalPDFGenerator {
 		// Closing the document
 		document.close();
 	}
-	public static void pdfInserterRequiredValues(eKYCDTO eKYCdto) throws Exception {
+	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto) throws Exception {
 		File file = new File(sourceFilePath);
 		String application_id = eKYCdto.getForPDFKeyValue().get("application_id");
 		String finalSestinationFilePath = destinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+application_id;
@@ -284,6 +284,7 @@ public class FinalPDFGenerator {
 		System.out.println("pdf Generated");
 		// Closing the document
 		document.close();
+		return finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+finalPDFName;
 	}
 	
 	private static HashMap<String, String> constructkeyAndItsCoordinates(List<PdfCoordinationsDTO> pdfCoordinationsDTOs) {

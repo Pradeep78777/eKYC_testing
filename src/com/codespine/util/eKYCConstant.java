@@ -92,6 +92,7 @@ public class eKYCConstant {
 	public static final String JPG_FILE_EXTENSION = ".jpg";
 	public static final String PDF_FILE_EXTENSION = ".pdf";
 	public static final String WINDOWS_FORMAT_SLASH = "//";
+	public static final String EKYC_DOCUMENT = "EKYC_DOCUMENT";
 
 
 }

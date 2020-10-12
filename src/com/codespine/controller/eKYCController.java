@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
@@ -22,6 +23,7 @@ import com.codespine.dto.eKYCDTO;
 import com.codespine.service.eKYCService;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.FinalPDFGenerator;
+import com.codespine.util.StringUtil;
 import com.codespine.util.eKYCConstant;
 
 @Path("/eKYC")
@@ -272,7 +274,10 @@ public class eKYCController {
 		ResponseDTO response = new ResponseDTO();
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (eKYCdto != null) {
-			FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
+			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
+			if(StringUtil.isNotNullOrEmpty(eKYCPdfFileLocation)){
+				eKYCDAO.getInstance().insertAttachementDetails(eKYCPdfFileLocation, eKYCConstant.EKYC_DOCUMENT, applicationId);
+			}
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
 			response.setReason(eKYCConstant.PDF_GENERATED_SUCESSFULLY);
