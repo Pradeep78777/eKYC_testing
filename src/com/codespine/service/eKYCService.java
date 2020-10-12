@@ -4,34 +4,38 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.json.simple.JSONObject;
-import java.util.HashMap;
 
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
+import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
-import com.codespine.restservice.NsdlPanVerificationRestService;
 import com.codespine.dto.eKYCDTO;
 import com.codespine.helper.eKYCHelper;
+import com.codespine.restservice.NsdlPanVerificationRestService;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 public class eKYCService {
 	public static eKYCService eKYCService = null;
+
 	public static eKYCService getInstance() {
-		if(eKYCService == null) {
+		if (eKYCService == null) {
 			eKYCService = new eKYCService();
 		}
 		return eKYCService;
 	}
+
 	eKYCDAO peKYCDao = new eKYCDAO();
 
 	/**
@@ -674,17 +678,18 @@ public class eKYCService {
 		}
 		return response;
 	}
+
 	public eKYCDTO finalPDFGenerator(int applicationId) {
 		ApplicationMasterDTO applicationMasterDTO = new ApplicationMasterDTO();
 		eKYCDTO eKYCDTO = null;
-		if(applicationId != 0 && applicationId > 0 ) {
+		if (applicationId != 0 && applicationId > 0) {
 			applicationMasterDTO.setApplication_id(applicationId);
 		}
 		applicationMasterDTO = eKYCDAO.getInstance().getApplicationMasterDetails(applicationMasterDTO);
-		if(applicationMasterDTO != null) {
+		if (applicationMasterDTO != null) {
 			eKYCDTO = new eKYCDTO();
-			if(eKYCDTO.getForPDFKeyValue() == null) {
-				eKYCDTO.setForPDFKeyValue(new HashMap<String,String>());
+			if (eKYCDTO.getForPDFKeyValue() == null) {
+				eKYCDTO.setForPDFKeyValue(new HashMap<String, String>());
 			}
 			eKYCDTO.setApplicationMasterDTO(applicationMasterDTO);
 			eKYCDTO.getForPDFKeyValue().putAll(applicationMasterDTO.getForPDFKeyValue());
@@ -693,9 +698,180 @@ public class eKYCService {
 			applicationMasterDTO.setCommunicationAddressRequired(true);
 			applicationMasterDTO.setPanCardDetailRequired(true);
 			applicationMasterDTO.setPermanentAddressRequired(true);
-			eKYCDTO = eKYCHelper.getInstance().populateRerquiredFields(applicationMasterDTO,eKYCDTO);
+			eKYCDTO = eKYCHelper.getInstance().populateRerquiredFields(applicationMasterDTO, eKYCDTO);
 		}
 		return eKYCDTO;
+	}
+
+	/**
+	 * TO get the Link to Download the Document
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getDocumentLink(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		PersonalDetailsDTO result = null;
+		if (pDto.getApplication_id() > 0) {
+			result = new PersonalDetailsDTO();
+			String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(), "E-Sign Document");
+			result.setEsign_document(documentLink);
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setResult(result);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return response;
+	}
+
+	/**
+	 * To get pan Card Details
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getPanCardDetails(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			PanCardDetailsDTO panDetails = peKYCDao.checkPanCardUpdated(pDto.getApplication_id());
+			if (panDetails != null) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(panDetails);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
+	}
+
+	public ResponseDTO getBasicInformation(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			PersonalDetailsDTO result = eKYCDAO.CheckBasicInformation(pDto.getApplication_id());
+			if (result != null) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
+	}
+
+	public ResponseDTO getCommunicationAddress(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			AddressDTO result = eKYCDAO.checkPermanentAddress(pDto.getApplication_id());
+			if (result != null) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
+	}
+
+	public ResponseDTO getPermanentAddress(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			AddressDTO result = eKYCDAO.checkPermanentAddress(pDto.getApplication_id());
+			if (result != null) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
+	}
+
+	public ResponseDTO getBankDetails(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			BankDetailsDTO result = peKYCDao.checkBankDetailsUpdated(pDto.getApplication_id());
+			if (result != null) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
+	}
+
+	public ResponseDTO getExchDetails(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			ExchDetailsDTO result = peKYCDao.checkExchUpdatedStatus(pDto.getApplication_id());
+			if (result != null) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
+	}
+
+	public ResponseDTO getUploadedFile(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getApplication_id() > 0) {
+			List<FileUploadDTO> result = peKYCDao.getUploadedFile(pDto.getApplication_id());
+			if (result != null && result.size() > 0) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
 	}
 
 }

@@ -264,23 +264,150 @@ public class eKYCController {
 		response = pService.getXmlEncode(pDto);
 		return response;
 	}
-	
+
 	@POST
 	@Path("/finalPDFGenerator")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseDTO finalPDFGenerator(int applicationId) throws Exception {
 		ResponseDTO response = new ResponseDTO();
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
-		if(eKYCdto != null) {
+		if (eKYCdto != null) {
 			FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
 			response.setReason(eKYCConstant.PDF_GENERATED_SUCESSFULLY);
-		}else {
-			response.setStatus(eKYCConstant.FAILED_STATUS);
-			response.setMessage(eKYCConstant.FAILED_MSG);
-			response.setReason(eKYCConstant.PDF_GENERATED_FAILED);
 		}
+		return response;
+	}
+
+	/**
+	 * TO get the Link to Download the Document
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getDocumentLink")
+	public ResponseDTO getDocumentLink(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getDocumentLink(pDto);
+		return response;
+	}
+
+	/**
+	 * To get the Pan Card details
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getPanCardDetails")
+	public ResponseDTO getPanCardDetails(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getPanCardDetails(pDto);
+		return response;
+	}
+
+	/**
+	 * To get the Basic information
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getBasicInformation")
+	public ResponseDTO getBasicInformation(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getBasicInformation(pDto);
+		return response;
+	}
+
+	/**
+	 * To get the Communication Address
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getCommunicationAddress")
+	public ResponseDTO getCommunicationAddress(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getCommunicationAddress(pDto);
+		return response;
+	}
+
+	/**
+	 * To get the Permanent Address
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getPermanentAddress")
+	public ResponseDTO getPermanentAddress(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getPermanentAddress(pDto);
+		return response;
+	}
+
+	/**
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getBankDetails")
+	public ResponseDTO getBankDetails(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getBankDetails(pDto);
+		return response;
+	}
+
+	/**
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getExchDetails")
+	public ResponseDTO getExchDetails(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getExchDetails(pDto);
+		return response;
+	}
+
+	/**
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getUploadedFile")
+	public ResponseDTO getUploadedFile(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.getUploadedFile(pDto);
 		return response;
 	}
 }

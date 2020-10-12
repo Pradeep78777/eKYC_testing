@@ -81,7 +81,7 @@ public class eKYCConstant {
 
 	public static final String FILE_UPLOAD_SUCESSFULL = "Document uploaded Sucessfully";
 	public static final String STRING = "STRING";
-	public static final String IMAGE ="IMG";
+	public static final String IMAGE = "IMG";
 	public static final String TICK = "TICK";
 	public static final String COMMA_SEPERATOR = ",";
 	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
@@ -92,6 +92,6 @@ public class eKYCConstant {
 	public static final String JPG_FILE_EXTENSION = ".jpg";
 	public static final String PDF_FILE_EXTENSION = ".pdf";
 	public static final String WINDOWS_FORMAT_SLASH = "//";
-	
+
 
 }

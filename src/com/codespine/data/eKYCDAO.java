@@ -14,6 +14,7 @@ import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
+import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
@@ -25,8 +26,9 @@ import com.codespine.util.eKYCConstant;
 
 public class eKYCDAO {
 	public static eKYCDAO eKYCDAO = null;
+
 	public static eKYCDAO getInstance() {
-		if(eKYCDAO == null) {
+		if (eKYCDAO == null) {
 			eKYCDAO = new eKYCDAO();
 		}
 		return eKYCDAO;
@@ -564,11 +566,12 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_account_holder_personal_details(application_id, mothersName, fathersName, gender, marital_status, "
+					"INSERT INTO tbl_account_holder_personal_details(application_id, applicant_name,mothersName, fathersName, gender, marital_status, "
 							+ "annual_income, trading_experience, occupation, politically_exposed, created_on) "
-							+ "VALUES (?,?,?,?,?,?,?,?,?,?)");
+							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)");
 			int paramPos = 1;
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
+			pStmt.setString(paramPos++, pDto.getApplicant_name());
 			pStmt.setString(paramPos++, pDto.getMothersName());
 			pStmt.setString(paramPos++, pDto.getFathersName());
 			pStmt.setString(paramPos++, pDto.getGender());
@@ -684,7 +687,7 @@ public class eKYCDAO {
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
-		 HashMap<String,String> json = null;
+		HashMap<String, String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -698,27 +701,27 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PersonalDetailsDTO();
-					json = new  HashMap<String,String>();
+					json = new HashMap<String, String>();
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setApplicant_name(rSet.getString("applicant_name"));
-					json.put("applicant_name",rSet.getString("applicant_name"));
+					json.put("applicant_name", rSet.getString("applicant_name"));
 					result.setMothersName(rSet.getString("mothersName"));
-					json.put("mothersName",rSet.getString("mothersName"));
+					json.put("mothersName", rSet.getString("mothersName"));
 					result.setFathersName(rSet.getString("fathersName"));
-					json.put("fathersName",rSet.getString("fathersName"));
+					json.put("fathersName", rSet.getString("fathersName"));
 					result.setGender(rSet.getString("gender"));
-					json.put("gender",rSet.getString("gender"));
+					json.put("gender", rSet.getString("gender"));
 					result.setMarital_status(rSet.getString("marital_status"));
-					json.put("marital_status",rSet.getString("marital_status"));
+					json.put("marital_status", rSet.getString("marital_status"));
 					result.setAnnual_income(rSet.getString("annual_income"));
-					json.put("annual_income",rSet.getString("annual_income"));
+					json.put("annual_income", rSet.getString("annual_income"));
 					result.setTrading_experience(rSet.getString("trading_experience"));
-					json.put("trading_experience",rSet.getString("trading_experience"));
+					json.put("trading_experience", rSet.getString("trading_experience"));
 					result.setOccupation(rSet.getString("occupation"));
-					json.put("occupation",rSet.getString("occupation"));
+					json.put("occupation", rSet.getString("occupation"));
 					result.setPolitically_exposed(rSet.getString("politically_exposed"));
-					json.put("politically_exposed",rSet.getString("politically_exposed"));
+					json.put("politically_exposed", rSet.getString("politically_exposed"));
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -752,9 +755,10 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" UPDATE tbl_account_holder_personal_details SET mothersName = ? , fathersName = ? , gender = ? , marital_status = ? , "
+					" UPDATE tbl_account_holder_personal_details SET applicant_name = ? , mothersName = ? , fathersName = ? , gender = ? , marital_status = ? , "
 							+ "annual_income = ? , trading_experience = ? , occupation = ? , politically_exposed = ? , last_updated = ? where application_id = ? ");
 			int paramPos = 1;
+			pStmt.setString(paramPos++, pDto.getApplicant_name());
 			pStmt.setString(paramPos++, pDto.getMothersName());
 			pStmt.setString(paramPos++, pDto.getFathersName());
 			pStmt.setString(paramPos++, pDto.getGender());
@@ -793,7 +797,7 @@ public class eKYCDAO {
 		AddressDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
-		 HashMap<String,String> json = null;
+		HashMap<String, String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -805,7 +809,7 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
-					json = new  HashMap<String,String>();
+					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setFlat_no(rSet.getString("flat_no"));
 					json.put("flat_no", rSet.getString("flat_no"));
@@ -847,19 +851,19 @@ public class eKYCDAO {
 		AddressDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
-		 HashMap<String,String> json = null;
+		HashMap<String, String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn
-					.prepareStatement(" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_permanent_address where application_id = ? ");
+			pStmt = conn.prepareStatement(
+					" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_permanent_address where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AddressDTO();
-					json = new  HashMap<String,String>();
+					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
 					result.setFlat_no(rSet.getString("flat_no"));
@@ -1061,13 +1065,12 @@ public class eKYCDAO {
 		BankDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
-		 HashMap<String,String> json = null;
+		HashMap<String, String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" SELECT id,application_id,account_holder_name,ifsc_code,"
+			pStmt = conn.prepareStatement(" SELECT id,application_id,account_holder_name,ifsc_code,"
 					+ "bank_account_no,account_type,verified_on,verified,verification_count "
 					+ "  FROM tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
@@ -1075,7 +1078,7 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new BankDetailsDTO();
-					json = new  HashMap<String,String>();
+					json = new HashMap<String, String>();
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
@@ -1191,18 +1194,19 @@ public class eKYCDAO {
 		PanCardDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
-		 HashMap<String,String> json = null;
+		HashMap<String, String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT application_id,pan_card,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
+			pStmt = conn.prepareStatement(
+					" SELECT application_id,pan_card,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PanCardDetailsDTO();
-					json = new  HashMap<String,String>();
+					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setPan_card(rSet.getString("pan_card"));
 					json.put("pan_card", rSet.getString("pan_card"));
@@ -1401,13 +1405,26 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT application_id  FROM tbl_exch_segments where application_id = ? ");
+			pStmt = conn.prepareStatement(
+					" SELECT id, application_id, nse_eq, bse_eq, mf, nse_fo, bse_fo, cds, bcd, mcx, icex, nse_com, bse_com  "
+							+ "FROM tbl_exch_segments where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new ExchDetailsDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setNse_eq(rSet.getInt("nse_eq"));
+					result.setBse_eq(rSet.getInt("bse_eq"));
+					result.setMf(rSet.getInt("mf"));
+					result.setNse_fo(rSet.getInt("nse_fo"));
+					result.setBse_fo(rSet.getInt("bse_fo"));
+					result.setCds(rSet.getInt("cds"));
+					result.setBcd(rSet.getInt("bcd"));
+					result.setMcx(rSet.getInt("mcx"));
+					result.setIcex(rSet.getInt("icex"));
+					result.setNse_com(rSet.getInt("nse_com"));
+					result.setBse_com(rSet.getInt("bse_com"));
 				}
 			}
 		} catch (Exception e) {
@@ -1585,6 +1602,7 @@ public class eKYCDAO {
 		}
 		return count;
 	}
+
 	/**
 	 * Method to get Application Detail For PDF Print
 	 * 
@@ -1597,20 +1615,20 @@ public class eKYCDAO {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rSet = null;
-		 HashMap<String,String> json =null;
+		HashMap<String, String> json = null;
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" SELECT application_id,mobile_number,mobile_no_verified,mob_owner,mobile_otp,"
-					+ "email_id,email_owner,email_activation_code,email_activated,otp_verified_on,"
-					+ "email_activated_on,application_status,last_updated,created_date"
+			pStmt = conn
+					.prepareStatement(" SELECT application_id,mobile_number,mobile_no_verified,mob_owner,mobile_otp,"
+							+ "email_id,email_owner,email_activation_code,email_activated,otp_verified_on,"
+							+ "email_activated_on,application_status,last_updated,created_date"
 							+ " FROM tbl_application_master where application_id = ?  ");
 			pStmt.setInt(paromPos++, pDto.getApplication_id());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
-					json = new  HashMap<String,String>();
+					json = new HashMap<String, String>();
 					result = new ApplicationMasterDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
 					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
@@ -1619,7 +1637,7 @@ public class eKYCDAO {
 					result.setMobile_no_verified(rSet.getInt("mobile_no_verified"));
 					result.setMob_owner(rSet.getString("mob_owner"));
 					json.put("mob_owner", rSet.getString("mob_owner"));
-					result.setMobile_otp(rSet.getString("mobile_otp")); 
+					result.setMobile_otp(rSet.getString("mobile_otp"));
 					result.setEmail_id(rSet.getString("email_id"));
 					json.put("email_id", rSet.getString("email_id"));
 					result.setEmail_owner(rSet.getString("email_owner"));
@@ -1632,7 +1650,7 @@ public class eKYCDAO {
 					result.setLast_updated(rSet.getDate("last_updated"));
 					result.setCreated_date(rSet.getDate("created_date"));
 					result.setForPDFKeyValue(json);
-					
+
 				}
 			}
 		} catch (Exception e) {
@@ -1648,6 +1666,7 @@ public class eKYCDAO {
 		}
 		return result;
 	}
+
 	public AccountHolderDetailsDTO getAccountHolderDetail(int applicationId) {
 		AccountHolderDetailsDTO result = null;
 		Connection conn = null;
@@ -1659,7 +1678,7 @@ public class eKYCDAO {
 			pStmt = conn.prepareStatement(
 					" SELECT  id,name,mobile_number,email,otp,email_verified,verified,verification_key,verified_on,created_on,application_id"
 							+ " FROM tbl_account_holder_details where application_id = ? ");
-			pStmt.setInt(paromPos++,applicationId);
+			pStmt.setInt(paromPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1689,6 +1708,7 @@ public class eKYCDAO {
 		}
 		return result;
 	}
+
 	public List<PdfCoordinationsDTO> getPdfCoordinations() {
 		List<PdfCoordinationsDTO> pdfCoordinationsDTOs = null;
 		PdfCoordinationsDTO result = null;
@@ -1697,8 +1717,7 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" SELECT id,column_name,coordinates,data_type FROM tbl_pdf_coordinations ");
+			pStmt = conn.prepareStatement(" SELECT id,column_name,coordinates,data_type FROM tbl_pdf_coordinations ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1707,7 +1726,7 @@ public class eKYCDAO {
 					result.setColumn_name(rSet.getString("column_name"));
 					result.setCoordinates(rSet.getString("coordinates"));
 					result.setData_type(rSet.getString("data_type"));
-					if(pdfCoordinationsDTOs == null) {
+					if (pdfCoordinationsDTOs == null) {
 						pdfCoordinationsDTOs = new ArrayList<PdfCoordinationsDTO>();
 					}
 					pdfCoordinationsDTOs.add(result);
@@ -1726,6 +1745,7 @@ public class eKYCDAO {
 		}
 		return pdfCoordinationsDTOs;
 	}
+
 	public List<String> getPdfTotalColumns() {
 		List<String> pdfColumns = new ArrayList<String>();
 		Connection conn = null;
@@ -1733,8 +1753,7 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" SELECT column_name FROM tbl_pdf_coordinations ");
+			pStmt = conn.prepareStatement(" SELECT column_name FROM tbl_pdf_coordinations ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1754,6 +1773,7 @@ public class eKYCDAO {
 		}
 		return pdfColumns;
 	}
+
 	public String getFileLocation(String key) {
 		String fileLocation = "";
 		Connection conn = null;
@@ -1762,9 +1782,8 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" SELECT Value FROM tbl_keyvaluepair where MasterkeyDesc = ? ");
-			pStmt.setString(paromPos++,key);
+			pStmt = conn.prepareStatement(" SELECT Value FROM tbl_keyvaluepair where MasterkeyDesc = ? ");
+			pStmt.setString(paromPos++, key);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1784,5 +1803,72 @@ public class eKYCDAO {
 		}
 		return fileLocation;
 	}
-	
+
+	public String getDocumentLink(int application_id, String attachementType) {
+		String fileLocation = "";
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT attachement_url FROM tbl_application_attachements where application_id = ? and attachement_type = ? ");
+			pStmt.setInt(paromPos++, application_id);
+			pStmt.setString(paromPos++, attachementType);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					fileLocation = rSet.getString("attachement_url");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return fileLocation;
+	}
+
+	public List<FileUploadDTO> getUploadedFile(int application_id) {
+		List<FileUploadDTO> response = new ArrayList<FileUploadDTO>();
+		FileUploadDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT attachement_type , attachement_url FROM tbl_application_attachements where application_id = ? ");
+			pStmt.setInt(paromPos++, application_id);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new FileUploadDTO();
+					result.setProofType(rSet.getString("attachement_type"));
+					result.setProof(rSet.getString("attachement_url"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
 }
