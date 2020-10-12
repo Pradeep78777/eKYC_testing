@@ -1,5 +1,6 @@
 package com.codespine.data;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1036,7 +1037,7 @@ public class eKYCDAO {
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
 			pStmt.setString(paramPos++, pDto.getIfsc_code());
-			pStmt.setLong(paramPos++, pDto.getBank_account_no());
+			pStmt.setString(paramPos++, pDto.getBank_account_no());
 			pStmt.setInt(paramPos++, 0);
 			pStmt.setInt(paramPos++, 0);
 			pStmt.setTimestamp(paramPos++, timestamp);
@@ -1085,7 +1086,7 @@ public class eKYCDAO {
 					json.put("account_holder_name", rSet.getString("account_holder_name"));
 					result.setIfsc_code(rSet.getString("ifsc_code"));
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
-					result.setBank_account_no(rSet.getInt("bank_account_no"));
+					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", Integer.toString(rSet.getInt("bank_account_no")));
 					result.setAccount_type(rSet.getString("account_type"));
 					json.put("account_type", rSet.getString("account_type"));
@@ -1109,6 +1110,10 @@ public class eKYCDAO {
 		return result;
 	}
 
+	private BigInteger BigInteger(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	/**
 	 * Update the bank details using application ID
 	 * 
@@ -1128,7 +1133,7 @@ public class eKYCDAO {
 			int paramPos = 1;
 			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
 			pStmt.setString(paramPos++, pDto.getIfsc_code());
-			pStmt.setLong(paramPos++, pDto.getBank_account_no());
+			pStmt.setString(paramPos++, pDto.getBank_account_no());
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			count = pStmt.executeUpdate();
 			if (count > 0) {

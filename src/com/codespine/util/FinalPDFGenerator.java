@@ -3,6 +3,7 @@ package com.codespine.util;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
@@ -239,6 +240,7 @@ public class FinalPDFGenerator {
 	}
 	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto) throws Exception {
 		File file = new File(sourceFilePath);
+		URL url = new URL("http://rest.irongates.in//e_sign/file//uploads//KYC_V6.pdf");
 		String application_id = eKYCdto.getForPDFKeyValue().get("application_id");
 		String finalSestinationFilePath = destinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+application_id;
 		File dir = new File(finalSestinationFilePath);
@@ -246,6 +248,7 @@ public class FinalPDFGenerator {
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
+//		PDDocument document = PDDocument.read(url);
 		PDDocument document = PDDocument.load(file);
 		HashMap<String,String> keyAndCoordinates = constructkeyAndItsCoordinates(eKYCDAO.getInstance().getPdfCoordinations());
 		List<String> columnsNames = eKYCDAO.getInstance().getPdfTotalColumns();

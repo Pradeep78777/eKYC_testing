@@ -8,7 +8,7 @@ public class BankDetailsDTO {
 	private int application_id;
 	private String account_holder_name;
 	private String ifsc_code;
-	private long bank_account_no;
+	private String bank_account_no;
 	private String account_type;
 	private String verified_on;
 	private int verified;
@@ -44,10 +44,10 @@ public class BankDetailsDTO {
 	public void setIfsc_code(String ifsc_code) {
 		this.ifsc_code = ifsc_code;
 	}
-	public long getBank_account_no() {
+	public String getBank_account_no() {
 		return bank_account_no;
 	}
-	public void setBank_account_no(long bank_account_no) {
+	public void setBank_account_no(String bank_account_no) {
 		this.bank_account_no = bank_account_no;
 	}
 	public String getAccount_type() {
