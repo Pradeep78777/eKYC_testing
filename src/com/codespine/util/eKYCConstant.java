@@ -89,5 +89,6 @@ public class eKYCConstant {
 	public static final String FILE_PATH = "FILE_PATH";
 	public static final String CONSTANT_PDF_NAME = "CONSTANT_PDF_NAME";
 	public static final String GENERATED_PDF_NAME = "GENERATED_PDF_NAME";
+	public static final String GIT_CHECK = "";
 
 }
