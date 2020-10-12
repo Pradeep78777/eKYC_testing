@@ -26,6 +26,7 @@ public class PersonalDetailsDTO {
 	private String applicant_name;
 	private String esign_Xml;
 	private Map<String,String>  forPDFKeyValue;
+	private String esign_document;
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
 	}
@@ -199,4 +200,11 @@ public class PersonalDetailsDTO {
 	public void setEsign_Xml(String esign_Xml) {
 		this.esign_Xml = esign_Xml;
 	}
+	public String getEsign_document() {
+		return esign_document;
+	}
+	public void setEsign_document(String esign_document) {
+		this.esign_document = esign_document;
+	}
+	
 }
