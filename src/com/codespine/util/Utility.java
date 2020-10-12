@@ -252,7 +252,7 @@ public class Utility {
 	public static String getXmlForEsign() {
 		String response = "";
 		try {
-			String pathToPDF = "C:\\Users\\GOWRI SANKAR R\\Desktop\\zebu_ekyc\\Ekyc_document\\Trading & Demat KYC_V6.pdf";
+			String pathToPDF = "C:\\Users\\Administrator\\Desktop\\zebu_ekyc\\Ekyc_document\\Trading & Demat KYC_V6.pdf";
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
 			String responseUrl = "https://zebull.in";
