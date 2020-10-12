@@ -1874,4 +1874,66 @@ public class eKYCDAO {
 		return response;
 	}
 
+	public int checkFileUploaded(int applicationId, String proofType) {
+		int dummyId = 0;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT id FROM tbl_application_attachements where application_id = ? and attachement_type = ? ");
+			pStmt.setInt(paromPos++, applicationId);
+			pStmt.setString(paromPos++, proofType);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					dummyId = rSet.getInt("id");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return dummyId;
+	}
+
+	public boolean updateAttachementDetails(String proofUrl, String proofType, int applicationId) {
+		int count = 0;
+		boolean isSuccessFull = false;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_application_attachements SET attachement_url = ?  where application_id = ? and attachement_type = ? ");
+			int paramPos = 1;
+			pStmt.setString(paramPos++, proofUrl);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setString(paramPos++, proofType);
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				isSuccessFull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return isSuccessFull;
+	}
+
 }
