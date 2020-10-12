@@ -281,6 +281,10 @@ public class eKYCController {
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
 			response.setReason(eKYCConstant.PDF_GENERATED_SUCESSFULLY);
+		}else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.PDF_GENERATED_FAILED);
 		}
 		return response;
 	}
