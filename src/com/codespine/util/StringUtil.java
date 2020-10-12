@@ -74,12 +74,12 @@ public class StringUtil {
 	public static String getString(String str){
 		return StringUtil.isNullOrEmpty(str)? "" : str;
 	}
-	public static String isImageReSizeExist(String imageFilepath, String image) {
+	public static String isImageReSizeExist(String imageFilepath, String application_id) {
 		for(int i=0;i<=1000;i++) {
-			String fileName = i+"-"+image;
+			String fileName = i+"-"+application_id+".jpg";
 			File tmpDir = new File(imageFilepath+fileName);
 			if(!tmpDir.exists()) {
-				fileName = i+"-"+image;
+				fileName = i+"-"+application_id+".jpg";
 				return fileName;
 			}
 		}
