@@ -705,11 +705,13 @@ public class eKYCDAO {
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setApplicant_name(rSet.getString("applicant_name"));
-					json.put("applicant_name", rSet.getString("applicant_name"));
+					json.put("applicant_name", rSet.getString("applicant_name").toUpperCase());
+					json.put("applicant_name1", rSet.getString("applicant_name").toUpperCase());
+					json.put("applicant_name2", rSet.getString("applicant_name").toUpperCase());
 					result.setMothersName(rSet.getString("mothersName"));
-					json.put("mothersName", rSet.getString("mothersName"));
+					json.put("mothersName", rSet.getString("mothersName").toUpperCase());
 					result.setFathersName(rSet.getString("fathersName"));
-					json.put("fathersName", rSet.getString("fathersName"));
+					json.put("fathersName", rSet.getString("fathersName").toUpperCase());
 					result.setGender(rSet.getString("gender"));
 					json.put("gender", rSet.getString("gender"));
 					result.setMarital_status(rSet.getString("marital_status"));
@@ -812,17 +814,18 @@ public class eKYCDAO {
 					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setFlat_no(rSet.getString("flat_no"));
-					json.put("flat_no", rSet.getString("flat_no"));
+					json.put("flat_no", rSet.getString("flat_no").toUpperCase());
 					result.setStreet(rSet.getString("street"));
-					json.put("street", rSet.getString("street"));
+					json.put("street", rSet.getString("street").toUpperCase());
 					result.setPin(rSet.getInt("pin"));
 					json.put("pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
-					json.put("city", rSet.getString("city"));
+					json.put("city", rSet.getString("city").toUpperCase());
+					json.put("city1", rSet.getString("city").toUpperCase());
 					result.setDistrict(rSet.getString("district"));
-					json.put("district", rSet.getString("district"));
+					json.put("district", rSet.getString("district").toUpperCase());
 					result.setState(rSet.getString("state"));
-					json.put("state", rSet.getString("state"));
+					json.put("state", rSet.getString("state").toUpperCase());
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -867,17 +870,17 @@ public class eKYCDAO {
 					result.setApplication_id(rSet.getInt("application_id"));
 					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
 					result.setFlat_no(rSet.getString("flat_no"));
-					json.put("flat_no", rSet.getString("flat_no"));
+					json.put("permanent_flat_no", rSet.getString("flat_no"));
 					result.setStreet(rSet.getString("street"));
-					json.put("street", rSet.getString("street"));
+					json.put("permanent_street", rSet.getString("street"));
 					result.setPin(rSet.getInt("pin"));
-					json.put("pin", Integer.toString(rSet.getInt("pin")));
+					json.put("permanent_pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
-					json.put("city", rSet.getString("city"));
+					json.put("permanent_city", rSet.getString("city"));
 					result.setDistrict(rSet.getString("district"));
-					json.put("district", rSet.getString("district"));
+					json.put("permanent_district", rSet.getString("district"));
 					result.setState(rSet.getString("state"));
-					json.put("state", rSet.getString("state"));
+					json.put("permanent_state", rSet.getString("state"));
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -1082,11 +1085,11 @@ public class eKYCDAO {
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
-					json.put("account_holder_name", rSet.getString("account_holder_name"));
+					json.put("account_holder_name", rSet.getString("account_holder_name").toUpperCase());
 					result.setIfsc_code(rSet.getString("ifsc_code"));
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
-					json.put("bank_account_no", Integer.toString(rSet.getInt("bank_account_no")));
+					json.put("bank_account_no", rSet.getString("bank_account_no"));
 					result.setAccount_type(rSet.getString("account_type"));
 					json.put("account_type", rSet.getString("account_type"));
 					result.setVerified_on(rSet.getString("verified_on"));
@@ -1634,14 +1637,15 @@ public class eKYCDAO {
 					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
 					result.setMobile_number(rSet.getString("mobile_number"));
 					json.put("mobile_number", rSet.getString("mobile_number"));
+					json.put("mobile_number1", rSet.getString("mobile_number"));
 					result.setMobile_no_verified(rSet.getInt("mobile_no_verified"));
 					result.setMob_owner(rSet.getString("mob_owner"));
-					json.put("mob_owner", rSet.getString("mob_owner"));
+					json.put("mob_owner", rSet.getString("mob_owner").toUpperCase());
 					result.setMobile_otp(rSet.getString("mobile_otp"));
 					result.setEmail_id(rSet.getString("email_id"));
-					json.put("email_id", rSet.getString("email_id"));
+					json.put("email_id", rSet.getString("email_id").toUpperCase());
 					result.setEmail_owner(rSet.getString("email_owner"));
-					json.put("email_owner", rSet.getString("email_owner"));
+					json.put("email_owner", rSet.getString("email_owner").toUpperCase());
 					result.setEmail_activation_code(rSet.getString("email_activation_code"));
 					result.setEmail_activated(rSet.getInt("email_activated"));
 					result.setOtp_verified_on(rSet.getDate("otp_verified_on"));
@@ -1717,7 +1721,7 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT id,column_name,coordinates,data_type FROM tbl_pdf_coordinations ");
+			pStmt = conn.prepareStatement(" SELECT id,column_name,coordinates FROM tbl_pdf_coordinations ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1725,7 +1729,6 @@ public class eKYCDAO {
 					result.setId(rSet.getInt("id"));
 					result.setColumn_name(rSet.getString("column_name"));
 					result.setCoordinates(rSet.getString("coordinates"));
-					result.setData_type(rSet.getString("data_type"));
 					if (pdfCoordinationsDTOs == null) {
 						pdfCoordinationsDTOs = new ArrayList<PdfCoordinationsDTO>();
 					}
