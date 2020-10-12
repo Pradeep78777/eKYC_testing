@@ -284,7 +284,7 @@ public class FinalPDFGenerator {
 		System.out.println("pdf Generated");
 		// Closing the document
 		document.close();
-		return finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+finalPDFName;
+		return eKYCConstant.SITE_URL_FILE+eKYCConstant.UPLOADS_DIR+application_id+eKYCConstant.WINDOWS_FORMAT_SLASH+finalPDFName;
 	}
 	
 	private static HashMap<String, String> constructkeyAndItsCoordinates(List<PdfCoordinationsDTO> pdfCoordinationsDTOs) {
