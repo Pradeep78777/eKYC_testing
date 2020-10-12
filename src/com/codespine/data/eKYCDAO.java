@@ -1,6 +1,5 @@
 package com.codespine.data;
 
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1110,10 +1109,6 @@ public class eKYCDAO {
 		return result;
 	}
 
-	private BigInteger BigInteger(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	/**
 	 * Update the bank details using application ID
 	 * 
