@@ -21,10 +21,10 @@ import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.eKYCDTO;
 
 public class FinalPDFGenerator {
-	static String sourceFile =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)+eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
-	static String destinationFile =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)+"new1.pdf";
+	static String sourceFilePath =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)+eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
+	static String destinationFilePath =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
 	public static void main(String[] args) throws Exception {
-		File file = new File(sourceFile);
+		File file = new File(sourceFilePath);
 		PDDocument document = PDDocument.load(file);
 		pdfInserter(document,2,"PRADEEP KUPPUSAMY",105,752);//name
 		pdfInserter(document,2,"STONEAGE",105,736);//fathers name
@@ -47,7 +47,7 @@ public class FinalPDFGenerator {
 		pdfInserter(document,2,"X",104,594);//Status -- other proof
 		pdfInserter(document,2,"STONEAGE",157,594);// -- other proof letter 
 		pdfInserter(document,2,"STONEA",379,594);// -- other proof letter
-		pdfimageInserter(document,2,490,600,"13.jpg");
+		pdfimageInserter(document,2,490,600,"13.jpg","","");
 		pdfInserter(document,2,"X",123,556);//address present
 		pdfInserter(document,2,"X",226,556);//office address
 		pdfInserter(document,2,"STONEAGE",104,538);//residence
@@ -233,28 +233,19 @@ public class FinalPDFGenerator {
 		pdfInserter(document,3,"STONEAGE",480,300);//FINANCIAL DETAIL 2st Holder sign
 		pdfInserter(document,3,"STONEAGE",480,273);//FINANCIAL DETAIL 3st Holder sign
 		// Saving the document
-		document.save(new File(destinationFile));
+		document.save(new File(destinationFilePath));
 		// Closing the document
 		document.close();
 	}
-	private static void pdfimageInserter(PDDocument document, int pageNumber,int xValue, int yValue, String image) throws IOException {
-		String File_path = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
-		File file1 = new File(File_path+image);
-		BufferedImage img = ImageIO.read(file1);
-		BufferedImage scaledImg = Scalr.resize(img, 100, 100);
-		String resizeImageName =StringUtil.isImageReSizeExist(File_path,image); 
-		File file = new File(File_path,resizeImageName);
-		ImageIO.write(scaledImg, "JPG", file);
-		PDPage page = document.getPage(pageNumber);
-		PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-		PDImageXObject pdImage = PDImageXObject.createFromFile(File_path+resizeImageName, document);
-		contentStream.drawImage(pdImage, xValue, yValue);
-		contentStream.close();
-
-
-	}
 	public static void pdfInserterRequiredValues(eKYCDTO eKYCdto) throws Exception {
-		File file = new File(sourceFile);
+		File file = new File(sourceFilePath);
+		String application_id = eKYCdto.getForPDFKeyValue().get("application_id");
+		String finalSestinationFilePath = destinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+application_id;
+		File dir = new File(finalSestinationFilePath);
+		String finalPDFName = application_id +eKYCConstant.PDF_FILE_EXTENSION;
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
 		PDDocument document = PDDocument.load(file);
 		HashMap<String,String> keyAndCoordinates = constructkeyAndItsCoordinates(eKYCDAO.getInstance().getPdfCoordinations());
 		List<String> columnsNames = eKYCDAO.getInstance().getPdfTotalColumns();
@@ -270,9 +261,9 @@ public class FinalPDFGenerator {
 					pdfInserter(document,pageNumber,eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)),xValue,yValue);	
 				}
 			}else if(StringUtil.isEqual(dataType,eKYCConstant.IMAGE)) {
-				pdfimageInserter(document, pageNumber,xValue,yValue,"13.jpg");
+				pdfimageInserter(document, pageNumber,xValue,yValue,"13.jpg",application_id,finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH);
 //				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
-//					pdfimageInserter(document, pageNumber,xValue,yValue, eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)));
+//					pdfimageInserter(document, pageNumber,xValue,yValue, eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)),application_id,finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH);
 //				}
 			}
 			else if(StringUtil.isEqual(dataType,eKYCConstant.TICK)) {
@@ -289,7 +280,7 @@ public class FinalPDFGenerator {
 			
 		}
 		// Saving the document
-		document.save(new File(destinationFile));
+		document.save(new File(finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+finalPDFName));
 		System.out.println("pdf Generated");
 		// Closing the document
 		document.close();
@@ -329,5 +320,21 @@ public class FinalPDFGenerator {
 
 		// Closing the content stream
 		contentStream.close();
+	}
+	private static void pdfimageInserter(PDDocument document, int pageNumber,int xValue, int yValue, String image, String application_id, String finalSestinationFilePath) throws IOException {
+		String File_path = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
+		File file1 = new File(File_path+image);
+		BufferedImage img = ImageIO.read(file1);
+		BufferedImage scaledImg = Scalr.resize(img, 100, 100);
+		String resizeImageName =StringUtil.isImageReSizeExist(finalSestinationFilePath,application_id); 
+		File file = new File(finalSestinationFilePath,resizeImageName);
+		ImageIO.write(scaledImg, "JPG", file);
+		PDPage page = document.getPage(pageNumber);
+		PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(finalSestinationFilePath+resizeImageName, document);
+		contentStream.drawImage(pdImage, xValue, yValue);
+		contentStream.close();
+
+
 	}
 }
