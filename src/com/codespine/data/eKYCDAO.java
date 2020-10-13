@@ -33,317 +33,6 @@ public class eKYCDAO {
 		}
 		return eKYCDAO;
 	}
-	// /**
-	// * Methos to insert the personal details and get the application Id back
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public int personalDetails(PersonalDetailsDTO pDto) {
-	// java.sql.Timestamp timestamp = new
-	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-	// Connection conn = null;
-	// PreparedStatement pStmt = null;
-	// ResultSet rSet = null;
-	// int count = 0;
-	// try {
-	// int paromPos = 1;
-	// conn = DBUtil.getConnection();
-	// pStmt = conn.prepareStatement(
-	// "INSERT INTO tbl_account_holder_details(name, mobile_number, email, otp,
-	// verified ,created_on)"
-	// + " VALUES (?,?,?,?,?,?) ",
-	// Statement.RETURN_GENERATED_KEYS);
-	// pStmt.setString(paromPos++, pDto.getName());
-	// pStmt.setLong(paromPos++, pDto.getMobile_number());
-	// pStmt.setString(paromPos++, pDto.getEmail());
-	// pStmt.setInt(paromPos++, pDto.getOtp());
-	// pStmt.setInt(paromPos++, 0);
-	// pStmt.setTimestamp(paromPos++, timestamp);
-	// pStmt.executeUpdate();
-	// rSet = pStmt.getGeneratedKeys();
-	// if (rSet != null) {
-	// while (rSet.next()) {
-	// count = rSet.getInt(1);
-	// }
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// DBUtil.closeResultSet(rSet);
-	// DBUtil.closeStatement(pStmt);
-	// DBUtil.closeConnection(conn);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return count;
-	// }
-	//
-	// /**
-	// * Check user already registred
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public PersonalDetailsDTO checkAlreadyRegistred(PersonalDetailsDTO pDto)
-	// {
-	// PersonalDetailsDTO dto = new PersonalDetailsDTO();
-	// Connection conn = null;
-	// PreparedStatement pStmt = null;
-	// ResultSet rSet = null;
-	// try {
-	// int paromPos = 1;
-	// conn = DBUtil.getConnection();
-	// pStmt = conn.prepareStatement(
-	// " SELECT id , otp , verified FROM tbl_account_holder_details where
-	// mobile_number = ? ");
-	// pStmt.setLong(paromPos++, pDto.getMobile_number());
-	// rSet = pStmt.executeQuery();
-	// if (rSet != null) {
-	// while (rSet.next()) {
-	// dto.setId(rSet.getInt("id"));
-	// dto.setOtp(rSet.getInt("otp"));
-	// dto.setVerified(rSet.getInt("verified"));
-	// }
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// DBUtil.closeResultSet(rSet);
-	// DBUtil.closeStatement(pStmt);
-	// DBUtil.closeConnection(conn);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return dto;
-	// }
-	//
-	// /**
-	// * Make the profile as verified
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public boolean updateAsVerified(PersonalDetailsDTO pDto) {
-	// PreparedStatement pStmt = null;
-	// Connection conn = null;
-	// boolean issuccess = false;
-	// int count = 0;
-	// java.sql.Timestamp timestamp = new
-	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-	// try {
-	// conn = DBUtil.getConnection();
-	// pStmt = conn.prepareStatement(
-	// "UPDATE tbl_account_holder_details SET verified = ?, verified_on = ?
-	// WHERE mobile_number =? ");
-	// int paramPos = 1;
-	// pStmt.setInt(paramPos++, 1);
-	// pStmt.setTimestamp(paramPos++, timestamp);
-	// pStmt.setLong(paramPos++, pDto.getMobile_number());
-	// count = pStmt.executeUpdate();
-	// if (count > 0) {
-	// issuccess = true;
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// DBUtil.closeStatement(pStmt);
-	// DBUtil.closeConnection(conn);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return issuccess;
-	// }
-	//
-	// /**
-	// * Make the profile as verified
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public boolean updateOTP(PersonalDetailsDTO pDto) {
-	// PreparedStatement pStmt = null;
-	// Connection conn = null;
-	// boolean issuccess = false;
-	// int count = 0;
-	// try {
-	// conn = DBUtil.getConnection();
-	// pStmt = conn.prepareStatement("UPDATE tbl_account_holder_details SET otp
-	// = ? WHERE mobile_number =? ");
-	// int paramPos = 1;
-	// pStmt.setInt(paramPos++, pDto.getOtp());
-	// pStmt.setLong(paramPos++, pDto.getMobile_number());
-	// count = pStmt.executeUpdate();
-	// if (count > 0) {
-	// issuccess = true;
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// DBUtil.closeStatement(pStmt);
-	// DBUtil.closeConnection(conn);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return issuccess;
-	// }
-	//
-	// /**
-	// * Method inser the pan card details into data base
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public boolean insertPanCardDetails(PanCardDetailsDTO pDto) {
-	// PreparedStatement pStmt = null;
-	// Connection conn = null;
-	// boolean isSuccessful = false;
-	// int count = 0;
-	// java.sql.Timestamp timestamp = new
-	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-	// try {
-	// conn = DBUtil.getConnection();
-	// pStmt = conn.prepareStatement(
-	// "INSERT INTO tbl_pancard_details(application_id, pan_card, dob,
-	// mothersName ,fathersName, "
-	// + "pan_card_verified, verification_count, created_on) " + "VALUES
-	// (?,?,?,?,?,?,?,?)");
-	// int paramPos = 1;
-	// pStmt.setInt(paramPos++, pDto.getApplication_id());
-	// pStmt.setString(paramPos++, pDto.getPan_card());
-	// pStmt.setString(paramPos++, pDto.getDob());
-	// pStmt.setString(paramPos++, pDto.getMothersName());
-	// pStmt.setString(paramPos++, pDto.getFathersName());
-	// pStmt.setInt(paramPos++, 0);
-	// pStmt.setInt(paramPos++, 0);
-	// pStmt.setTimestamp(paramPos++, timestamp);
-	// count = pStmt.executeUpdate();
-	// if (count > 0) {
-	// isSuccessful = true;
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// DBUtil.closeStatement(pStmt);
-	// DBUtil.closeConnection(conn);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return isSuccessful;
-	//
-	// }
-	//
-	// /**
-	// * Method to inser the personal info Details in to data base
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public boolean insertPersonalInfoDetails(PersonalDetailsDTO pDto) {
-	// PreparedStatement pStmt = null;
-	// Connection conn = null;
-	// boolean isSuccessful = false;
-	// int count = 0;
-	// java.sql.Timestamp timestamp = new
-	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-	// try {
-	// conn = DBUtil.getConnection();
-	// pStmt = conn.prepareStatement(
-	// "INSERT INTO tbl_account_holder_personal_details(application_id,gender
-	// ,marital_status, annual_income, "
-	// + "trading_experience, occupation, politically_exposed, created_on) "
-	// + "VALUES (?,?,?,?,?,?,?,?)");
-	// int paramPos = 1;
-	// pStmt.setInt(paramPos++, pDto.getApplication_id());
-	// pStmt.setString(paramPos++, pDto.getGender());
-	// pStmt.setString(paramPos++, pDto.getMarital_status());
-	// pStmt.setString(paramPos++, pDto.getAnnual_income());
-	// pStmt.setInt(paramPos++, pDto.getTrading_experience());
-	// pStmt.setString(paramPos++, pDto.getOccupation());
-	// pStmt.setInt(paramPos++, pDto.getPolitically_exposed());
-	// pStmt.setTimestamp(paramPos++, timestamp);
-	// count = pStmt.executeUpdate();
-	// if (count > 0) {
-	// isSuccessful = true;
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// DBUtil.closeStatement(pStmt);
-	// DBUtil.closeConnection(conn);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return isSuccessful;
-	//
-	// }
-	//
-	// /**
-	// * Method to insert the bank account Details in to data base
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param pDto
-	// * @return
-	// */
-	// public boolean bankDetails(BankDetailsDTO pDto) {
-	// PreparedStatement pStmt = null;
-	// Connection conn = null;
-	// boolean isSuccessful = false;
-	// int count = 0;
-	// java.sql.Timestamp timestamp = new
-	// java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-	// try {
-	// conn = DBUtil.getConnection();
-	// pStmt = conn.prepareStatement(
-	// "INSERT INTO tbl_bank_account_details(application_id,
-	// account_holder_name, ifsc_code, "
-	// + "bank_account_no, account_type, verified, verification_count,
-	// created_on) "
-	// + "VALUES (?,?,?,?,?,?,?,?)");
-	// int paramPos = 1;
-	// pStmt.setInt(paramPos++, pDto.getApplication_id());
-	// pStmt.setString(paramPos++, pDto.getAccount_holder_name());
-	// pStmt.setString(paramPos++, pDto.getIfsc_code());
-	// pStmt.setLong(paramPos++, pDto.getBank_account_no());
-	// pStmt.setString(paramPos++, pDto.getAccount_type());
-	// pStmt.setInt(paramPos++, 0);
-	// pStmt.setInt(paramPos++, 0);
-	// pStmt.setTimestamp(paramPos++, timestamp);
-	// count = pStmt.executeUpdate();
-	// if (count > 0) {
-	// isSuccessful = true;
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// } finally {
-	// try {
-	// DBUtil.closeStatement(pStmt);
-	// DBUtil.closeConnection(conn);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// return isSuccessful;
-	//
-	// }
 
 	/**
 	 * Check the profile for given mobile number and take the profile details
@@ -558,7 +247,7 @@ public class eKYCDAO {
 	 * @param pDto
 	 * @return
 	 */
-	public int basicInformation(PersonalDetailsDTO pDto) {
+	public int insertBasicInformation(PersonalDetailsDTO pDto) {
 		int count = 0;
 		PreparedStatement pStmt = null;
 		Connection conn = null;
@@ -566,10 +255,26 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_account_holder_personal_details(application_id, applicant_name,mothersName, fathersName, gender, marital_status, "
-							+ "annual_income, trading_experience, occupation, politically_exposed, created_on) "
-							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+					"INSERT INTO tbl_account_holder_personal_details(application_id, applicant_name,mothersName, fathersName, "
+							+ "gender, marital_status,annual_income, trading_experience, occupation, politically_exposed, created_on) "
+							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE  application_id = ?, applicant_name = ? , "
+							+ "mothersName = ? , fathersName = ? , gender = ? ,marital_status = ?, annual_income = ? , "
+							+ "trading_experience = ? , occupation= ? , politically_exposed = ? , last_updated = ?");
 			int paramPos = 1;
+			pStmt.setLong(paramPos++, pDto.getApplication_id());
+			pStmt.setString(paramPos++, pDto.getApplicant_name());
+			pStmt.setString(paramPos++, pDto.getMothersName());
+			pStmt.setString(paramPos++, pDto.getFathersName());
+			pStmt.setString(paramPos++, pDto.getGender());
+			pStmt.setString(paramPos++, pDto.getMarital_status());
+			pStmt.setString(paramPos++, pDto.getAnnual_income());
+			pStmt.setString(paramPos++, pDto.getTrading_experience());
+			pStmt.setString(paramPos++, pDto.getOccupation());
+			pStmt.setString(paramPos++, pDto.getPolitically_exposed());
+			pStmt.setTimestamp(paramPos++, timestamp);
+			/**
+			 * On duplicate Key
+			 */
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getApplicant_name());
 			pStmt.setString(paramPos++, pDto.getMothersName());
@@ -610,9 +315,20 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_communication_address(application_id, flat_no, street, pin, city, district, state, created_on) "
-							+ "VALUES (?,?,?,?,?,?,?,?)");
+					"INSERT INTO tbl_communication_address(application_id, flat_no, street, pin, city, district, state, created_on) VALUES (?,?,?,?,?,?,?,?) "
+							+ "ON DUPLICATE KEY UPDATE application_id = ? , flat_no = ? , street = ? , pin = ? , city = ? , district = ? , state = ? , last_updated = ?");
 			int paramPos = 1;
+			pStmt.setLong(paramPos++, pDto.getApplication_id());
+			pStmt.setString(paramPos++, pDto.getFlat_no());
+			pStmt.setString(paramPos++, pDto.getStreet());
+			pStmt.setInt(paramPos++, pDto.getPin());
+			pStmt.setString(paramPos++, pDto.getCity());
+			pStmt.setString(paramPos++, pDto.getDistrict());
+			pStmt.setString(paramPos++, pDto.getState());
+			pStmt.setTimestamp(paramPos++, timestamp);
+			/**
+			 * on update value
+			 */
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getFlat_no());
 			pStmt.setString(paramPos++, pDto.getStreet());
@@ -650,9 +366,20 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_permanent_address(application_id, flat_no, street, pin, city, district, state, created_on) "
-							+ "VALUES (?,?,?,?,?,?,?,?)");
+					"INSERT INTO tbl_permanent_address(application_id, flat_no, street, pin, city, district, state, created_on) VALUES (?,?,?,?,?,?,?,?) "
+							+ "ON DUPLICATE KEY UPDATE application_id = ? , flat_no = ? , street = ? , pin = ? , city = ? , district = ? , state = ? , last_updated = ?");
 			int paramPos = 1;
+			pStmt.setLong(paramPos++, pDto.getApplication_id());
+			pStmt.setString(paramPos++, pDto.getFlat_no());
+			pStmt.setString(paramPos++, pDto.getStreet());
+			pStmt.setInt(paramPos++, pDto.getPin());
+			pStmt.setString(paramPos++, pDto.getCity());
+			pStmt.setString(paramPos++, pDto.getDistrict());
+			pStmt.setString(paramPos++, pDto.getState());
+			pStmt.setTimestamp(paramPos++, timestamp);
+			/**
+			 * on duplicate Key
+			 */
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getFlat_no());
 			pStmt.setString(paramPos++, pDto.getStreet());
@@ -741,52 +468,52 @@ public class eKYCDAO {
 		return result;
 	}
 
-	/**
-	 * To update the basic information for the given application uSer
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param pDto
-	 * @return
-	 */
-	public boolean updateBasicInformation(PersonalDetailsDTO pDto) {
-		int count = 0;
-		boolean isSuccessFull = false;
-		Connection conn = null;
-		PreparedStatement pStmt = null;
-		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-		try {
-			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" UPDATE tbl_account_holder_personal_details SET applicant_name = ? , mothersName = ? , fathersName = ? , gender = ? , marital_status = ? , "
-							+ "annual_income = ? , trading_experience = ? , occupation = ? , politically_exposed = ? , last_updated = ? where application_id = ? ");
-			int paramPos = 1;
-			pStmt.setString(paramPos++, pDto.getApplicant_name());
-			pStmt.setString(paramPos++, pDto.getMothersName());
-			pStmt.setString(paramPos++, pDto.getFathersName());
-			pStmt.setString(paramPos++, pDto.getGender());
-			pStmt.setString(paramPos++, pDto.getMarital_status());
-			pStmt.setString(paramPos++, pDto.getAnnual_income());
-			pStmt.setString(paramPos++, pDto.getTrading_experience());
-			pStmt.setString(paramPos++, pDto.getOccupation());
-			pStmt.setString(paramPos++, pDto.getPolitically_exposed());
-			pStmt.setTimestamp(paramPos++, timestamp);
-			pStmt.setLong(paramPos++, pDto.getApplication_id());
-			count = pStmt.executeUpdate();
-			if (count > 0) {
-				isSuccessFull = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				DBUtil.closeStatement(pStmt);
-				DBUtil.closeConnection(conn);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return isSuccessFull;
-	}
+//	/**
+//	 * To update the basic information for the given application uSer
+//	 * 
+//	 * @author GOWRI SANKAR R
+//	 * @param pDto
+//	 * @return
+//	 */
+//	public boolean updateBasicInformation(PersonalDetailsDTO pDto) {
+//		int count = 0;
+//		boolean isSuccessFull = false;
+//		Connection conn = null;
+//		PreparedStatement pStmt = null;
+//		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+//		try {
+//			conn = DBUtil.getConnection();
+//			pStmt = conn.prepareStatement(
+//					" UPDATE tbl_account_holder_personal_details SET applicant_name = ? , mothersName = ? , fathersName = ? , gender = ? , marital_status = ? , "
+//							+ "annual_income = ? , trading_experience = ? , occupation = ? , politically_exposed = ? , last_updated = ? where application_id = ? ");
+//			int paramPos = 1;
+//			pStmt.setString(paramPos++, pDto.getApplicant_name());
+//			pStmt.setString(paramPos++, pDto.getMothersName());
+//			pStmt.setString(paramPos++, pDto.getFathersName());
+//			pStmt.setString(paramPos++, pDto.getGender());
+//			pStmt.setString(paramPos++, pDto.getMarital_status());
+//			pStmt.setString(paramPos++, pDto.getAnnual_income());
+//			pStmt.setString(paramPos++, pDto.getTrading_experience());
+//			pStmt.setString(paramPos++, pDto.getOccupation());
+//			pStmt.setString(paramPos++, pDto.getPolitically_exposed());
+//			pStmt.setTimestamp(paramPos++, timestamp);
+//			pStmt.setLong(paramPos++, pDto.getApplication_id());
+//			count = pStmt.executeUpdate();
+//			if (count > 0) {
+//				isSuccessFull = true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				DBUtil.closeStatement(pStmt);
+//				DBUtil.closeConnection(conn);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return isSuccessFull;
+//	}
 
 	/**
 	 * Check the communication address is aldready updated
@@ -870,17 +597,17 @@ public class eKYCDAO {
 					result.setApplication_id(rSet.getInt("application_id"));
 					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
 					result.setFlat_no(rSet.getString("flat_no"));
-					json.put("permanent_flat_no", rSet.getString("flat_no"));
+					json.put("permanent_flat_no", rSet.getString("flat_no").toUpperCase());
 					result.setStreet(rSet.getString("street"));
-					json.put("permanent_street", rSet.getString("street"));
+					json.put("permanent_street", rSet.getString("street").toUpperCase());
 					result.setPin(rSet.getInt("pin"));
 					json.put("permanent_pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
-					json.put("permanent_city", rSet.getString("city"));
+					json.put("permanent_city", rSet.getString("city").toUpperCase());
 					result.setDistrict(rSet.getString("district"));
-					json.put("permanent_district", rSet.getString("district"));
+					json.put("permanent_district", rSet.getString("district").toUpperCase());
 					result.setState(rSet.getString("state"));
-					json.put("permanent_state", rSet.getString("state"));
+					json.put("permanent_state", rSet.getString("state").toUpperCase());
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -898,93 +625,93 @@ public class eKYCDAO {
 		return result;
 	}
 
-	/**
-	 * Update the Communication address for the application ID
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param pDto
-	 * @return
-	 */
-	public static boolean updateCommunicationAddress(AddressDTO pDto) {
-		int count = 0;
-		boolean isSuccessFull = false;
-		Connection conn = null;
-		PreparedStatement pStmt = null;
-		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-		try {
-			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" UPDATE tbl_communication_address SET flat_no = ? , street = ? , pin = ? , city = ? , district = ? , state = ? "
-							+ " , last_updated = ? where application_id = ? ");
-			int paramPos = 1;
-			pStmt.setString(paramPos++, pDto.getFlat_no());
-			pStmt.setString(paramPos++, pDto.getStreet());
-			pStmt.setInt(paramPos++, pDto.getPin());
-			pStmt.setString(paramPos++, pDto.getCity());
-			pStmt.setString(paramPos++, pDto.getDistrict());
-			pStmt.setString(paramPos++, pDto.getState());
-			pStmt.setTimestamp(paramPos++, timestamp);
-			pStmt.setLong(paramPos++, pDto.getApplication_id());
-			count = pStmt.executeUpdate();
-			if (count > 0) {
-				isSuccessFull = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				DBUtil.closeStatement(pStmt);
-				DBUtil.closeConnection(conn);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return isSuccessFull;
-	}
+//	/**
+//	 * Update the Communication address for the application ID
+//	 * 
+//	 * @author GOWRI SANKAR R
+//	 * @param pDto
+//	 * @return
+//	 */
+//	public static boolean updateCommunicationAddress(AddressDTO pDto) {
+//		int count = 0;
+//		boolean isSuccessFull = false;
+//		Connection conn = null;
+//		PreparedStatement pStmt = null;
+//		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+//		try {
+//			conn = DBUtil.getConnection();
+//			pStmt = conn.prepareStatement(
+//					" UPDATE tbl_communication_address SET flat_no = ? , street = ? , pin = ? , city = ? , district = ? , state = ? "
+//							+ " , last_updated = ? where application_id = ? ");
+//			int paramPos = 1;
+//			pStmt.setString(paramPos++, pDto.getFlat_no());
+//			pStmt.setString(paramPos++, pDto.getStreet());
+//			pStmt.setInt(paramPos++, pDto.getPin());
+//			pStmt.setString(paramPos++, pDto.getCity());
+//			pStmt.setString(paramPos++, pDto.getDistrict());
+//			pStmt.setString(paramPos++, pDto.getState());
+//			pStmt.setTimestamp(paramPos++, timestamp);
+//			pStmt.setLong(paramPos++, pDto.getApplication_id());
+//			count = pStmt.executeUpdate();
+//			if (count > 0) {
+//				isSuccessFull = true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				DBUtil.closeStatement(pStmt);
+//				DBUtil.closeConnection(conn);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return isSuccessFull;
+//	}
 
-	/**
-	 * Update the Communication address for the application ID
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param pDto
-	 * @return
-	 */
-	public static boolean updatePermanentAddress(AddressDTO pDto) {
-		int count = 0;
-		boolean isSuccessFull = false;
-		Connection conn = null;
-		PreparedStatement pStmt = null;
-		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
-		try {
-			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" UPDATE tbl_permanent_address SET flat_no = ? , street = ? , pin = ? , city = ? , district = ? , state = ? "
-							+ " , last_updated = ? where application_id = ? ");
-			int paramPos = 1;
-			pStmt.setString(paramPos++, pDto.getFlat_no());
-			pStmt.setString(paramPos++, pDto.getStreet());
-			pStmt.setInt(paramPos++, pDto.getPin());
-			pStmt.setString(paramPos++, pDto.getCity());
-			pStmt.setString(paramPos++, pDto.getDistrict());
-			pStmt.setString(paramPos++, pDto.getState());
-			pStmt.setTimestamp(paramPos++, timestamp);
-			pStmt.setLong(paramPos++, pDto.getApplication_id());
-			count = pStmt.executeUpdate();
-			if (count > 0) {
-				isSuccessFull = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				DBUtil.closeStatement(pStmt);
-				DBUtil.closeConnection(conn);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return isSuccessFull;
-	}
+//	/**
+//	 * Update the Communication address for the application ID
+//	 * 
+//	 * @author GOWRI SANKAR R
+//	 * @param pDto
+//	 * @return
+//	 */
+//	public static boolean updatePermanentAddress(AddressDTO pDto) {
+//		int count = 0;
+//		boolean isSuccessFull = false;
+//		Connection conn = null;
+//		PreparedStatement pStmt = null;
+//		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+//		try {
+//			conn = DBUtil.getConnection();
+//			pStmt = conn.prepareStatement(
+//					" UPDATE tbl_permanent_address SET flat_no = ? , street = ? , pin = ? , city = ? , district = ? , state = ? "
+//							+ " , last_updated = ? where application_id = ? ");
+//			int paramPos = 1;
+//			pStmt.setString(paramPos++, pDto.getFlat_no());
+//			pStmt.setString(paramPos++, pDto.getStreet());
+//			pStmt.setInt(paramPos++, pDto.getPin());
+//			pStmt.setString(paramPos++, pDto.getCity());
+//			pStmt.setString(paramPos++, pDto.getDistrict());
+//			pStmt.setString(paramPos++, pDto.getState());
+//			pStmt.setTimestamp(paramPos++, timestamp);
+//			pStmt.setLong(paramPos++, pDto.getApplication_id());
+//			count = pStmt.executeUpdate();
+//			if (count > 0) {
+//				isSuccessFull = true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				DBUtil.closeStatement(pStmt);
+//				DBUtil.closeConnection(conn);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return isSuccessFull;
+//	}
 
 	/**
 	 * Update the Communication address for the application ID
@@ -1033,9 +760,21 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_bank_account_details(application_id, account_holder_name, ifsc_code, bank_account_no, "
-							+ "verified, verification_count, created_on) " + "VALUES (?,?,?,?,?,?,?)");
+					"INSERT INTO tbl_bank_account_details(application_id, account_holder_name, ifsc_code, bank_account_no,verified, "
+							+ "verification_count, created_on) VALUES (?,?,?,?,?,?,?) "
+							+ "ON DUPLICATE KEY UPDATE application_id = ? , account_holder_name = ? , ifsc_code = ? , "
+							+ "bank_account_no = ?, verified = ? ,verification_count = ? , last_updated = ?");
 			int paramPos = 1;
+			pStmt.setLong(paramPos++, pDto.getApplication_id());
+			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
+			pStmt.setString(paramPos++, pDto.getIfsc_code());
+			pStmt.setString(paramPos++, pDto.getBank_account_no());
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			/**
+			 * on Duplicate key
+			 */
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
 			pStmt.setString(paramPos++, pDto.getIfsc_code());
@@ -1112,43 +851,43 @@ public class eKYCDAO {
 		return result;
 	}
 
-	/**
-	 * Update the bank details using application ID
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param pDto
-	 * @return
-	 */
-	public boolean updateBankDetails(BankDetailsDTO pDto) {
-		int count = 0;
-		boolean isSuccessFull = false;
-		Connection conn = null;
-		PreparedStatement pStmt = null;
-		try {
-			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" UPDATE tbl_bank_account_details SET account_holder_name = ? , ifsc_code = ? , bank_account_no = ? where application_id = ? ");
-			int paramPos = 1;
-			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
-			pStmt.setString(paramPos++, pDto.getIfsc_code());
-			pStmt.setString(paramPos++, pDto.getBank_account_no());
-			pStmt.setLong(paramPos++, pDto.getApplication_id());
-			count = pStmt.executeUpdate();
-			if (count > 0) {
-				isSuccessFull = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				DBUtil.closeStatement(pStmt);
-				DBUtil.closeConnection(conn);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return isSuccessFull;
-	}
+//	/**
+//	 * Update the bank details using application ID
+//	 * 
+//	 * @author GOWRI SANKAR R
+//	 * @param pDto
+//	 * @return
+//	 */
+//	public boolean updateBankDetails(BankDetailsDTO pDto) {
+//		int count = 0;
+//		boolean isSuccessFull = false;
+//		Connection conn = null;
+//		PreparedStatement pStmt = null;
+//		try {
+//			conn = DBUtil.getConnection();
+//			pStmt = conn.prepareStatement(
+//					" UPDATE tbl_bank_account_details SET account_holder_name = ? , ifsc_code = ? , bank_account_no = ? where application_id = ? ");
+//			int paramPos = 1;
+//			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
+//			pStmt.setString(paramPos++, pDto.getIfsc_code());
+//			pStmt.setString(paramPos++, pDto.getBank_account_no());
+//			pStmt.setLong(paramPos++, pDto.getApplication_id());
+//			count = pStmt.executeUpdate();
+//			if (count > 0) {
+//				isSuccessFull = true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				DBUtil.closeStatement(pStmt);
+//				DBUtil.closeConnection(conn);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return isSuccessFull;
+//	}
 
 	/**
 	 * To insert the pan card details
@@ -1165,8 +904,14 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_pancard_details(application_id, pan_card,applicant_name , dob , created_on) VALUES (?,?,?,?,?)");
+					"INSERT INTO tbl_pancard_details(application_id, pan_card,applicant_name , dob , created_on) VALUES (?,?,?,?,?) "
+							+ "ON DUPLICATE KEY UPDATE  application_id = ?, pan_card = ? , applicant_name = ? , dob = ? , last_updated = ?");
 			int paramPos = 1;
+			pStmt.setInt(paramPos++, pDto.getApplication_id());
+			pStmt.setString(paramPos++, pDto.getPan_card());
+			pStmt.setString(paramPos++, pDto.getApplicant_name());
+			pStmt.setString(paramPos++, pDto.getDob());
+			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.setInt(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getPan_card());
 			pStmt.setString(paramPos++, pDto.getApplicant_name());
@@ -1239,44 +984,44 @@ public class eKYCDAO {
 		return result;
 	}
 
-	/**
-	 * Method to update the pan card details
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param pDto
-	 * @return
-	 */
-	public boolean updatePanCardDetails(PanCardDetailsDTO pDto) {
-		int count = 0;
-		boolean isSuccessFull = false;
-		Connection conn = null;
-		PreparedStatement pStmt = null;
-		try {
-			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					" UPDATE tbl_pancard_details SET pan_card = ? , applicant_name = ? , dob = ? where application_id = ? ");
-			int paramPos = 1;
-			pStmt.setString(paramPos++, pDto.getPan_card());
-			pStmt.setString(paramPos++, pDto.getApplicant_name());
-			// pStmt.setString(paramPos++, pDto.getFathersName());
-			pStmt.setString(paramPos++, pDto.getDob());
-			pStmt.setLong(paramPos++, pDto.getApplication_id());
-			count = pStmt.executeUpdate();
-			if (count > 0) {
-				isSuccessFull = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				DBUtil.closeStatement(pStmt);
-				DBUtil.closeConnection(conn);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return isSuccessFull;
-	}
+//	/**
+//	 * Method to update the pan card details
+//	 * 
+//	 * @author GOWRI SANKAR R
+//	 * @param pDto
+//	 * @return
+//	 */
+//	public boolean updatePanCardDetails(PanCardDetailsDTO pDto) {
+//		int count = 0;
+//		boolean isSuccessFull = false;
+//		Connection conn = null;
+//		PreparedStatement pStmt = null;
+//		try {
+//			conn = DBUtil.getConnection();
+//			pStmt = conn.prepareStatement(
+//					" UPDATE tbl_pancard_details SET pan_card = ? , applicant_name = ? , dob = ? where application_id = ? ");
+//			int paramPos = 1;
+//			pStmt.setString(paramPos++, pDto.getPan_card());
+//			pStmt.setString(paramPos++, pDto.getApplicant_name());
+//			// pStmt.setString(paramPos++, pDto.getFathersName());
+//			pStmt.setString(paramPos++, pDto.getDob());
+//			pStmt.setLong(paramPos++, pDto.getApplication_id());
+//			count = pStmt.executeUpdate();
+//			if (count > 0) {
+//				isSuccessFull = true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			try {
+//				DBUtil.closeStatement(pStmt);
+//				DBUtil.closeConnection(conn);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return isSuccessFull;
+//	}
 
 	/**
 	 * To update the email id for the given mobilemnumber
@@ -1934,6 +1679,41 @@ public class eKYCDAO {
 			}
 		}
 		return isSuccessFull;
+	}
+
+	public int insertIvrDetails(int applicationId, String proofUrl, String ivrLat, String ivrLong) {
+		int count = 0;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"INSERT INTO tbl_ivr_capture(application_id , ivr_image , ivr_lat ,ivr_long , created_on ) VALUES (? ,?, ?, ? , ?) "
+							+ "ON DUPLICATE KEY UPDATE  application_id = ?, ivr_image = ? , ivr_lat = ? , ivr_long = ? , last_updated = ?");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setString(paramPos++, proofUrl);
+			pStmt.setString(paramPos++, ivrLat);
+			pStmt.setString(paramPos++, ivrLong);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setString(paramPos++, proofUrl);
+			pStmt.setString(paramPos++, ivrLat);
+			pStmt.setString(paramPos++, ivrLong);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			count = pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
 	}
 
 }

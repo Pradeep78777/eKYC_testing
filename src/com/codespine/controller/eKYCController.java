@@ -275,13 +275,14 @@ public class eKYCController {
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (eKYCdto != null) {
 			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
-			if(StringUtil.isNotNullOrEmpty(eKYCPdfFileLocation)){
-				eKYCDAO.getInstance().insertAttachementDetails(eKYCPdfFileLocation, eKYCConstant.EKYC_DOCUMENT, applicationId);
+			if (StringUtil.isNotNullOrEmpty(eKYCPdfFileLocation)) {
+				eKYCDAO.getInstance().insertAttachementDetails(eKYCPdfFileLocation, eKYCConstant.EKYC_DOCUMENT,
+						applicationId);
 			}
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
 			response.setReason(eKYCConstant.PDF_GENERATED_SUCESSFULLY);
-		}else {
+		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.PDF_GENERATED_FAILED);
@@ -417,6 +418,28 @@ public class eKYCController {
 	public ResponseDTO getUploadedFile(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		response = pService.getUploadedFile(pDto);
+		return response;
+	}
+
+	/**
+	 * To upload the ivr capture for given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param ivrImage
+	 * @param ivrLat
+	 * @param ivrLong
+	 * @param applicationId
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/uploadIvrCapture")
+	public ResponseDTO uploadIvrCapture(@FormDataParam("ivrImage") FormDataBodyPart ivrImage,
+			@FormDataParam("ivrLat") String ivrLat, @FormDataParam("ivrLong") String ivrLong,
+			@FormDataParam("applicationId") int applicationId) {
+		ResponseDTO response = new ResponseDTO();
+		response = pService.uploadIvrCapture(ivrImage, ivrLat, ivrLong, applicationId);
 		return response;
 	}
 }

@@ -192,7 +192,7 @@ public class eKYCService {
 					String firstName = (String) tempResult.get("firstName");
 					String middleName = (String) tempResult.get("middleName");
 					String lastName = (String) tempResult.get("lastName");
-					String panCardname = firstName + middleName + lastName;
+					String panCardname = firstName + " " + middleName + " " + lastName;
 					// String fatherName = (String) tempResult.get("lastName");
 					dummResult.setApplicant_name(panCardname);
 					// dummResult.setFathersName(fatherName);
@@ -234,31 +234,16 @@ public class eKYCService {
 	public ResponseDTO updatePanCard(PanCardDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
-			PanCardDetailsDTO checkApplicationId = peKYCDao.checkPanCardUpdated(pDto.getApplication_id());
-			if (checkApplicationId != null && checkApplicationId.getApplication_id() > 0) {
-				boolean isSucessFull = peKYCDao.updatePanCardDetails(pDto);
-				if (isSucessFull) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PAN_CARD_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.PAN_CARD_DETAILS_SAVED);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+			int insertCount = peKYCDao.insertPanCardDetails(pDto);
+			if (insertCount > 0) {
+				peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PAN_CARD_UPDATED);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.OTP_VERIFIED_SUCCESS);
 			} else {
-				int insertCount = peKYCDao.insertPanCardDetails(pDto);
-				if (insertCount > 0) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PAN_CARD_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.OTP_VERIFIED_SUCCESS);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -267,31 +252,6 @@ public class eKYCService {
 		}
 		return response;
 	}
-
-	// /**
-	// *
-	// * @param applicationId
-	// * @param panCard
-	// */
-	// public static void panVerification(int applicationId, String panCard) {
-	// /**
-	// * To create the create the jks file for the given application id
-	// */
-	// NsdlPanVerificationRestService.pfx2JksFile(applicationId);
-	// /**
-	// * To create the sig file from the jks file
-	// */
-	// NsdlPanVerificationRestService.pkcs7Generate(applicationId, panCard);
-	// /**
-	// * TO get the result from the NSDL
-	// */
-	// String respone =
-	// NsdlPanVerificationRestService.apiCallForPanVerififcation(applicationId,
-	// panCard);
-	// /**
-	// * Make the String to json Object
-	// */
-	// }
 
 	/**
 	 * To save the basic information for the user by the given application id
@@ -306,40 +266,16 @@ public class eKYCService {
 		 * Insert the basic information for thr given user
 		 */
 		if (pDto.getApplication_id() > 0) {
-			/**
-			 * Check user inserted or not
-			 */
-			PersonalDetailsDTO checkUser = eKYCDAO.CheckBasicInformation(pDto.getApplication_id());
-			if (checkUser != null && checkUser.getApplication_id() > 0) {
-				/**
-				 * If already there e update the basic information
-				 */
-				boolean updateCount = peKYCDao.updateBasicInformation(pDto);
-				if (updateCount) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.BASIC_DETAILS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.BASIC_INFORMATION_SAVED_SUCESSFULLY);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+			int insertCount = peKYCDao.insertBasicInformation(pDto);
+			if (insertCount > 0) {
+				peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.BASIC_DETAILS_UPDATED);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.BASIC_INFORMATION_SAVED_SUCESSFULLY);
 			} else {
-				/**
-				 * else insert the basic information
-				 */
-				int insertCount = peKYCDao.basicInformation(pDto);
-				if (insertCount > 0) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.BASIC_DETAILS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.BASIC_INFORMATION_SAVED_SUCESSFULLY);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -396,33 +332,16 @@ public class eKYCService {
 	public ResponseDTO updateCommunicationAddress(AddressDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
-			AddressDTO checkAddress = eKYCDAO.checkCommunicationAddress(pDto.getApplication_id());
-			if (checkAddress != null && checkAddress.getApplication_id() > 0) {
-				boolean isSuucessFull = eKYCDAO.updateCommunicationAddress(pDto);
-				if (isSuucessFull) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(),
-							eKYCConstant.COMMUNICATION_ADDRESS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+			int insertCommunicationCount = eKYCDAO.insertCommunicationAddress(pDto);
+			if (insertCommunicationCount > 0) {
+				peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.COMMUNICATION_ADDRESS_UPDATED);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
 			} else {
-				int insertCommunicationCount = eKYCDAO.insertCommunicationAddress(pDto);
-				if (insertCommunicationCount > 0) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(),
-							eKYCConstant.COMMUNICATION_ADDRESS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -442,31 +361,16 @@ public class eKYCService {
 	public ResponseDTO updatePermanentAddress(AddressDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
-			AddressDTO checkAddress = eKYCDAO.checkPermanentAddress(pDto.getApplication_id());
-			if (checkAddress != null && checkAddress.getApplication_id() > 0) {
-				boolean isSuucessFull = eKYCDAO.updatePermanentAddress(pDto);
-				if (isSuucessFull) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PERMANENT_ADDRESS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+			int premanentCount = eKYCDAO.insertPermanentAddress(pDto);
+			if (premanentCount > 0) {
+				peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PERMANENT_ADDRESS_UPDATED);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
 			} else {
-				int premanentCount = eKYCDAO.insertPermanentAddress(pDto);
-				if (premanentCount > 0) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PERMANENT_ADDRESS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -486,31 +390,16 @@ public class eKYCService {
 	public ResponseDTO updateBankAccountDetails(BankDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
-			BankDetailsDTO checkUser = peKYCDao.checkBankDetailsUpdated(pDto.getApplication_id());
-			if (checkUser != null && checkUser.getApplication_id() > 0) {
-				boolean isSuccessFull = peKYCDao.updateBankDetails(pDto);
-				if (isSuccessFull) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.BANK_DETAILS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.BANK_DETAILS_SAVED);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+			int insertCount = peKYCDao.insertBankAccountDetails(pDto);
+			if (insertCount > 0) {
+				peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.BANK_DETAILS_UPDATED);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.BANK_DETAILS_SAVED);
 			} else {
-				int insertCount = peKYCDao.insertBankAccountDetails(pDto);
-				if (insertCount > 0) {
-					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.BANK_DETAILS_UPDATED);
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setReason(eKYCConstant.BANK_DETAILS_SAVED);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-				}
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -601,69 +490,6 @@ public class eKYCService {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
-		}
-		return response;
-	}
-
-	public ResponseDTO uploadProof(FormDataBodyPart proof, String proofType, int applicationId) {
-		ResponseDTO response = new ResponseDTO();
-		try {
-			if (applicationId > 0) {
-				int checkId = 0;
-				FormDataBodyPart formDataBodyPart = proof;
-				FormDataContentDisposition contentDisposition = formDataBodyPart.getFormDataContentDisposition();
-				String fileName = "";
-				if (contentDisposition.getFileName() != null) {
-					checkId = eKYCDAO.getInstance().checkFileUploaded(applicationId, proofType);
-					fileName = contentDisposition.getFileName();
-					InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
-					int read = 0;
-					String filePath = eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//"
-							+ proofType;
-					File dir = new File(filePath);
-					if (!dir.exists()) {
-						dir.mkdirs();
-					}
-					byte[] bytes = new byte[1024];
-					OutputStream out = new FileOutputStream(dir + "//" + fileName);
-					while ((read = is.read(bytes)) != -1) {
-						out.write(bytes, 0, read);
-					}
-					out.flush();
-					out.close();
-					String proofUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//"
-							+ proofType + "//" + fileName;
-					if (checkId > 0) {
-						int insertCount = peKYCDao.insertAttachementDetails(proofUrl, proofType, applicationId);
-						if (insertCount > 0) {
-							response.setStatus(eKYCConstant.SUCCESS_STATUS);
-							response.setMessage(eKYCConstant.SUCCESS_MSG);
-							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
-						} else {
-							response.setStatus(eKYCConstant.FAILED_STATUS);
-							response.setMessage(eKYCConstant.FAILED_MSG);
-							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-						}
-					} else {
-						boolean isSucessFull = peKYCDao.updateAttachementDetails(proofUrl, proofType, applicationId);
-						if (isSucessFull) {
-							response.setStatus(eKYCConstant.SUCCESS_STATUS);
-							response.setMessage(eKYCConstant.SUCCESS_MSG);
-							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
-						} else {
-							response.setStatus(eKYCConstant.FAILED_STATUS);
-							response.setMessage(eKYCConstant.FAILED_MSG);
-							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
-						}
-					}
-				}
-			} else {
-				response.setStatus(eKYCConstant.FAILED_STATUS);
-				response.setMessage(eKYCConstant.FAILED_MSG);
-				response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return response;
 	}
@@ -766,6 +592,13 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * To get the basic Information for given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
 	public ResponseDTO getBasicInformation(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
@@ -786,6 +619,13 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * To get the Communication Address for the given application address
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
 	public ResponseDTO getCommunicationAddress(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
@@ -806,6 +646,13 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * To get the permanent Address for the given application address
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
 	public ResponseDTO getPermanentAddress(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
@@ -826,6 +673,13 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * To get the Bank Details for the given application address
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
 	public ResponseDTO getBankDetails(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
@@ -846,6 +700,13 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * To get the Exch Details for the given application address
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
 	public ResponseDTO getExchDetails(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
@@ -866,6 +727,13 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * To get the File uploaded for the given application address
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
 	public ResponseDTO getUploadedFile(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
@@ -882,6 +750,131 @@ public class eKYCService {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return response;
+	}
+
+	public ResponseDTO uploadProof(FormDataBodyPart proof, String proofType, int applicationId) {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			if (applicationId > 0) {
+				int checkId = 0;
+				FormDataBodyPart formDataBodyPart = proof;
+				FormDataContentDisposition contentDisposition = formDataBodyPart.getFormDataContentDisposition();
+				String fileName = "";
+				if (contentDisposition.getFileName() != null) {
+					checkId = eKYCDAO.getInstance().checkFileUploaded(applicationId, proofType);
+					fileName = contentDisposition.getFileName();
+					InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
+					int read = 0;
+					String filePath = eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//"
+							+ proofType;
+					File dir = new File(filePath);
+					if (!dir.exists()) {
+						dir.mkdirs();
+					}
+					byte[] bytes = new byte[1024];
+					OutputStream out = new FileOutputStream(dir + "//" + fileName);
+					while ((read = is.read(bytes)) != -1) {
+						out.write(bytes, 0, read);
+					}
+					out.flush();
+					out.close();
+					String proofUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//"
+							+ proofType + "//" + fileName;
+					if (checkId > 0) {
+						int insertCount = peKYCDao.insertAttachementDetails(proofUrl, proofType, applicationId);
+						if (insertCount > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						}
+					} else {
+						boolean isSucessFull = peKYCDao.updateAttachementDetails(proofUrl, proofType, applicationId);
+						if (isSucessFull) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						}
+					}
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	/**
+	 * upload the ivr capture details for given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param ivrImage
+	 * @param ivrLat
+	 * @param ivrLong
+	 * @param applicationId
+	 * @return
+	 */
+	public ResponseDTO uploadIvrCapture(FormDataBodyPart ivrImage, String ivrLat, String ivrLong, int applicationId) {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			if (applicationId > 0) {
+				FormDataBodyPart formDataBodyPart = ivrImage;
+				FormDataContentDisposition contentDisposition = formDataBodyPart.getFormDataContentDisposition();
+				String fileName = "";
+				if (contentDisposition.getFileName() != null) {
+					fileName = contentDisposition.getFileName();
+					InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
+					int read = 0;
+					String filePath = eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//"
+							+ "IVR_IMAGE";
+					File dir = new File(filePath);
+					if (!dir.exists()) {
+						dir.mkdirs();
+					}
+					byte[] bytes = new byte[1024];
+					OutputStream out = new FileOutputStream(dir + "//" + fileName);
+					while ((read = is.read(bytes)) != -1) {
+						out.write(bytes, 0, read);
+					}
+					out.flush();
+					out.close();
+					String proofUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//"
+							+ "IVR_IMAGE" + "//" + fileName;
+					int count = eKYCDAO.getInstance().insertIvrDetails(applicationId, proofUrl, ivrLat, ivrLong);
+					if (count > 0) {
+						response.setStatus(eKYCConstant.SUCCESS_STATUS);
+						response.setMessage(eKYCConstant.SUCCESS_MSG);
+						response.setReason(eKYCConstant.IVR_DETAILS_UPDATED_SUCESSFULLY);
+					} else {
+						response.setStatus(eKYCConstant.FAILED_STATUS);
+						response.setMessage(eKYCConstant.FAILED_MSG);
+						response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+					}
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+					response.setReason(eKYCConstant.FILE_CANNOT_BE_EMPTY);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return response;
 	}

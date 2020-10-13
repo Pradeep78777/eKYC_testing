@@ -56,6 +56,11 @@ public class eKYCConstant {
 	public static final String INVALID_PANCARD = "Your pan Card is invalid";
 	public static final String EXCH_DETAILS_UPDATED_SUCESSFULLY = "Exch deatils are updated sucessfully";
 
+	public static final String PROOF_UPLOADED_SUCESSFULLY = "Proof uploaded Sucessfully";
+	public static final String FILE_CANNOT_BE_EMPTY = "File cannot be empty";
+
+	public static final String IVR_DETAILS_UPDATED_SUCESSFULLY = "Ivr Details updated sucessfully";
+
 	/**
 	 * Application Status
 	 */
@@ -93,6 +98,5 @@ public class eKYCConstant {
 	public static final String PDF_FILE_EXTENSION = ".pdf";
 	public static final String WINDOWS_FORMAT_SLASH = "//";
 	public static final String EKYC_DOCUMENT = "EKYC_DOCUMENT";
-
 
 }
