@@ -85,4 +85,18 @@ public class StringUtil {
 		}
 		return null;
 	}
+	public static boolean isStrContainsWithEqIgnoreCase(String strValue, String value) {
+		boolean isContains = false;
+		String value1 = "";
+		String value2 = "";
+		if (StringUtil.isNotNullOrEmpty(strValue) &&
+				StringUtil.isNotNullOrEmpty(value)) {
+			value1 = strValue.toLowerCase();
+			value2 = value.toLowerCase();
+			if (value1.contains(value2)) {
+				isContains = true;
+			}
+		}
+		return isContains;
+	}
 }

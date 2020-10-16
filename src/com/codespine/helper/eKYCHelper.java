@@ -55,8 +55,6 @@ public class eKYCHelper {
 			AddressDTO addressDTO=  eKYCDAO.getInstance().checkCommunicationAddress(applicationId);
 			if(addressDTO != null) {
 				eKYCDTO.setAddressDTO(addressDTO);
-				HashMap<String, String> json = new HashMap<String, String>();
-				json.put("country","X");
 				eKYCDTO.getForPDFKeyValue().putAll(addressDTO.getForPDFKeyValue());
 			}
 		}
@@ -72,8 +70,6 @@ public class eKYCHelper {
 			if(addressDTO != null) {
 				eKYCDTO.setPermanentAddressDTO(addressDTO);
 				HashMap<String, String> json = new HashMap<String, String>();
-				json.put("permanent_address","X");
-				json.put("permanent_country","X");
 				eKYCDTO.getForPDFKeyValue().putAll(addressDTO.getForPDFKeyValue());
 				eKYCDTO.getForPDFKeyValue().putAll(json);
 			}

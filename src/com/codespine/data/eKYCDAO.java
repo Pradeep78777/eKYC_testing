@@ -433,8 +433,6 @@ public class eKYCDAO {
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setApplicant_name(rSet.getString("applicant_name"));
 					json.put("applicant_name", rSet.getString("applicant_name").toUpperCase());
-					json.put("applicant_name1", rSet.getString("applicant_name").toUpperCase());
-					json.put("applicant_name2", rSet.getString("applicant_name").toUpperCase());
 					result.setMothersName(rSet.getString("mothersName"));
 					json.put("mothersName", rSet.getString("mothersName").toUpperCase());
 					result.setFathersName(rSet.getString("fathersName"));
@@ -548,7 +546,7 @@ public class eKYCDAO {
 					json.put("pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
 					json.put("city", rSet.getString("city").toUpperCase());
-					json.put("city1", rSet.getString("city").toUpperCase());
+					json.put("country", "INDIA");
 					result.setDistrict(rSet.getString("district"));
 					json.put("district", rSet.getString("district").toUpperCase());
 					result.setState(rSet.getString("state"));
@@ -829,6 +827,8 @@ public class eKYCDAO {
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", rSet.getString("bank_account_no"));
+					json.put("date", DateUtil.getTodayStringDate());
+					json.put("last_financial_date", DateUtil.getLastFinancialYearTo(DateUtil.getTodayDate()));
 					result.setAccount_type(rSet.getString("account_type"));
 					json.put("account_type", rSet.getString("account_type"));
 					result.setVerified_on(rSet.getString("verified_on"));
@@ -957,7 +957,7 @@ public class eKYCDAO {
 					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setPan_card(rSet.getString("pan_card"));
-					json.put("pan_card", rSet.getString("pan_card"));
+					json.put("pan_card", rSet.getString("pan_card").toUpperCase());
 					result.setDob(rSet.getString("dob"));
 					json.put("dob", DateUtil.parseDateStringForDOB(rSet.getString("dob")));
 					result.setMothersName(rSet.getString("mothersName"));
@@ -1382,7 +1382,6 @@ public class eKYCDAO {
 					json.put("application_id", Integer.toString(rSet.getInt("application_id")));
 					result.setMobile_number(rSet.getString("mobile_number"));
 					json.put("mobile_number", rSet.getString("mobile_number"));
-					json.put("mobile_number1", rSet.getString("mobile_number"));
 					result.setMobile_no_verified(rSet.getInt("mobile_no_verified"));
 					result.setMob_owner(rSet.getString("mob_owner"));
 					json.put("mob_owner", rSet.getString("mob_owner").toUpperCase());
@@ -1466,14 +1465,15 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT id,column_name,coordinates FROM tbl_pdf_coordinations ");
+			pStmt = conn.prepareStatement(" SELECT column_name,coordinates,page_number,is_default FROM tbl_pdf_orgins ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PdfCoordinationsDTO();
-					result.setId(rSet.getInt("id"));
 					result.setColumn_name(rSet.getString("column_name"));
 					result.setCoordinates(rSet.getString("coordinates"));
+					result.setPage_number(rSet.getInt("page_number"));
+					result.setIs_default(rSet.getInt("is_default"));
 					if (pdfCoordinationsDTOs == null) {
 						pdfCoordinationsDTOs = new ArrayList<PdfCoordinationsDTO>();
 					}

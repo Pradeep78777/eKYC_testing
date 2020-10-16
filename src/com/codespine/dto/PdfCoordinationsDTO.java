@@ -11,6 +11,7 @@ public class PdfCoordinationsDTO {
 	private String data_type;
 	private Date created_on;
 	private Date updated_on;
+	private int is_default;
 	public int getId() {
 		return id;
 	}
@@ -53,5 +54,12 @@ public class PdfCoordinationsDTO {
 	public void setCoordinates(String coordinates) {
 		this.coordinates = coordinates;
 	}
+	public int getIs_default() {
+		return is_default;
+	}
+	public void setIs_default(int is_default) {
+		this.is_default = is_default;
+	}
+	
 	
 }
