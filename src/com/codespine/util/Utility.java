@@ -213,6 +213,47 @@ public class Utility {
 		return status;
 	}
 
+	public static String mailCheck(String email, String msg) {
+		StringBuilder builder = new StringBuilder();
+		String status = eKYCConstant.FAILED_MSG;
+		try {
+			Properties properties = new Properties();
+			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
+			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
+			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.auth", "true");
+			properties.put("mail.smtp.debug", "true");
+			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
+							CSEnvVariables.getProperty(eKYCConstant.PASSWORD));
+				}
+			});
+			try {
+				String hs = msg;
+				builder.append(msg);
+				MimeMessage message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
+				message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.trim()));
+				message.setSubject("Email Verification");
+				BodyPart messageBodyPart1 = new MimeBodyPart();
+				messageBodyPart1.setContent(builder.toString(), "text/html");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(messageBodyPart1);
+				message.setContent(multipart);
+				Transport.send(message);
+				status = eKYCConstant.SUCCESS_MSG;
+			} catch (MessagingException ex) {
+				ex.printStackTrace();
+				status = eKYCConstant.FAILED_MSG;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+
 	/**
 	 * @author GOWRI SANKAR R
 	 * @param mobileNumber
@@ -285,7 +326,7 @@ public class Utility {
 			String pathToPDF = "C:\\Users\\Administrator\\Desktop\\zebu_ekyc\\Ekyc_document\\Trading & Demat KYC_V6.pdf";
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
-			String responseUrl = "http://ekyc.stoneagesolutions.com/eSignAadhar";
+			String responseUrl = "http://rest.irongates.in/eKYCService/eKYC/getNsdlXML";
 			String p12CertificatePath = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
 			String p12CertiPwd = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
 			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
