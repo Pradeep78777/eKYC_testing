@@ -1,17 +1,16 @@
 package com.codespine.util;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Test {
 
 	public static void main(String[] args) {
-		String givenPath = "C://apache-tomcat-8.5.35//Test//";
-		int applicationId = 2;
-		File dir = new File(givenPath + applicationId);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		} else {
-			dir.mkdirs();
+		try {
+			String esignXml = new String(
+					Files.readAllBytes(Paths.get("C:\\Users\\GOWRI SANKAR R\\Desktop\\zebu_ekyc\\esignXML.txt")));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
