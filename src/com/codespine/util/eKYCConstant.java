@@ -99,4 +99,11 @@ public class eKYCConstant {
 	public static final String WINDOWS_FORMAT_SLASH = "//";
 	public static final String EKYC_DOCUMENT = "EKYC_DOCUMENT";
 
+	public static final String EXPIRY_TIME = "expiryInMilleseconds";
+
+	/**
+	 * 
+	 */
+	public static final String SECURED_METHODS = "securedMethods";
+	public static final String UNAUTHORIZED = "Unauthorized";
 }
