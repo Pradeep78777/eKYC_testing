@@ -26,6 +26,7 @@ import com.codespine.restservice.NsdlPanVerificationRestService;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
+@SuppressWarnings("unchecked")
 public class eKYCService {
 	public static eKYCService eKYCService = null;
 
@@ -50,6 +51,9 @@ public class eKYCService {
 		ResponseDTO response = new ResponseDTO();
 		PersonalDetailsDTO checkUser = peKYCDao.checkExistingUser(pDto);
 		if (checkUser != null && checkUser.getApplication_id() > 0) {
+			/**
+			 * 
+			 */
 			result = new PersonalDetailsDTO();
 			result.setApplication_id(checkUser.getApplication_id());
 			result.setApplicationStatus(checkUser.getApplicationStatus());
@@ -58,12 +62,15 @@ public class eKYCService {
 			 */
 			if (checkUser.getEmail().equalsIgnoreCase(pDto.getEmail())) {
 				/**
+				 * Send Otp to the given mobile number
+				 */
+				String otp = Utility.generateOTP();
+				peKYCDao.updateOtpForApplicationId(Integer.parseInt(otp), checkUser.getApplication_id());
+				Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
+				/**
 				 * Check the otp and email is verified
 				 */
 				if (checkUser.getMobile_number_verified() == 0) {
-					String otp = Utility.generateOTP();
-					peKYCDao.updateOtpForApplicationId(Integer.parseInt(otp), checkUser.getApplication_id());
-					Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
 					if (checkUser.getApplicationStatus() >= 3) {
 						PanCardDetailsDTO panCardName = peKYCDao.getApplicantName(checkUser.getApplication_id());
 						result.setApplicant_name(panCardName.getApplicant_name());
@@ -129,9 +136,19 @@ public class eKYCService {
 			if (pDto.getOtp() == checkUser.getOtp()) {
 				peKYCDao.updateOtpVerified(pDto);
 				peKYCDao.updateApplicationStatus(checkUser.getApplication_id(), eKYCConstant.OTP_VERIFIED);
+
+				/**
+				 * Create the Seesion id for the and keep the session valid for
+				 * the another 30 mins
+				 */
+				String sessionId = Utility.createAndStoreSeesionInCache(pDto.getMobile_number() + "");
+				JSONObject result = new JSONObject();
+				result.put("authKey", sessionId);
+
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
 				response.setReason(eKYCConstant.OTP_VERIFIED_SUCCESS);
+				response.setResult(result);
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);
@@ -466,6 +483,7 @@ public class eKYCService {
 			if (checkExchUpdated != null && checkExchUpdated.getApplication_id() > 0) {
 				boolean isSucessfull = peKYCDao.updateExchDetails(pDto);
 				if (isSucessfull) {
+					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.EXCH_UPDATED);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
@@ -477,6 +495,7 @@ public class eKYCService {
 			} else {
 				int insertCount = peKYCDao.insertExchDetails(pDto);
 				if (insertCount > 0) {
+					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.EXCH_UPDATED);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
@@ -783,8 +802,9 @@ public class eKYCService {
 					String proofUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//"
 							+ proofType + "//" + fileName;
 					if (checkId > 0) {
-						int insertCount = peKYCDao.insertAttachementDetails(proofUrl, proofType, applicationId);
-						if (insertCount > 0) {
+						boolean isSucessFull = peKYCDao.updateAttachementDetails(proofUrl, proofType, applicationId);
+						if (isSucessFull) {
+							peKYCDao.updateApplicationStatus(applicationId, eKYCConstant.ATTACHEMENT_UPLOADED);
 							response.setStatus(eKYCConstant.SUCCESS_STATUS);
 							response.setMessage(eKYCConstant.SUCCESS_MSG);
 							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
@@ -794,8 +814,9 @@ public class eKYCService {
 							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 						}
 					} else {
-						boolean isSucessFull = peKYCDao.updateAttachementDetails(proofUrl, proofType, applicationId);
-						if (isSucessFull) {
+						int insertCount = peKYCDao.insertAttachementDetails(proofUrl, proofType, applicationId);
+						if (insertCount > 0) {
+							peKYCDao.updateApplicationStatus(applicationId, eKYCConstant.ATTACHEMENT_UPLOADED);
 							response.setStatus(eKYCConstant.SUCCESS_STATUS);
 							response.setMessage(eKYCConstant.SUCCESS_MSG);
 							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
@@ -827,37 +848,27 @@ public class eKYCService {
 	 * @param applicationId
 	 * @return
 	 */
-	public ResponseDTO uploadIvrCapture(FormDataBodyPart ivrImage, String ivrLat, String ivrLong, int applicationId) {
+	public ResponseDTO uploadIvrCapture(String ivrImageBase64, String ivrLat, String ivrLong, int applicationId,
+			String deviceIP, String userAgent) {
 		ResponseDTO response = new ResponseDTO();
 		try {
 			if (applicationId > 0) {
-				FormDataBodyPart formDataBodyPart = ivrImage;
-				FormDataContentDisposition contentDisposition = formDataBodyPart.getFormDataContentDisposition();
-				String fileName = "";
-				if (contentDisposition.getFileName() != null) {
-					fileName = contentDisposition.getFileName();
-					InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
-					int read = 0;
-					String filePath = eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//"
-							+ "IVR_IMAGE";
-					File dir = new File(filePath);
-					if (!dir.exists()) {
-						dir.mkdirs();
-					}
-					byte[] bytes = new byte[1024];
-					OutputStream out = new FileOutputStream(dir + "//" + fileName);
-					while ((read = is.read(bytes)) != -1) {
-						out.write(bytes, 0, read);
-					}
-					out.flush();
-					out.close();
-					String proofUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//"
-							+ "IVR_IMAGE" + "//" + fileName;
-					int count = eKYCDAO.getInstance().insertIvrDetails(applicationId, proofUrl, ivrLat, ivrLong);
-					if (count > 0) {
-						response.setStatus(eKYCConstant.SUCCESS_STATUS);
-						response.setMessage(eKYCConstant.SUCCESS_MSG);
-						response.setReason(eKYCConstant.IVR_DETAILS_UPDATED_SUCESSFULLY);
+				if (ivrImageBase64 != null && !ivrImageBase64.isEmpty()) {
+					String siteUrl = Utility.convertBase64ToImage(ivrImageBase64,
+							eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//" + "IVR_IMAGE",
+							applicationId);
+					if (siteUrl != null && !siteUrl.isEmpty()) {
+						int count = eKYCDAO.getInstance().insertIvrDetails(applicationId, siteUrl, ivrLat, ivrLong,
+								deviceIP, userAgent);
+						if (count > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setReason(eKYCConstant.IVR_DETAILS_UPDATED_SUCESSFULLY);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						}
 					} else {
 						response.setStatus(eKYCConstant.FAILED_STATUS);
 						response.setMessage(eKYCConstant.FAILED_MSG);

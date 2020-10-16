@@ -1,8 +1,17 @@
 package com.codespine.util;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Properties;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -15,13 +24,34 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.xml.bind.DatatypeConverter;
 
 import org.json.simple.JSONObject;
 
+import com.codespine.cache.CacheController;
+import com.codespine.dto.AccesslogDTO;
+import com.codespine.service.AccessLogService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsdl.esign.preverifiedNo.controller.EsignApplication;
 
 @SuppressWarnings("unchecked")
 public class Utility {
+
+	/**
+	 * To random generated Text
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param count
+	 * @return
+	 */
+	public static String randomAlphaNumericNew(int count) {
+		StringBuilder builder = new StringBuilder();
+		while (count-- != 0) {
+			int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
+			builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+		}
+		return builder.toString();
+	}
 
 	/**
 	 * Method to generate OTP
@@ -255,7 +285,7 @@ public class Utility {
 			String pathToPDF = "C:\\Users\\Administrator\\Desktop\\zebu_ekyc\\Ekyc_document\\Trading & Demat KYC_V6.pdf";
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
-			String responseUrl = "https://zebull.in";
+			String responseUrl = "http://ekyc.stoneagesolutions.com/eSignAadhar";
 			String p12CertificatePath = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
 			String p12CertiPwd = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
 			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
@@ -290,5 +320,90 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return response;
+	}
+
+	public static String convertBase64ToImage(String base64, String location, int applicationId) {
+		String siteUrl = "";
+		String base64String = base64;
+		String[] strings = base64String.split(",");
+		String extension;
+		switch (strings[0]) {// check image's extension
+		case "data:image/jpeg;base64":
+			extension = "jpeg";
+			break;
+		case "data:image/png;base64":
+			extension = "png";
+			break;
+		default:// should write cases for more images types
+			extension = "jpg";
+			break;
+		}
+		// convert base64 string to binary data
+		byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
+		String path = location + "//" + applicationId + "_ivrImage." + extension;
+		File file = new File(path);
+		try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+			outputStream.write(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		siteUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//IVR_IMAGE//"
+				+ applicationId + "_ivrImage." + extension;
+		return siteUrl;
+	}
+
+	/**
+	 * Method to insert the access log into the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param accessLogDto
+	 * @param pObj
+	 * @param userId
+	 */
+	public static void inputAccessLogDetails(AccesslogDTO accessLogDto, Object pObj, String userId) {
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(100, 100, 1, TimeUnit.SECONDS,
+				new LinkedBlockingQueue<Runnable>());
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				AccesslogDTO accessLog = new AccesslogDTO();
+				ObjectMapper mapper = new ObjectMapper();
+				String convert = "";
+				try {
+					convert = mapper.writeValueAsString(pObj);
+					accessLog.setInput(convert);
+					accessLog.setUri(accessLogDto.getUri());
+					accessLog.setDevice_ip(accessLogDto.getDevice_ip());
+					accessLog.setUser_id(userId);
+					accessLog.setCreated_on(accessLogDto.getCreated_on());
+					accessLog.setUser_agent(accessLogDto.getUser_agent());
+					accessLog.setDomain(accessLogDto.getDomain());
+					AccessLogService logService = new AccessLogService();
+					logService.insertAccessLogInputRecords(accessLog);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					executor.shutdown();
+				}
+			}
+		});
+	}
+
+	public static long getExpirySeconds() {
+		long timeNow = System.currentTimeMillis();
+		long expiry = timeNow + Integer.parseInt(CSEnvVariables.getProperty(eKYCConstant.EXPIRY_TIME));
+		return expiry;
+	}
+
+	/**
+	 * Create and store the token into the cache and set the validation for 30
+	 * minutues
+	 */
+	public static String createAndStoreSeesionInCache(String mobileNumber) {
+		String sessionId = randomAlphaNumericNew(256);
+		TokenAuthModule.storeToken(mobileNumber, sessionId);
+		long timeNow = System.currentTimeMillis();
+		CacheController.getKeyTimeMap().put(sessionId, timeNow);
+		return sessionId;
 	}
 }

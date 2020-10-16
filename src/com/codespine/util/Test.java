@@ -1,11 +1,18 @@
 package com.codespine.util;
 
-import com.codespine.restservice.NsdlPanVerificationRestService;
+import java.io.File;
 
 public class Test {
+
 	public static void main(String[] args) {
-		NsdlPanVerificationRestService.pfx2JksFile(2);
-		NsdlPanVerificationRestService.pkcs7Generate(2, "ANHPK5791Q");
-		NsdlPanVerificationRestService.apiCallForPanVerififcation(2, "ANHPK5791Q");
+		String givenPath = "C://apache-tomcat-8.5.35//Test//";
+		int applicationId = 2;
+		File dir = new File(givenPath + applicationId);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		} else {
+			dir.mkdirs();
+		}
 	}
+
 }

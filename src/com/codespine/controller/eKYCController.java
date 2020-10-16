@@ -1,11 +1,16 @@
 package com.codespine.controller;
 
+import java.util.Calendar;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -13,6 +18,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.codespine.data.eKYCDAO;
+import com.codespine.dto.AccesslogDTO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
@@ -24,11 +30,17 @@ import com.codespine.service.eKYCService;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.FinalPDFGenerator;
 import com.codespine.util.StringUtil;
+import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 @Path("/eKYC")
 public class eKYCController {
-	eKYCService pService = new eKYCService();
+
+	AccesslogDTO accessLog = new AccesslogDTO();
+	String contentType = "content-type";
+	@Context
+	HttpServletRequest request;
+	java.sql.Timestamp created_on = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 
 	/**
 	 * To check the given mobile and email, proceed to next step
@@ -41,9 +53,17 @@ public class eKYCController {
 	@Path("/newRegistration")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO newRegistration(PersonalDetailsDTO pDto) {
+	public ResponseDTO newRegistration(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.newRegistration(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+
+		response = eKYCService.getInstance().newRegistration(pDto);
 		return response;
 	}
 
@@ -58,7 +78,7 @@ public class eKYCController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verifyActivationLink(@QueryParam("email") String email, @QueryParam("key") String link) {
-		String response = pService.verifyActivationLink(email, link);
+		String response = eKYCService.getInstance().verifyActivationLink(email, link);
 		if (response.equals(eKYCConstant.SUCCESS_MSG)) {
 			try {
 				java.net.URI location = new java.net.URI(CSEnvVariables.getProperty(eKYCConstant.REDIRECT_PAGE));
@@ -81,9 +101,17 @@ public class eKYCController {
 	@Path("/verifyOtp")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO verifyOtp(PersonalDetailsDTO pDto) {
+	public ResponseDTO verifyOtp(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.verifyOtp(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+
+		response = eKYCService.getInstance().verifyOtp(pDto);
 		return response;
 	}
 
@@ -98,9 +126,18 @@ public class eKYCController {
 	@Path("/verifyPan")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO verifyPan(PanCardDetailsDTO pDto) {
+	public ResponseDTO verifyPan(@Context ContainerRequestContext requestContext, PanCardDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.verifyPan(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().verifyPan(pDto);
 		return response;
 	}
 
@@ -115,9 +152,18 @@ public class eKYCController {
 	@Path("/basicInformation")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO basicInformation(PersonalDetailsDTO pDto) {
+	public ResponseDTO basicInformation(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.basicInformation(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().basicInformation(pDto);
 		return response;
 	}
 
@@ -132,9 +178,18 @@ public class eKYCController {
 	@Path("/updateAddress")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO updateAddress(AddressDTO pDto) {
+	public ResponseDTO updateAddress(@Context ContainerRequestContext requestContext, AddressDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.updateAddress(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().updateAddress(pDto);
 		return response;
 	}
 
@@ -149,9 +204,18 @@ public class eKYCController {
 	@Path("/updateCommunicationAddress")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO updateCommunicationAddress(AddressDTO pDto) {
+	public ResponseDTO updateCommunicationAddress(@Context ContainerRequestContext requestContext, AddressDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.updateCommunicationAddress(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().updateCommunicationAddress(pDto);
 		return response;
 	}
 
@@ -166,9 +230,18 @@ public class eKYCController {
 	@Path("/updatePermanentAddress")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO updatePermanentAddress(AddressDTO pDto) {
+	public ResponseDTO updatePermanentAddress(@Context ContainerRequestContext requestContext, AddressDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.updatePermanentAddress(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().updatePermanentAddress(pDto);
 		return response;
 	}
 
@@ -183,9 +256,18 @@ public class eKYCController {
 	@Path("/updateBankAccountDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO updateBankAccountDetails(BankDetailsDTO pDto) {
+	public ResponseDTO updateBankAccountDetails(@Context ContainerRequestContext requestContext, BankDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.updateBankAccountDetails(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().updateBankAccountDetails(pDto);
 		return response;
 	}
 
@@ -200,9 +282,18 @@ public class eKYCController {
 	@Path("/updateEmail")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO updateEmail(PersonalDetailsDTO pDto) {
+	public ResponseDTO updateEmail(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.updateEmail(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().updateEmail(pDto);
 		return response;
 	}
 
@@ -217,9 +308,18 @@ public class eKYCController {
 	@Path("/deleteOldOne")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO deleteOldOne(PersonalDetailsDTO pDto) {
+	public ResponseDTO deleteOldOne(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.deleteOldOne(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().deleteOldOne(pDto);
 		return response;
 	}
 
@@ -233,9 +333,18 @@ public class eKYCController {
 	@Path("/updateExchDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO updateExchDetails(ExchDetailsDTO pDto) {
+	public ResponseDTO updateExchDetails(@Context ContainerRequestContext requestContext, ExchDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.updateExchDetails(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().updateExchDetails(pDto);
 		return response;
 	}
 
@@ -250,10 +359,20 @@ public class eKYCController {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/fileUpload")
-	public ResponseDTO uploadProof(@FormDataParam("proof") FormDataBodyPart proof,
-			@FormDataParam("proofType") String proofType, @FormDataParam("applicationId") int applicationId) {
+	public ResponseDTO uploadProof(@Context ContainerRequestContext requestContext,
+			@FormDataParam("proof") FormDataBodyPart proof, @FormDataParam("proofType") String proofType,
+			@FormDataParam("applicationId") int applicationId) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.uploadProof(proof, proofType, applicationId);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, proofType, applicationId + "");
+
+		response = eKYCService.getInstance().uploadProof(proof, proofType, applicationId);
 		return response;
 	}
 
@@ -261,17 +380,35 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getEsignXml")
-	public ResponseDTO getXmlEncode(PersonalDetailsDTO pDto) {
+	public ResponseDTO getXmlEncode(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getXmlEncode(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getXmlEncode(pDto);
 		return response;
 	}
 
 	@POST
 	@Path("/finalPDFGenerator")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO finalPDFGenerator(int applicationId) throws Exception {
+	public ResponseDTO finalPDFGenerator(@Context ContainerRequestContext requestContext, int applicationId)
+			throws Exception {
 		ResponseDTO response = new ResponseDTO();
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (eKYCdto != null) {
 			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
@@ -301,9 +438,18 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getDocumentLink")
-	public ResponseDTO getDocumentLink(PersonalDetailsDTO pDto) {
+	public ResponseDTO getDocumentLink(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getDocumentLink(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getDocumentLink(pDto);
 		return response;
 	}
 
@@ -318,9 +464,18 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getPanCardDetails")
-	public ResponseDTO getPanCardDetails(PersonalDetailsDTO pDto) {
+	public ResponseDTO getPanCardDetails(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getPanCardDetails(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getPanCardDetails(pDto);
 		return response;
 	}
 
@@ -335,9 +490,18 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getBasicInformation")
-	public ResponseDTO getBasicInformation(PersonalDetailsDTO pDto) {
+	public ResponseDTO getBasicInformation(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getBasicInformation(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getBasicInformation(pDto);
 		return response;
 	}
 
@@ -352,9 +516,19 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getCommunicationAddress")
-	public ResponseDTO getCommunicationAddress(PersonalDetailsDTO pDto) {
+	public ResponseDTO getCommunicationAddress(@Context ContainerRequestContext requestContext,
+			PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getCommunicationAddress(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getCommunicationAddress(pDto);
 		return response;
 	}
 
@@ -369,9 +543,18 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getPermanentAddress")
-	public ResponseDTO getPermanentAddress(PersonalDetailsDTO pDto) {
+	public ResponseDTO getPermanentAddress(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getPermanentAddress(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getPermanentAddress(pDto);
 		return response;
 	}
 
@@ -385,9 +568,18 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getBankDetails")
-	public ResponseDTO getBankDetails(PersonalDetailsDTO pDto) {
+	public ResponseDTO getBankDetails(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getBankDetails(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getBankDetails(pDto);
 		return response;
 	}
 
@@ -400,9 +592,18 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getExchDetails")
-	public ResponseDTO getExchDetails(PersonalDetailsDTO pDto) {
+	public ResponseDTO getExchDetails(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getExchDetails(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getExchDetails(pDto);
 		return response;
 	}
 
@@ -415,9 +616,18 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getUploadedFile")
-	public ResponseDTO getUploadedFile(PersonalDetailsDTO pDto) {
+	public ResponseDTO getUploadedFile(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.getUploadedFile(pDto);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getUploadedFile(pDto);
 		return response;
 	}
 
@@ -435,11 +645,51 @@ public class eKYCController {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/uploadIvrCapture")
-	public ResponseDTO uploadIvrCapture(@FormDataParam("ivrImage") FormDataBodyPart ivrImage,
-			@FormDataParam("ivrLat") String ivrLat, @FormDataParam("ivrLong") String ivrLong,
-			@FormDataParam("applicationId") int applicationId) {
+	public ResponseDTO uploadIvrCapture(@Context ContainerRequestContext requestContext,
+			@FormDataParam("ivrImage") String ivrImage, @FormDataParam("ivrLat") String ivrLat,
+			@FormDataParam("ivrLong") String ivrLong, @FormDataParam("applicationId") int applicationId) {
 		ResponseDTO response = new ResponseDTO();
-		response = pService.uploadIvrCapture(ivrImage, ivrLat, ivrLong, applicationId);
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+
+		response = eKYCService.getInstance().uploadIvrCapture(ivrImage, ivrLat, ivrLong, applicationId,
+				request.getHeader("X-Forwarded-For"), request.getHeader("user-agent"));
+		return response;
+	}
+
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getNsdlXML")
+	public ResponseDTO uploadIvrCapture(@FormDataParam("msg") String msg) {
+		ResponseDTO response = new ResponseDTO();
+
+		return response;
+	}
+
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getEsignSignature")
+	public String checkIP(@Context ContainerRequestContext requestContext, String sampleBase64) {
+		String response = "";
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, sampleBase64, "");
+
+		String randomString = Utility.randomAlphaNumericNew(256);
+		long currentTime = System.currentTimeMillis();
+
 		return response;
 	}
 }
