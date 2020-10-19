@@ -110,4 +110,6 @@ public class eKYCConstant {
 	public static final String FILE_PATH_NEWDOCUMENT = "filePathFirstXml";
 	public static final String FILE_PATH_EXAMPLE_DOCUMENT = "exampleDocumentFilePath";
 	public static final String TEMP_FILE_XML_DOCUMENTS = "tempXMLFiles";
+	
+	public static final String DOCUMENT_FILE_NAEM = "constantPDFName";
 }
