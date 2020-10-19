@@ -1,25 +1,20 @@
 package com.codespine.util;
 
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
-import org.apache.pdfbox.pdmodel.font.PDCIDFontType0;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.font.PDType3Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.imgscalr.Scalr;
 import org.json.simple.JSONObject;
@@ -32,13 +27,13 @@ import com.codespine.dto.eKYCDTO;
 public class FinalPDFGenerator {
 	static String sourceFilePath =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)+eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
 	static String destinationFilePath =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
-//	static String sourceFilePath = "C:\\Users\\user\\Downloads\\"+"2.pdf";
-//	static String destinationFilePath =  "C:\\Users\\user\\Downloads\\"+ "1.pdf";
+//	static String sourceFilePath = "C:\\Users\\user\\Downloads\\" + "2.pdf";
+//	static String destinationFilePath = "C:\\Users\\user\\Downloads\\" + "1.pdf";
+
 	public static void main(String[] args) throws Exception {
 //		File file = new File(sourceFilePath);
-//		String application_id = "1";
 //		PDDocument document = PDDocument.load(file);
-//		String val  ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//153 - 
+//		String val = "AAAAAIIIII WWWWWWWWWW AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";// AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";// 153
 //		String val1 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//142 - 
 //		String val2 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//131 - 
 //		String val3 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//120 - 
@@ -50,142 +45,173 @@ public class FinalPDFGenerator {
 //		String val9 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//54 - 
 //		String val10 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//43 - size 10
 //		PDPage page = document.getPage(0);
-//		PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, false);
-//		contentStream.setFont(PDType1Font.SYMBOL, 10);
+//		PDRectangle mediaBox = page.getMediaBox();
+//		System.out.println("Width:" + mediaBox.getWidth());
+//		System.out.println("Height:" + mediaBox.getHeight());
+//		PDImageXObject pdImage = PDImageXObject.createFromFile("C:\\Users\\user\\Downloads\\11.png", document);
+//	    PDPageContentStream contentStream1 =  new PDPageContentStream(document, page, AppendMode.APPEND, true);
+//	    contentStream1.drawImage(pdImage, 104,707);
+//	    contentStream1.close();
+//		PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true);
+//		PDPageContentStream contentStream1 = new PDPageContentStream(document, page,AppendMode.APPEND, true);
+//		PDImageXObject pdImage = PDImageXObject.createFromFile("C:\\Users\\user\\Downloads\\tick.svg", document);
+//		contentStream1.drawImage(pdImage, 104,707);
+//		contentStream1.close();
 //		contentStream.beginText();
-//		File f = new File("C:\\Users\\user\\Downloads\\LiberationSans-Regular.ttf");
+//		File f = new File("C:\\Users\\user\\Downloads\\MonospaceTypewriter.ttf");
 //		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
-
-//		PDFont font1 = PDType1Font.COURIER;
-//		char aa = 'U+2714'; 
-//		U+2714
-//		String value = val;
-//		System.out.println(value.length());
-//		 char[] ch = new char[value.length()];
-//		 System.out.println(ch.length);
-//		 if(ch.length > 41) {
-//			 contentStream.setFont(font1, 9);
-//		 }else {
-//		 }
-//		contentStream.setFont(font1,4);
-//		contentStream.showText("\u2714");
-//		 contentStream.setFont(PDType1Font.HELVETICA, 11);
-//		contentStream.setCharacterSpacing(5);
-//		contentStream.newLineAtOffset(105,751);
-//		char aa1 = '\u2714';
-//		String a = "✔";
-//		String text = a;
-//		contentStream.showText(text);
-//		pdfimageInserter(document, 0,105,751,"tick-3.png",application_id,"C:\\Users\\user\\Downloads\\","TICK");
+//		if(!val.isEmpty() && val.length() > 70 && val.length() < 80 ) {
+//			contentStream.setFont(font1, 5);	
+//		}else if(!val.isEmpty() && val.length() > 80 && val.length() < 90 ) {
+//			contentStream.setFont(font1, 4);	
+//		}else if(!val.isEmpty() && val.length() > 90 && val.length() < 110 ) {
+//			contentStream.setFont(font1, 6);	
+////		}else if(!val.isEmpty() && val.length() > 100 && val.length() < 110 ) {
+////			contentStream.setFont(font1, 2);	
+//		}
+//		else {
+//			contentStream.setFont(font1, 10);
+//		}
+		
+//		contentStream.newLineAtOffset(105, 752);
+//		contentStream.setCharacterSpacing(1);
+//		contentStream.showText(val);
 //		contentStream.endText();
 //		contentStream.close();
-//		System.out.println("Content added");
+//		
 //		document.save(destinationFilePath);
 //		System.out.println("pdf Generated");
 //		document.close();
 	}
+
 	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto) throws Exception {
-		
 		File file = new File(sourceFilePath);
 		String application_id = eKYCdto.getForPDFKeyValue().get("application_id");
-		String finalSestinationFilePath = destinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+application_id;
+		String finalSestinationFilePath = destinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id;
 		File dir = new File(finalSestinationFilePath);
-		String finalPDFName = application_id +eKYCConstant.PDF_FILE_EXTENSION;
+		String finalPDFName = application_id + eKYCConstant.PDF_FILE_EXTENSION;
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
 		PDDocument document = PDDocument.load(file);
 		List<PdfCoordinationsDTO> pdfCoordinationsDTOs = eKYCDAO.getInstance().getPdfCoordinations();
-		for(PdfCoordinationsDTO DTO:pdfCoordinationsDTOs) {
-			System.out.println(DTO.getColumn_name());
+		File tickFontFile = new File("C:\\Users\\user\\Downloads\\ARIALUNI.ttf");
+		PDType0Font font = PDType0Font.load(document, tickFontFile);
+		for (PdfCoordinationsDTO DTO : pdfCoordinationsDTOs) {
 			String coordinates = DTO.getCoordinates();
-			if(DTO.getIs_default() < 1) {
-				String[] orgs = StringUtil.split(coordinates,eKYCConstant.COMMA_SEPERATOR);
+			if (DTO.getIs_default() < 1) {
+				String[] orgs = StringUtil.split(coordinates, eKYCConstant.COMMA_SEPERATOR);
 				int xValue = Integer.parseInt(orgs[0]);
 				int yValue = Integer.parseInt(orgs[1]);
-				if(StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()))
-						&& !StringUtil.isEqual(DTO.getColumn_name(),eKYCConstant.IMAGE)) {
-					pdfInserter(document,DTO.getPage_number(),eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()),xValue,yValue);
-				}
-				else if(StringUtil.isEqual(DTO.getColumn_name(),eKYCConstant.IMAGE)){
-					pdfimageInserter(document, DTO.getPage_number(),xValue,yValue,"13.jpg",application_id,finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH,"");
+				if (StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()))
+						&& !StringUtil.isEqual(DTO.getColumn_name(), eKYCConstant.IMAGE)) {
+					pdfInserter(DTO.getPage_number(),document,eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()),
+							xValue, yValue, DTO.getIs_value_reduced());
+				} else if (StringUtil.isEqual(DTO.getColumn_name(), eKYCConstant.IMAGE)) {
+					pdfimageInserter(DTO.getPage_number(),document,xValue, yValue, "13.jpg", application_id,
+							finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH);
 //				if(eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)) != null) {
 //					pdfimageInserter(document, pageNumber,xValue,yValue, eKYCdto.getForPDFKeyValue().get(columnsNames.get(i)),application_id,finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH);
 				}
-			}else {
-				if(StringUtil.isEqual(DTO.getColumn_name(), "TICK")) {
-					String[] orgs = StringUtil.split(coordinates,eKYCConstant.COMMA_SEPERATOR);
+			} else {
+				if (StringUtil.isEqual(DTO.getColumn_name(), "TICK")) {
+					String[] orgs = StringUtil.split(coordinates, eKYCConstant.COMMA_SEPERATOR);
 					int xValue = Integer.parseInt(orgs[0]);
 					int yValue = Integer.parseInt(orgs[1]);
-					pdfimageInserter(document,DTO.getPage_number(),xValue,yValue,"tick-1.png",application_id,eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH),"TICK");
-				}else if(StringUtil.isStrContainsWithEqIgnoreCase(DTO.getColumn_name(),"DEFAULT")){
-					String[] orgs = StringUtil.split(coordinates,eKYCConstant.COMMA_SEPERATOR);
+					pdfTickInserter(font,DTO.getPage_number(),document,xValue, yValue);
+				} else if (StringUtil.isStrContainsWithEqIgnoreCase(DTO.getColumn_name(), "DEFAULT")) {
+					String[] orgs = StringUtil.split(coordinates, eKYCConstant.COMMA_SEPERATOR);
 					int xValue = Integer.parseInt(orgs[0]);
 					int yValue = Integer.parseInt(orgs[1]);
-					String columnValue = StringUtil.replace(DTO.getColumn_name(),"DEFAULT_","");
-					pdfInserter(document,DTO.getPage_number(),columnValue,xValue,yValue);
-				}else {
-					 JSONParser parser = new JSONParser();
-				     JSONObject json = (JSONObject) parser.parse(coordinates);
-				     if(StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()))) {
-				    	 String A = (String) json.get(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()).toLowerCase());
-				    	 String[] orgs1 = StringUtil.split(A,eKYCConstant.COMMA_SEPERATOR);
-				    	 int xValue1 = Integer.parseInt(orgs1[0]);
-				    	 int yValue1 = Integer.parseInt(orgs1[1]);
-				    	 System.out.println(A); 
-				    	 pdfimageInserter(document,DTO.getPage_number(),xValue1,yValue1,"tick-1.png",application_id,eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH),"TICK");
-				     }
+					String columnValue = StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "");
+					pdfInserter(DTO.getPage_number(),document,columnValue, xValue, yValue, DTO.getIs_value_reduced());
+				} else {
+					JSONParser parser = new JSONParser();
+					JSONObject json = (JSONObject) parser.parse(coordinates);
+					if (StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()))) {
+						String A = (String) json
+								.get(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()).toLowerCase());
+						String[] orgs1 = StringUtil.split(A, eKYCConstant.COMMA_SEPERATOR);
+						int xValue1 = Integer.parseInt(orgs1[0]);
+						int yValue1 = Integer.parseInt(orgs1[1]);
+						pdfTickInserter(font,DTO.getPage_number(),document, xValue1, yValue1);
+					}
 				}
 			}
 		}
 		// Saving the document
-		document.save(new File(finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH+finalPDFName));
+		document.save(new File(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName));
 		System.out.println("pdf Generated");
 		// Closing the document
 		document.close();
-		return eKYCConstant.SITE_URL_FILE+eKYCConstant.UPLOADS_DIR+application_id+eKYCConstant.WINDOWS_FORMAT_SLASH+finalPDFName;
+		return eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + application_id
+				+ eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName;
 	}
-	
-	public static void pdfInserter(PDDocument document ,int pageNumber,String insertValue,int xValue, int yValue) throws Exception {
+
+	@SuppressWarnings("deprecation")
+	public static void pdfInserter(int pageNumber,PDDocument document,String insertValue, int xValue, int yValue,int resizeRequired) throws Exception {
 		PDPage page = document.getPage(pageNumber);
-		PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, false);
-		// Begin the Content stream
+	   	PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
 		contentStream.beginText();
-		// Or whatever font you want.
-		// Setting the font to the Content stream
-//		Font nameFont = new Font(Font.MONOSPACED, Font.BOLD, 18);
-//		PDFontFactory factory = new PDFontFactory()
-		contentStream.setFont(PDType1Font.HELVETICA, 11);
 		contentStream.setNonStrokingColor(0, 0, 0);
-		contentStream.setCharacterSpacing(5);
+		if (resizeRequired > 0) {
+			File f = new File("C:\\Users\\user\\Downloads\\MonospaceTypewriter.ttf");
+			PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
+			contentStream.setFont(font1, 7);
+			contentStream.setCharacterSpacing(1);
+			if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+				contentStream.setFont(font1, 6);	
+			}else {
+				contentStream.setFont(PDType1Font.HELVETICA, 11);
+			}
+		} else {
+			contentStream.setFont(PDType1Font.HELVETICA, 11);
+			contentStream.setNonStrokingColor(0, 0, 0);
+			contentStream.setCharacterSpacing(5);
+		}
 		// Setting the position for the line
-		contentStream.newLineAtOffset(xValue,yValue);
+		contentStream.newLineAtOffset(xValue, yValue);
 		String text = insertValue;
 		// Adding text in the form of string
 		contentStream.showText(text);
 		// Ending the content stream
 		contentStream.endText();
+		contentStream.close();
 		System.out.println("Content added");
 		// Closing the content stream
-		contentStream.close();
+		
 	}
-	private static void pdfimageInserter(PDDocument document, int pageNumber,int xValue, int yValue, String image, String application_id, String finalSestinationFilePath, String tick) throws IOException {
-		String File_path = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
-		File file1 = new File(File_path+image);
-		String resizeImageName =	image;
-		if(StringUtil.isNotEqual(tick, "TICK")) {
-			BufferedImage img = ImageIO.read(file1);
-			BufferedImage scaledImg = Scalr.resize(img, 100, 100);
-			resizeImageName =StringUtil.isImageReSizeExist(finalSestinationFilePath,application_id); 
-			File file = new File(finalSestinationFilePath,resizeImageName);
-			ImageIO.write(scaledImg, "JPG", file);
-		}
+
+	private static void pdfimageInserter(int pageNumber,PDDocument document,int xValue, int yValue, String image,String application_id, String finalSestinationFilePath) throws IOException {
 		PDPage page = document.getPage(pageNumber);
-		PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-		PDImageXObject pdImage = PDImageXObject.createFromFile(finalSestinationFilePath+resizeImageName, document);
-		contentStream.drawImage(pdImage, xValue, yValue);
-		contentStream.close();
+	   	PDPageContentStream stream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
+		String File_path = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
+		File file1 = new File(File_path + image);
+		String resizeImageName = image;
+		BufferedImage img = ImageIO.read(file1);
+		BufferedImage scaledImg = Scalr.resize(img, 100, 100);
+		resizeImageName = StringUtil.isImageReSizeExist(finalSestinationFilePath, application_id);
+		File file = new File(finalSestinationFilePath, resizeImageName);
+		ImageIO.write(scaledImg, "JPG", file);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(finalSestinationFilePath + resizeImageName, document);
+		stream.drawImage(pdImage, xValue, yValue);
+		stream.close();
 
-
+	}
+	@SuppressWarnings("deprecation")
+	private static void pdfTickInserter(PDType0Font font,int pageNumber,PDDocument document, int xValue, int yValue) throws IOException {
+		PDPage page = document.getPage(pageNumber);
+	   	PDPageContentStream stream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
+	    String ascii4 ="✓";
+	    stream.beginText();
+	    stream.setFont(font, 12);
+	    stream.moveTextPositionByAmount(xValue,yValue);
+	    stream.drawString(ascii4);
+	    stream.endText();
+	    stream.close();
 	}
 }

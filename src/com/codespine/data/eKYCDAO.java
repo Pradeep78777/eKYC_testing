@@ -835,7 +835,9 @@ public class eKYCDAO {
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", rSet.getString("bank_account_no"));
-					json.put("date", DateUtil.getTodayStringDate());
+					json.put("half_date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(),DateUtil.DDMMYY));
+					json.put("date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(),DateUtil.DDMMYYYY));
+					json.put("reverse_full_date",DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(),DateUtil.YYYYMMDD));
 					json.put("last_financial_date", DateUtil.getLastFinancialYearTo(DateUtil.getTodayDate()));
 					result.setAccount_type(rSet.getString("account_type"));
 					json.put("account_type", rSet.getString("account_type"));
@@ -1475,8 +1477,7 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn
-					.prepareStatement(" SELECT column_name,coordinates,page_number,is_default FROM tbl_pdf_orgins ");
+			pStmt = conn.prepareStatement(" SELECT column_name,coordinates,page_number,is_default,is_value_reduced FROM tbl_pdf_orgins order by page_number asc ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1485,6 +1486,7 @@ public class eKYCDAO {
 					result.setCoordinates(rSet.getString("coordinates"));
 					result.setPage_number(rSet.getInt("page_number"));
 					result.setIs_default(rSet.getInt("is_default"));
+					result.setIs_value_reduced(rSet.getInt("is_value_reduced"));
 					if (pdfCoordinationsDTOs == null) {
 						pdfCoordinationsDTOs = new ArrayList<PdfCoordinationsDTO>();
 					}

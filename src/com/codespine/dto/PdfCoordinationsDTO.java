@@ -12,6 +12,7 @@ public class PdfCoordinationsDTO {
 	private Date created_on;
 	private Date updated_on;
 	private int is_default;
+	private int is_value_reduced;
 	public int getId() {
 		return id;
 	}
@@ -59,6 +60,12 @@ public class PdfCoordinationsDTO {
 	}
 	public void setIs_default(int is_default) {
 		this.is_default = is_default;
+	}
+	public int getIs_value_reduced() {
+		return is_value_reduced;
+	}
+	public void setIs_value_reduced(int is_value_reduced) {
+		this.is_value_reduced = is_value_reduced;
 	}
 	
 	
