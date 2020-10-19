@@ -25,8 +25,9 @@ import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.eKYCDTO;
 
 public class FinalPDFGenerator {
-	static String sourceFilePath =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)+eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
-	static String destinationFilePath =  eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
+	static String filePath = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
+	static String sourceFilePath = filePath +eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
+	static String destinationFilePath =  filePath;
 //	static String sourceFilePath = "C:\\Users\\user\\Downloads\\" + "2.pdf";
 //	static String destinationFilePath = "C:\\Users\\user\\Downloads\\" + "1.pdf";
 
@@ -95,7 +96,7 @@ public class FinalPDFGenerator {
 		}
 		PDDocument document = PDDocument.load(file);
 		List<PdfCoordinationsDTO> pdfCoordinationsDTOs = eKYCDAO.getInstance().getPdfCoordinations();
-		File tickFontFile = new File("C:\\Users\\user\\Downloads\\ARIALUNI.ttf");
+		File tickFontFile = new File(filePath+"ARIALUNI.ttf");
 		PDType0Font font = PDType0Font.load(document, tickFontFile);
 		for (PdfCoordinationsDTO DTO : pdfCoordinationsDTOs) {
 			String coordinates = DTO.getCoordinates();
@@ -155,7 +156,7 @@ public class FinalPDFGenerator {
 		contentStream.beginText();
 		contentStream.setNonStrokingColor(0, 0, 0);
 		if (resizeRequired > 0) {
-			File f = new File("C:\\Users\\user\\Downloads\\MonospaceTypewriter.ttf");
+			File f = new File(filePath+"MonospaceTypewriter.ttf");
 			PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
 			contentStream.setFont(font1, 7);
 			contentStream.setCharacterSpacing(1);
