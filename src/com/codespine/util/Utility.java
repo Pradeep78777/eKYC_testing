@@ -3,10 +3,13 @@ package com.codespine.util;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -25,8 +28,13 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.codespine.cache.CacheController;
 import com.codespine.dto.AccesslogDTO;
@@ -320,10 +328,10 @@ public class Utility {
 	 * @author GOWRI SANKAR R
 	 * @return
 	 */
-	public static String getXmlForEsign() {
+	public static String getXmlForEsign(int applicationId, String folderName) {
 		String response = "";
 		try {
-			String pathToPDF = "C:\\Users\\Administrator\\Desktop\\zebu_ekyc\\Ekyc_document\\Trading & Demat KYC_V6.pdf";
+			String pathToPDF = folderName + "\\Trading & Demat KYC_V6.pdf";
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
 			String responseUrl = "http://rest.irongates.in/eKYCService/eKYC/getNsdlXML";
@@ -446,5 +454,98 @@ public class Utility {
 		long timeNow = System.currentTimeMillis();
 		CacheController.getKeyTimeMap().put(sessionId, timeNow);
 		return sessionId;
+	}
+
+	/**
+	 * Method to copy one folder to another folder
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param sourceLocation
+	 * @param desinitionLocation
+	 */
+	public static void exampleDocumentToNewUser(String sourceLocation, String desinitionLocation) {
+		File source = new File(sourceLocation);
+		File dest = new File(desinitionLocation);
+		try {
+			FileUtils.copyDirectory(source, dest);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * To create the new xml document and write the response Xml from the NSDL
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param xmlPath
+	 * @param xmlTowrite
+	 */
+	public static void createNewXmlFile(String xmlPath, String xmlTowrite) {
+		try {
+			File myObj = new File(xmlPath + "\\" + "FirstResponse.xml");
+			if (myObj.createNewFile()) {
+				FileWriter myWriter = new FileWriter(xmlPath + "\\" + "FirstResponse.xml");
+				myWriter.write(xmlTowrite);
+				myWriter.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * To get the TXN id from the XMl
+	 * 
+	 * @param xmlPath
+	 * @param xmlTowrite
+	 * @return
+	 */
+	public static String toGetTxnFromXMlpath(String xmlPath) {
+		String txnId = "";
+		try {
+			File fXmlFile = new File(xmlPath);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+			doc.getDocumentElement().normalize();
+			Element eElement = doc.getDocumentElement();
+			txnId = eElement.getAttribute("txn");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return txnId;
+	}
+
+	public static void getSignFromNsdl(String dcoumentLocation, String documentToBeSavedLocation, String receivedXml) {
+		try {
+			String pathToPDF = dcoumentLocation;
+			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
+			int serverTime = 10;
+			int pageNumberToInsertSignatureStamp = 1;
+			String nameToShowOnSignatureStamp = "Test";
+			String locationToShowOnSignatureStamp = "Test";
+			String reasonForSign = "";
+			int xCo_ordinates = 100;
+			int yCo_ordinates = 100;
+			int signatureWidth = 200;
+			int signatureHeight = 50;
+			String pdfPassword = "";
+			String esignXml = receivedXml;
+			String returnPath = documentToBeSavedLocation;
+			try {
+				EsignApplication eSignApp = new EsignApplication();
+				String signedDocument = eSignApp.getSignOnDocument(esignXml, pathToPDF, tickImagePath, serverTime,
+						pageNumberToInsertSignatureStamp, nameToShowOnSignatureStamp, locationToShowOnSignatureStamp,
+						reasonForSign, xCo_ordinates, yCo_ordinates, signatureWidth, signatureHeight, pdfPassword,
+						returnPath);
+				System.out.println(signedDocument);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 }

@@ -18,6 +18,7 @@ import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
+import com.codespine.dto.esignDTO;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.DBUtil;
 import com.codespine.util.DateUtil;
@@ -1474,7 +1475,8 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT column_name,coordinates,page_number,is_default FROM tbl_pdf_orgins ");
+			pStmt = conn
+					.prepareStatement(" SELECT column_name,coordinates,page_number,is_default FROM tbl_pdf_orgins ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1728,6 +1730,93 @@ public class eKYCDAO {
 			}
 		}
 		return count;
+	}
+
+	/**
+	 * Method to insert the txn Details into the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationID
+	 * @param txn
+	 * @return
+	 */
+	public static int insertTxnDetails(int applicationID, String txn, String folderName) {
+		int count = 0;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		try {
+			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"INSERT INTO tbl_txn_details(application_id, txn, folder_location ,created_on, created_by) "
+							+ "VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE  application_id = ?, txn = ? , folder_location = ?, updated_on = ? , updated_by = ? ");
+			int paramPos = 1;
+			pStmt.setLong(paramPos++, applicationID);
+			pStmt.setString(paramPos++, txn);
+			pStmt.setString(paramPos++, folderName);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setLong(paramPos++, applicationID);
+			/**
+			 * on duplicate Key
+			 */
+			pStmt.setLong(paramPos++, applicationID);
+			pStmt.setString(paramPos++, txn);
+			pStmt.setString(paramPos++, folderName);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setLong(paramPos++, applicationID);
+			count = pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Get the txn details for given txn
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param txnName
+	 * @return
+	 */
+	public esignDTO getTxnDetails(String txnName) {
+		esignDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT application_id ,txn , folder_location  FROM tbl_txn_details where txn =  ? ");
+			pStmt.setString(paromPos++, txnName);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				result = new esignDTO();
+				while (rSet.next()) {
+					result.setApplication_id(rSet.getInt("application_id"));
+					result.setTxn(rSet.getString("txn"));
+					result.setFolderLocation(rSet.getString("folder_location"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 }
