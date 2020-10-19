@@ -2,6 +2,7 @@ package com.codespine.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -970,30 +971,45 @@ public class eKYCService {
 				String random = Utility.generateOTP();
 				String fileName = "lastXml" + random + ".xml";
 				File fXmlFile = new File(CSEnvVariables.getProperty(eKYCConstant.TEMP_FILE_XML_DOCUMENTS) + fileName);
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(fXmlFile);
-				doc.getDocumentElement().normalize();
-				Element eElement = doc.getDocumentElement();
-				String txnName = eElement.getAttribute("txn");
+				if (fXmlFile.createNewFile()) {
+					FileWriter myWriter = new FileWriter(fXmlFile);
+					myWriter.write(msg);
+					myWriter.close();
 
-				/**
-				 * Get Application for thr TxnName
-				 */
+					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+					Document doc = dBuilder.parse(fXmlFile);
+					doc.getDocumentElement().normalize();
+					Element eElement = doc.getDocumentElement();
+					String txnName = eElement.getAttribute("txn");
 
-				esignDTO applicationNumber = eKYCDAO.getInstance().getTxnDetails(txnName);
-				if (applicationNumber != null && applicationNumber.getApplication_id() > 0) {
-					
+					/**
+					 * Get Application for thr TxnName
+					 */
+
+					esignDTO applicationNumber = eKYCDAO.getInstance().getTxnDetails(txnName);
+					if (applicationNumber != null && applicationNumber.getApplication_id() > 0) {
+						String filePath = CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_NEWDOCUMENT)
+								+ applicationNumber.getApplication_id() + "\\" + applicationNumber.getFolderLocation();
+						/**
+						 * 
+						 */
+						Utility.getSignFromNsdl(
+								filePath + "\\" + CSEnvVariables.getProperty(eKYCConstant.DOCUMENT_FILE_NAEM), filePath,
+								msg);
+					} else {
+						/**
+						 * application id cannot be zero at this time
+						 */
+					}
+
 				} else {
 					/**
-					 * application id cannot be zero at this time
+					 * message cannot be null
 					 */
 				}
-
 			} else {
-				/**
-				 * message cannot be null
-				 */
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

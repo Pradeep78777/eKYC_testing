@@ -331,7 +331,7 @@ public class Utility {
 	public static String getXmlForEsign(int applicationId, String folderName) {
 		String response = "";
 		try {
-			String pathToPDF = folderName + "\\Trading & Demat KYC_V6.pdf";
+			String pathToPDF = folderName + "\\" + CSEnvVariables.getProperty(eKYCConstant.DOCUMENT_FILE_NAEM);
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
 			String responseUrl = "http://rest.irongates.in/eKYCService/eKYC/getNsdlXML";
