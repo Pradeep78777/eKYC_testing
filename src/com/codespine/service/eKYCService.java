@@ -4,12 +4,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.json.simple.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
@@ -21,8 +28,10 @@ import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
+import com.codespine.dto.esignDTO;
 import com.codespine.helper.eKYCHelper;
 import com.codespine.restservice.NsdlPanVerificationRestService;
+import com.codespine.util.CSEnvVariables;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
@@ -523,10 +532,59 @@ public class eKYCService {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
 			PersonalDetailsDTO result = new PersonalDetailsDTO();
-			String xml = Utility.getXmlForEsign();
-			result.setEsign_Xml(xml);
-			response.setStatus(eKYCConstant.SUCCESS_STATUS);
-			response.setResult(result);
+			/**
+			 * Create the folder name
+			 */
+			Date date = new Date();
+			SimpleDateFormat DateFor = new SimpleDateFormat("yyyy-MM-dd");
+			String stringDate = DateFor.format(date);
+			long timeInmillsecods = System.currentTimeMillis();
+			String folderName = stringDate + " " + timeInmillsecods;
+			/**
+			 * Create the folder name and mov ethe ekyc document to the folder
+			 * for the Esign
+			 */
+			String filePath = CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_NEWDOCUMENT) + pDto.getApplication_id()
+					+ "\\" + folderName;
+
+			File dir = new File(filePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			/**
+			 * Copy the example document to the given Application id location
+			 */
+			Utility.exampleDocumentToNewUser(CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_EXAMPLE_DOCUMENT),
+					filePath);
+			/**
+			 * Call to NSDL for getting the xml form the NSDL
+			 */
+			String getXml = Utility.getXmlForEsign(pDto.getApplication_id(), filePath);
+			Utility.createNewXmlFile(filePath, getXml);
+			/**
+			 * Read the Xml file and get the txn id to save in the data base
+			 */
+			String txnId = Utility.toGetTxnFromXMlpath(filePath + "\\FirstResponse.xml");
+
+			if (txnId != null && !txnId.isEmpty()) {
+				/**
+				 * Save the Txn into the data base
+				 */
+				int insertCount = eKYCDAO.insertTxnDetails(pDto.getApplication_id(), txnId, folderName);
+				if (insertCount > 0) {
+					result.setEsign_Xml(getXml);
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setResult(result);
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
@@ -535,6 +593,11 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * 
+	 * @param applicationId
+	 * @return
+	 */
 	public eKYCDTO finalPDFGenerator(int applicationId) {
 		ApplicationMasterDTO applicationMasterDTO = new ApplicationMasterDTO();
 		eKYCDTO eKYCDTO = null;
@@ -883,6 +946,54 @@ public class eKYCService {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);
 				response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	/**
+	 * To get the Esign application as signed
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param msg
+	 * @return
+	 */
+	public ResponseDTO getNsdlXML(String msg) {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			if (msg != null && !msg.isEmpty()) {
+				/**
+				 * Write into the temp file and get the txn from the xml
+				 */
+				String random = Utility.generateOTP();
+				String fileName = "lastXml" + random + ".xml";
+				File fXmlFile = new File(CSEnvVariables.getProperty(eKYCConstant.TEMP_FILE_XML_DOCUMENTS) + fileName);
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(fXmlFile);
+				doc.getDocumentElement().normalize();
+				Element eElement = doc.getDocumentElement();
+				String txnName = eElement.getAttribute("txn");
+
+				/**
+				 * Get Application for thr TxnName
+				 */
+
+				esignDTO applicationNumber = eKYCDAO.getInstance().getTxnDetails(txnName);
+				if (applicationNumber != null && applicationNumber.getApplication_id() > 0) {
+					
+				} else {
+					/**
+					 * application id cannot be zero at this time
+					 */
+				}
+
+			} else {
+				/**
+				 * message cannot be null
+				 */
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

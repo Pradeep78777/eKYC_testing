@@ -106,4 +106,8 @@ public class eKYCConstant {
 	 */
 	public static final String SECURED_METHODS = "securedMethods";
 	public static final String UNAUTHORIZED = "Unauthorized";
+
+	public static final String FILE_PATH_NEWDOCUMENT = "filePathFirstXml";
+	public static final String FILE_PATH_EXAMPLE_DOCUMENT = "exampleDocumentFilePath";
+	public static final String TEMP_FILE_XML_DOCUMENTS = "tempXMLFiles";
 }
