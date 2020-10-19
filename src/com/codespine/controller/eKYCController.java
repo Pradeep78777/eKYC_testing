@@ -35,7 +35,14 @@ import com.codespine.util.eKYCConstant;
 
 @Path("/eKYC")
 public class eKYCController {
+	public static eKYCController eKYCController = null;
 
+	public static eKYCController getInstance() {
+		if (eKYCController == null) {
+			eKYCController = new eKYCController();
+		}
+		return eKYCController;
+	}
 	AccesslogDTO accessLog = new AccesslogDTO();
 	String contentType = "content-type";
 	@Context
@@ -390,7 +397,7 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getEsignXml")
-	public ResponseDTO getXmlEncode(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
+	public ResponseDTO getXmlEncode(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) throws Exception {
 		ResponseDTO response = new ResponseDTO();
 		/*
 		 * TO insert Access log into data base
@@ -422,7 +429,7 @@ public class eKYCController {
 
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (eKYCdto != null) {
-			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto);
+			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto,null);
 			if (StringUtil.isNotNullOrEmpty(eKYCPdfFileLocation)) {
 				eKYCDAO.getInstance().insertAttachementDetails(eKYCPdfFileLocation, eKYCConstant.EKYC_DOCUMENT,
 						applicationId);

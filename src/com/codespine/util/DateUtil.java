@@ -13,6 +13,7 @@ public class DateUtil {
 	public static final String DD_MMM_YY					= "dd-MMM-yy";
 	public static final String DD_MMM_YYYY 					= "dd-MM-yyyy";
 	public static final String YYYYMMDD 					= "yyyyMMdd";
+	public static final String YYYY_MM_DD 					= "yyyy-MM-dd";
 	public static final DateFormat DATEFORMAT_YYYYMMDD = new SimpleDateFormat(YYYYMMDD);
 	public static final DateFormat DATEFORMAT_DDMMYY = new SimpleDateFormat(DDMMYY);
 	public static final DateFormat DATEFORMAT_DDMMYYYY = new SimpleDateFormat(DDMMYYYY);

@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Calendar;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -239,7 +236,7 @@ public class Utility {
 				}
 			});
 			try {
-				String hs = msg;
+//				String hs = msg;
 				builder.append(msg);
 				MimeMessage message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));

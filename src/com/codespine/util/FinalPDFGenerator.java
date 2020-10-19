@@ -73,12 +73,16 @@ public class FinalPDFGenerator {
 //		document.close();
 	}
 
-	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto) throws Exception {
+	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto, String folderName) throws Exception {
 		File file = new File(sourceFilePath);
 		String application_id = eKYCdto.getForPDFKeyValue().get("application_id");
-		String finalSestinationFilePath = destinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id;
+		if(StringUtil.isNullOrEmpty(folderName)) {
+			long timeInmillsecods = System.currentTimeMillis();
+			folderName = String.valueOf(timeInmillsecods);
+		}
+		String finalSestinationFilePath = destinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id+ eKYCConstant.WINDOWS_FORMAT_SLASH+folderName;
 		File dir = new File(finalSestinationFilePath);
-		String finalPDFName = application_id + eKYCConstant.PDF_FILE_EXTENSION;
+		String finalPDFName = eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME) + eKYCConstant.PDF_FILE_EXTENSION;
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
@@ -133,7 +137,7 @@ public class FinalPDFGenerator {
 		System.out.println("pdf Generated");
 		// Closing the document
 		document.close();
-		return eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + application_id
+		return  application_id+ eKYCConstant.WINDOWS_FORMAT_SLASH+folderName
 				+ eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName;
 	}
 
@@ -159,9 +163,9 @@ public class FinalPDFGenerator {
 	}
 
 	private static PDPageContentStream changeInputTextSizes(PDPageContentStream contentStream, PDFont font1,String insertValue, int pageNumber) throws Exception {
-		if(pageNumber == 2) {
-			
-		}
+//		if(pageNumber == 2) {
+//			
+//		}
 		contentStream.setCharacterSpacing(1);
 		if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
 			contentStream.setFont(font1, 8);	

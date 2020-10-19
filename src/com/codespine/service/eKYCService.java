@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +31,8 @@ import com.codespine.dto.esignDTO;
 import com.codespine.helper.eKYCHelper;
 import com.codespine.restservice.NsdlPanVerificationRestService;
 import com.codespine.util.CSEnvVariables;
+import com.codespine.util.FinalPDFGenerator;
+import com.codespine.util.StringUtil;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
@@ -528,35 +528,41 @@ public class eKYCService {
 	 * @author GOWRI SANKAR R
 	 * @param pDto
 	 * @return
+	 * @throws Exception 
 	 */
-	public ResponseDTO getXmlEncode(PersonalDetailsDTO pDto) {
+	public ResponseDTO getXmlEncode(PersonalDetailsDTO pDto) throws Exception {
 		ResponseDTO response = new ResponseDTO();
+		String filePath = null;
 		if (pDto.getApplication_id() > 0) {
 			PersonalDetailsDTO result = new PersonalDetailsDTO();
 			/**
 			 * Create the folder name
 			 */
-			Date date = new Date();
-			SimpleDateFormat DateFor = new SimpleDateFormat("yyyy-MM-dd");
-			String stringDate = DateFor.format(date);
 			long timeInmillsecods = System.currentTimeMillis();
-			String folderName = stringDate + " " + timeInmillsecods;
-			/**
-			 * Create the folder name and mov ethe ekyc document to the folder
-			 * for the Esign
-			 */
-			String filePath = CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_NEWDOCUMENT) + pDto.getApplication_id()
-					+ "\\" + folderName;
-
-			File dir = new File(filePath);
-			if (!dir.exists()) {
-				dir.mkdirs();
+			String folderName = String.valueOf(timeInmillsecods);
+//			/**
+//			 * Create the folder name and mov ethe ekyc document to the folder
+//			 * for the Esign
+//			 */
+//			String filePath = CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_NEWDOCUMENT) + pDto.getApplication_id()
+//					+ "\\" + folderName;
+//
+//			File dir = new File(filePath);
+//			if (!dir.exists()) {
+//				dir.mkdirs();
+//			}
+			eKYCDTO eKYCdto = finalPDFGenerator(pDto.getApplication_id());
+			if (eKYCdto != null) {
+				filePath = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto,folderName);
+				if (StringUtil.isNotNullOrEmpty(filePath)) {
+					eKYCDAO.getInstance().insertAttachementDetails(eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR +filePath, eKYCConstant.EKYC_DOCUMENT,pDto.getApplication_id());
+				}
 			}
 			/**
 			 * Copy the example document to the given Application id location
 			 */
-			Utility.exampleDocumentToNewUser(CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_EXAMPLE_DOCUMENT),
-					filePath);
+//			Utility.exampleDocumentToNewUser(CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_EXAMPLE_DOCUMENT),
+//					filePath);
 			/**
 			 * Call to NSDL for getting the xml form the NSDL
 			 */
