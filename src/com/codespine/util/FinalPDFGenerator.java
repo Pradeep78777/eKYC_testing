@@ -14,7 +14,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.imgscalr.Scalr;
 import org.json.simple.JSONObject;
@@ -49,16 +48,6 @@ public class FinalPDFGenerator {
 //		PDRectangle mediaBox = page.getMediaBox();
 //		System.out.println("Width:" + mediaBox.getWidth());
 //		System.out.println("Height:" + mediaBox.getHeight());
-//		PDImageXObject pdImage = PDImageXObject.createFromFile("C:\\Users\\user\\Downloads\\11.png", document);
-//	    PDPageContentStream contentStream1 =  new PDPageContentStream(document, page, AppendMode.APPEND, true);
-//	    contentStream1.drawImage(pdImage, 104,707);
-//	    contentStream1.close();
-//		PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true);
-//		PDPageContentStream contentStream1 = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-//		PDImageXObject pdImage = PDImageXObject.createFromFile("C:\\Users\\user\\Downloads\\tick.svg", document);
-//		contentStream1.drawImage(pdImage, 104,707);
-//		contentStream1.close();
-//		contentStream.beginText();
 //		File f = new File("C:\\Users\\user\\Downloads\\MonospaceTypewriter.ttf");
 //		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
 //		if(!val.isEmpty() && val.length() > 70 && val.length() < 80 ) {
@@ -67,13 +56,12 @@ public class FinalPDFGenerator {
 //			contentStream.setFont(font1, 4);	
 //		}else if(!val.isEmpty() && val.length() > 90 && val.length() < 110 ) {
 //			contentStream.setFont(font1, 6);	
-////		}else if(!val.isEmpty() && val.length() > 100 && val.length() < 110 ) {
-////			contentStream.setFont(font1, 2);	
+//		}else if(!val.isEmpty() && val.length() > 100 && val.length() < 110 ) {
+//			contentStream.setFont(font1, 2);	
 //		}
 //		else {
 //			contentStream.setFont(font1, 10);
 //		}
-		
 //		contentStream.newLineAtOffset(105, 752);
 //		contentStream.setCharacterSpacing(1);
 //		contentStream.showText(val);
@@ -149,42 +137,42 @@ public class FinalPDFGenerator {
 				+ eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName;
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "resource" })
 	public static void pdfInserter(int pageNumber,PDDocument document,String insertValue, int xValue, int yValue,int resizeRequired) throws Exception {
 		PDPage page = document.getPage(pageNumber);
 	   	PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
 		contentStream.beginText();
 		contentStream.setNonStrokingColor(0, 0, 0);
+		File f = new File(filePath+"MonospaceTypewriter.ttf");
+		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
 		if (resizeRequired > 0) {
-			File f = new File(filePath+"MonospaceTypewriter.ttf");
-			PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
-			contentStream.setFont(font1, 7);
-			contentStream.setCharacterSpacing(1);
-			if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
-				contentStream.setFont(font1, 8);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
-				contentStream.setFont(font1, 7);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
-				contentStream.setFont(font1, 6);	
-			}else {
-				contentStream.setFont(PDType1Font.HELVETICA, 11);
-			}
+			contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber);
 		} else {
-			contentStream.setFont(PDType1Font.HELVETICA, 11);
-			contentStream.setNonStrokingColor(0, 0, 0);
+			contentStream.setFont(font1, 11);
 			contentStream.setCharacterSpacing(5);
 		}
-		// Setting the position for the line
 		contentStream.newLineAtOffset(xValue, yValue);
 		String text = insertValue;
-		// Adding text in the form of string
 		contentStream.showText(text);
-		// Ending the content stream
 		contentStream.endText();
 		contentStream.close();
-		System.out.println("Content added");
-		// Closing the content stream
-		
+	}
+
+	private static PDPageContentStream changeInputTextSizes(PDPageContentStream contentStream, PDFont font1,String insertValue, int pageNumber) throws Exception {
+		if(pageNumber == 2) {
+			
+		}
+		contentStream.setCharacterSpacing(1);
+		if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+			contentStream.setFont(font1, 8);	
+		}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+			contentStream.setFont(font1, 7);	
+		}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+			contentStream.setFont(font1, 6);	
+		}else {
+			contentStream.setFont(font1, 11);
+		}
+		return contentStream;
 	}
 
 	private static void pdfimageInserter(int pageNumber,PDDocument document,int xValue, int yValue, String image,String application_id, String finalSestinationFilePath) throws IOException {
