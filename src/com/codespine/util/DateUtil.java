@@ -8,11 +8,14 @@ import java.util.Date;
 
 public class DateUtil {
 	public static final String DDMMYYYY 					= "ddMMyyyy";
+	public static final String DDMMYY 						= "ddMMyy";
 	public static final String DD_MMM_YYYY_HH_MM_SS 		= "dd-MMM-yyyyHHmmss";
 	public static final String DD_MMM_YY					= "dd-MMM-yy";
 	public static final String DD_MMM_YYYY 					= "dd-MM-yyyy";
 	public static final String YYYYMMDD 					= "yyyyMMdd";
 	public static final DateFormat DATEFORMAT_YYYYMMDD = new SimpleDateFormat(YYYYMMDD);
+	public static final DateFormat DATEFORMAT_DDMMYY = new SimpleDateFormat(DDMMYY);
+	public static final DateFormat DATEFORMAT_DDMMYYYY = new SimpleDateFormat(DDMMYYYY);
 	public static String parseDate(Date date) {
 		String date2 = null; 
 		DateFormat formatter ; 
@@ -92,7 +95,7 @@ public class DateUtil {
 		return calendar.getTime();
 	}
 	public static String getTodayStringDate(){
-		String date = DATEFORMAT_YYYYMMDD.format(getNewDateWithCurrentTime());
+		String date = DATEFORMAT_DDMMYY.format(getNewDateWithCurrentTime());
 		return date;
 	}
 	public static String getLastFinancialDate(){
