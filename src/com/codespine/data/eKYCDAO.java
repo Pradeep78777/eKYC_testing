@@ -1798,15 +1798,20 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id ,txn , folder_location  FROM tbl_txn_details where txn =  ? ");
+					"SELECT b.application_id , b.applicant_name , c.city  , a.txn , a.folder_location  "
+							+ "FROM tbl_txn_details A inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+							+ "inner join tbl_communication_address C  on a.application_id = c.application_id "
+							+ "where a.txn = ? ");
 			pStmt.setString(paromPos++, txnName);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				result = new esignDTO();
 				while (rSet.next()) {
-					result.setApplication_id(rSet.getInt("application_id"));
-					result.setTxn(rSet.getString("txn"));
-					result.setFolderLocation(rSet.getString("folder_location"));
+					result.setApplication_id(rSet.getInt("b.application_id"));
+					result.setApplicant_name(rSet.getString("b.applicant_name"));
+					result.setCity(rSet.getString("c.city"));
+					result.setTxn(rSet.getString("a.txn"));
+					result.setFolderLocation(rSet.getString("a.folder_location"));
 				}
 			}
 		} catch (Exception e) {
@@ -1871,7 +1876,8 @@ public class eKYCDAO {
 		try {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" UPDATE tbl_txn_details SET txn_status = ? , updated_on = ? where  txn = ? ");
+			pStmt = conn
+					.prepareStatement(" UPDATE tbl_txn_details SET txn_status = ? , updated_on = ? where  txn = ? ");
 			int paramPos = 1;
 			pStmt.setInt(paramPos++, txnStatus);
 			pStmt.setString(paramPos++, txn);

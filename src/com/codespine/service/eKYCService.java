@@ -1022,9 +1022,11 @@ public class eKYCService {
 						 * 
 						 */
 						// System.out.println("BBBBBBBBBB"+filePath);
-						String resposne = Utility.getSignFromNsdl(filePath + eKYCConstant.WINDOWS_FORMAT_SLASH
-								+ eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME)
-								+ eKYCConstant.PDF_FILE_EXTENSION, filePath, msg);
+						String resposne = Utility.getSignFromNsdl(
+								filePath + eKYCConstant.WINDOWS_FORMAT_SLASH
+										+ eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME)
+										+ eKYCConstant.PDF_FILE_EXTENSION,
+								filePath, msg, applicationNumber.getApplicant_name(), applicationNumber.getCity());
 						if (resposne != null && !resposne.isEmpty() && resposne.equalsIgnoreCase(
 								CSEnvVariables.getProperty(eKYCConstant.SIGNED_FINAL_RESPONSE_TEXT))) {
 							/**
