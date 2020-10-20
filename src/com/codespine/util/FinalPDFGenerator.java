@@ -3,6 +3,9 @@ package com.codespine.util;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -11,15 +14,19 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.imgscalr.Scalr;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.codespine.data.eKYCDAO;
+import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.eKYCDTO;
 
@@ -33,7 +40,14 @@ public class FinalPDFGenerator {
 
 	public static void main(String[] args) throws Exception {
 	}
-
+	
+	/**
+	 * Mrthod to construct pdf for ESIGN 
+	 * @param eKYCdto
+	 * @param folderName
+	 * @return
+	 * @throws Exception
+	 */
 	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto, String folderName) throws Exception {
 		File file = new File(sourceFilePath+ eKYCConstant.PDF_FILE_EXTENSION);
 		String application_id = eKYCdto.getForPDFKeyValue().get("application_id");
@@ -93,15 +107,45 @@ public class FinalPDFGenerator {
 				}
 			}
 		}
-		// Saving the document
+		List<String> urls = getAttachedDocumentURLs(Integer.parseInt(application_id));
+		if(urls != null) {
+			for(String url:urls) {
+				if(StringUtil.isStrContainsWithEqIgnoreCase(url,".pdf")) {
+					InputStream inputStream = new URL(url).openStream();
+					PDPageTree mergePD = document.getPages();
+					PDDocument pddDocument2 = PDDocument.load(inputStream);
+					mergePD.insertAfter(pddDocument2.getPage(0),document.getPage(16));
+					pddDocument2.close();
+					inputStream.close();
+				}else {
+					InputStream in = new URL(url).openStream();
+					BufferedImage bimg = ImageIO.read(in);
+					float width = bimg.getWidth();
+					float height = bimg.getHeight();
+					PDPage page = new PDPage(new PDRectangle(width, height));
+					document.addPage(page); 
+					PDImageXObject  pdImage = LosslessFactory.createFromImage(document, bimg);
+					PDPageContentStream contentStream = new PDPageContentStream(document, page);
+					contentStream.drawImage(pdImage, 0, 0);
+					contentStream.close();
+					in.close();	
+				}
+			}
+		}
 		document.save(new File(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName));
 		System.out.println("pdf Generated");
-		// Closing the document
 		document.close();
 		return  application_id+ eKYCConstant.WINDOWS_FORMAT_SLASH+folderName
 				+ eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName;
 	}
-
+	
+	/**
+	 * Method to insert text value in PDF 
+	 * @param eKYCdto
+	 * @param folderName
+	 * @return
+	 * @throws Exception
+	 */
 	@SuppressWarnings({ "deprecation", "resource" })
 	public static void pdfInserter(int pageNumber,PDDocument document,String insertValue, int xValue, int yValue,int resizeRequired) throws Exception {
 		PDPage page = document.getPage(pageNumber);
@@ -123,7 +167,58 @@ public class FinalPDFGenerator {
 		contentStream.endText();
 		contentStream.close();
 	}
+	
+	/**
+	 * Method to insert images value in PDF 
+	 * @param eKYCdto
+	 * @param folderName
+	 * @return
+	 * @throws Exception
+	 */
+	private static void pdfimageInserter(int pageNumber,PDDocument document,int xValue, int yValue, String image,String application_id, String finalSestinationFilePath) throws IOException {
+		PDPage page = document.getPage(pageNumber);
+	   	PDPageContentStream stream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
+		String File_path = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
+		File file1 = new File(File_path + image);
+		String resizeImageName = image;
+		BufferedImage img = ImageIO.read(file1);
+		BufferedImage scaledImg = Scalr.resize(img, 100, 100);
+		resizeImageName = StringUtil.isImageReSizeExist(finalSestinationFilePath, application_id);
+		File file = new File(finalSestinationFilePath, resizeImageName);
+		ImageIO.write(scaledImg, "JPG", file);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(finalSestinationFilePath + resizeImageName, document);
+		stream.drawImage(pdImage, xValue, yValue);
+		stream.close();
 
+	}
+	
+	/**
+	 * Method to insert TICK MARK in PDF 
+	 * @param eKYCdto
+	 * @param folderName
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("deprecation")
+	private static void pdfTickInserter(PDType0Font font,int pageNumber,PDDocument document, int xValue, int yValue) throws IOException {
+		PDPage page = document.getPage(pageNumber);
+	   	PDPageContentStream stream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
+	   	String ascii4 ="✓";
+	    stream.beginText();
+	    stream.setFont(font, 12);
+	    stream.moveTextPositionByAmount(xValue,yValue);
+	    stream.drawString(ascii4);
+	    stream.endText();
+	    stream.close();
+	}
+	
+	/**
+	 * Method to RE-Size value of text in pdf
+	 * @param eKYCdto
+	 * @param folderName
+	 * @return
+	 * @throws Exception
+	 */
 	private static PDPageContentStream changeInputTextSizes(PDPageContentStream contentStream, PDFont font1,String insertValue, int pageNumber) throws Exception {
 		if(pageNumber == 2) {
 			if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
@@ -229,33 +324,27 @@ public class FinalPDFGenerator {
 		
 		return contentStream;
 	}
-
-	private static void pdfimageInserter(int pageNumber,PDDocument document,int xValue, int yValue, String image,String application_id, String finalSestinationFilePath) throws IOException {
-		PDPage page = document.getPage(pageNumber);
-	   	PDPageContentStream stream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-		String File_path = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
-		File file1 = new File(File_path + image);
-		String resizeImageName = image;
-		BufferedImage img = ImageIO.read(file1);
-		BufferedImage scaledImg = Scalr.resize(img, 100, 100);
-		resizeImageName = StringUtil.isImageReSizeExist(finalSestinationFilePath, application_id);
-		File file = new File(finalSestinationFilePath, resizeImageName);
-		ImageIO.write(scaledImg, "JPG", file);
-		PDImageXObject pdImage = PDImageXObject.createFromFile(finalSestinationFilePath + resizeImageName, document);
-		stream.drawImage(pdImage, xValue, yValue);
-		stream.close();
-
-	}
-	@SuppressWarnings("deprecation")
-	private static void pdfTickInserter(PDType0Font font,int pageNumber,PDDocument document, int xValue, int yValue) throws IOException {
-		PDPage page = document.getPage(pageNumber);
-	   	PDPageContentStream stream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-	   	String ascii4 ="✓";
-	    stream.beginText();
-	    stream.setFont(font, 12);
-	    stream.moveTextPositionByAmount(xValue,yValue);
-	    stream.drawString(ascii4);
-	    stream.endText();
-	    stream.close();
+	
+	/**
+	 * Method to get url of attached documents
+	 * @param eKYCdto
+	 * @param folderName
+	 * @return
+	 * @throws Exception
+	 */
+	private static List<String> getAttachedDocumentURLs(int application_id) {
+		List<String> urls = null;
+		List<FileUploadDTO>  fileUploadDTOs = eKYCDAO.getInstance().getUploadedFile(application_id);
+		for(FileUploadDTO fileUploadDTO:fileUploadDTOs) {
+			if(StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.EKYC_DOCUMENT)) {
+				if(urls == null) {
+					urls = new ArrayList<String>();
+				}
+				if(StringUtil.isNotNullOrEmpty(fileUploadDTO.getProof())) {
+					urls.add(fileUploadDTO.getProof());
+				}
+			}
+		}
+		return urls;
 	}
 }
