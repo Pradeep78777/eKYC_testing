@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -528,7 +529,7 @@ public class eKYCService {
 	 * @author GOWRI SANKAR R
 	 * @param pDto
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public ResponseDTO getXmlEncode(PersonalDetailsDTO pDto) throws Exception {
 		ResponseDTO response = new ResponseDTO();
@@ -540,38 +541,53 @@ public class eKYCService {
 			 */
 			long timeInmillsecods = System.currentTimeMillis();
 			String folderName = String.valueOf(timeInmillsecods);
-//			/**
-//			 * Create the folder name and mov ethe ekyc document to the folder
-//			 * for the Esign
-//			 */
-//			String filePath = CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_NEWDOCUMENT) + pDto.getApplication_id()
-//					+ "\\" + folderName;
-//
-//			File dir = new File(filePath);
-//			if (!dir.exists()) {
-//				dir.mkdirs();
-//			}
+			// /**
+			// * Create the folder name and mov ethe ekyc document to the folder
+			// * for the Esign
+			// */
+			// String filePath =
+			// CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_NEWDOCUMENT) +
+			// pDto.getApplication_id()
+			// + "\\" + folderName;
+			//
+			// File dir = new File(filePath);
+			// if (!dir.exists()) {
+			// dir.mkdirs();
+			// }
 			eKYCDTO eKYCdto = finalPDFGenerator(pDto.getApplication_id());
 			if (eKYCdto != null) {
-				filePath = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto,folderName);
+				filePath = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto, folderName);
 				if (StringUtil.isNotNullOrEmpty(filePath)) {
-					eKYCDAO.getInstance().insertAttachementDetails(eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR +filePath, eKYCConstant.EKYC_DOCUMENT,pDto.getApplication_id());
+					int checkId = eKYCDAO.getInstance().checkFileUploaded(pDto.getApplication_id(),
+							eKYCConstant.EKYC_DOCUMENT);
+					if (checkId > 0) {
+						eKYCDAO.getInstance().updateAttachementDetails(
+								eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + filePath,
+								eKYCConstant.EKYC_DOCUMENT, pDto.getApplication_id());
+					} else {
+						eKYCDAO.getInstance().insertAttachementDetails(
+								eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + filePath,
+								eKYCConstant.EKYC_DOCUMENT, pDto.getApplication_id());
+					}
 				}
 			}
 			/**
 			 * Copy the example document to the given Application id location
 			 */
-//			Utility.exampleDocumentToNewUser(CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_EXAMPLE_DOCUMENT),
-//					filePath);
+			// Utility.exampleDocumentToNewUser(CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_EXAMPLE_DOCUMENT),
+			// filePath);
 			/**
 			 * Call to NSDL for getting the xml form the NSDL
 			 */
-			String getXml = Utility.getXmlForEsign(pDto.getApplication_id(), filePath);
-			Utility.createNewXmlFile(filePath, getXml);
+			String getXml = Utility.getXmlForEsign(pDto.getApplication_id(),
+					eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH) + filePath);
+			Utility.createNewXmlFile(eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)
+					+ pDto.getApplication_id() + "\\" + folderName, getXml);
 			/**
 			 * Read the Xml file and get the txn id to save in the data base
 			 */
-			String txnId = Utility.toGetTxnFromXMlpath(filePath + "\\FirstResponse.xml");
+			String txnId = Utility.toGetTxnFromXMlpath(eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)
+					+ pDto.getApplication_id() + "\\" + folderName + "\\FirstResponse.xml");
 
 			if (txnId != null && !txnId.isEmpty()) {
 				/**
@@ -579,6 +595,7 @@ public class eKYCService {
 				 */
 				int insertCount = eKYCDAO.insertTxnDetails(pDto.getApplication_id(), txnId, folderName);
 				if (insertCount > 0) {
+					eKYCDAO.getInstance().updateTxnStatus(1, txnId);
 					result.setEsign_Xml(getXml);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setResult(result);
@@ -967,8 +984,7 @@ public class eKYCService {
 	 * @param msg
 	 * @return
 	 */
-	public ResponseDTO getNsdlXML(String msg) {
-		ResponseDTO response = new ResponseDTO();
+	public Response getNsdlXML(String msg) {
 		try {
 			if (msg != null && !msg.isEmpty()) {
 				/**
@@ -976,7 +992,11 @@ public class eKYCService {
 				 */
 				String random = Utility.generateOTP();
 				String fileName = "lastXml" + random + ".xml";
-				File fXmlFile = new File(CSEnvVariables.getProperty(eKYCConstant.TEMP_FILE_XML_DOCUMENTS) + fileName);
+				// File fXmlFile = new
+				// File(CSEnvVariables.getProperty(eKYCConstant.TEMP_FILE_XML_DOCUMENTS)
+				// + fileName);
+				File fXmlFile = new File(eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH) + "TempXMLFiles"
+						+ eKYCConstant.WINDOWS_FORMAT_SLASH + fileName);
 				if (fXmlFile.createNewFile()) {
 					FileWriter myWriter = new FileWriter(fXmlFile);
 					myWriter.write(msg);
@@ -995,14 +1015,55 @@ public class eKYCService {
 
 					esignDTO applicationNumber = eKYCDAO.getInstance().getTxnDetails(txnName);
 					if (applicationNumber != null && applicationNumber.getApplication_id() > 0) {
-						String filePath = CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_NEWDOCUMENT)
-								+ applicationNumber.getApplication_id() + "\\" + applicationNumber.getFolderLocation();
+						String filePath = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)
+								+ applicationNumber.getApplication_id() + eKYCConstant.WINDOWS_FORMAT_SLASH
+								+ applicationNumber.getFolderLocation() + eKYCConstant.WINDOWS_FORMAT_SLASH;
 						/**
 						 * 
 						 */
-						Utility.getSignFromNsdl(
-								filePath + "\\" + CSEnvVariables.getProperty(eKYCConstant.DOCUMENT_FILE_NAEM), filePath,
-								msg);
+						// System.out.println("BBBBBBBBBB"+filePath);
+						String resposne = Utility.getSignFromNsdl(filePath + eKYCConstant.WINDOWS_FORMAT_SLASH
+								+ eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME)
+								+ eKYCConstant.PDF_FILE_EXTENSION, filePath, msg);
+						if (resposne != null && !resposne.isEmpty() && resposne.equalsIgnoreCase(
+								CSEnvVariables.getProperty(eKYCConstant.SIGNED_FINAL_RESPONSE_TEXT))) {
+							/**
+							 * update the txn status
+							 */
+							eKYCDAO.getInstance().updateTxnStatus(1, txnName);
+							/**
+							 * check and update the url details in attchements
+							 * details
+							 */
+							int checkId = eKYCDAO.getInstance().checkFileUploaded(applicationNumber.getApplication_id(),
+									eKYCConstant.SIGNED_EKYC_DOCUMENT);
+							if (checkId > 0) {
+								eKYCDAO.getInstance().updateAttachementDetails(eKYCConstant.SITE_URL_FILE
+										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME,
+										eKYCConstant.SIGNED_EKYC_DOCUMENT, applicationNumber.getApplication_id());
+
+								java.net.URI location = new java.net.URI(eKYCConstant.SITE_URL_FILE
+										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME);
+								return Response.temporaryRedirect(location).build();
+							} else {
+								eKYCDAO.getInstance().insertAttachementDetails(eKYCConstant.SITE_URL_FILE
+										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME,
+										eKYCConstant.SIGNED_EKYC_DOCUMENT, applicationNumber.getApplication_id());
+								java.net.URI location = new java.net.URI(eKYCConstant.SITE_URL_FILE
+										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME);
+								return Response.temporaryRedirect(location).build();
+							}
+						} else {
+
+						}
 					} else {
 						/**
 						 * application id cannot be zero at this time
@@ -1019,6 +1080,25 @@ public class eKYCService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public ResponseDTO getEsignedDocument(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		PersonalDetailsDTO result = null;
+		if (pDto.getApplication_id() > 0) {
+			result = new PersonalDetailsDTO();
+			String documentLink = eKYCDAO.getInstance().getEsignedDocument(pDto.getApplication_id(),
+					eKYCConstant.SIGNED_EKYC_DOCUMENT);
+			result.setEsign_document(documentLink);
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setResult(result);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 		}
 		return response;
 	}
