@@ -27,12 +27,13 @@ public class FinalPDFGenerator {
 	static String filePath = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
 	static String sourceFilePath = filePath +eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
 	static String destinationFilePath =  filePath;
-//	static String sourceFilePath = "C:\\Users\\user\\Downloads\\" + "2.pdf";
+//	static String filePath = "";
+//	static String sourceFilePath = "C:\\Users\\user\\Downloads\\" + "3.pdf";
 //	static String destinationFilePath = "C:\\Users\\user\\Downloads\\" + "1.pdf";
 
 	public static void main(String[] args) throws Exception {
-//		File file = new File(sourceFilePath);
-//		PDDocument document = PDDocument.load(file);
+		File file = new File(sourceFilePath);
+		PDDocument document = PDDocument.load(file);
 //		String val = "AAAAAIIIII WWWWWWWWWW AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";// AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";// 153
 //		String val1 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//142 - 
 //		String val2 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//131 - 
@@ -44,12 +45,14 @@ public class FinalPDFGenerator {
 //		String val8 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//65 - 
 //		String val9 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//54 - 
 //		String val10 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//43 - size 10
-//		PDPage page = document.getPage(0);
+		PDPage page = document.getPage(0);
+		PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
+		contentStream.beginText();
 //		PDRectangle mediaBox = page.getMediaBox();
 //		System.out.println("Width:" + mediaBox.getWidth());
 //		System.out.println("Height:" + mediaBox.getHeight());
-//		File f = new File("C:\\Users\\user\\Downloads\\MonospaceTypewriter.ttf");
-//		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
+		File f = new File("C:\\Users\\user\\Downloads\\MonospaceTypewriter.ttf");
+		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
 //		if(!val.isEmpty() && val.length() > 70 && val.length() < 80 ) {
 //			contentStream.setFont(font1, 5);	
 //		}else if(!val.isEmpty() && val.length() > 80 && val.length() < 90 ) {
@@ -60,17 +63,17 @@ public class FinalPDFGenerator {
 //			contentStream.setFont(font1, 2);	
 //		}
 //		else {
-//			contentStream.setFont(font1, 10);
+			contentStream.setFont(font1, 10);
 //		}
-//		contentStream.newLineAtOffset(105, 752);
-//		contentStream.setCharacterSpacing(1);
-//		contentStream.showText(val);
-//		contentStream.endText();
-//		contentStream.close();
+		contentStream.newLineAtOffset(500, 200);
+		contentStream.setCharacterSpacing(1);
+		contentStream.showText("A");
+		contentStream.endText();
+		contentStream.close();
 //		
-//		document.save(destinationFilePath);
-//		System.out.println("pdf Generated");
-//		document.close();
+		document.save(destinationFilePath);
+		System.out.println("pdf Generated");
+		document.close();
 	}
 
 	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto, String folderName) throws Exception {
@@ -150,6 +153,7 @@ public class FinalPDFGenerator {
 		File f = new File(filePath+"MonospaceTypewriter.ttf");
 		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
 		if (resizeRequired > 0) {
+			contentStream.setCharacterSpacing(1);
 			contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber);
 		} else {
 			contentStream.setFont(font1, 11);
@@ -163,19 +167,108 @@ public class FinalPDFGenerator {
 	}
 
 	private static PDPageContentStream changeInputTextSizes(PDPageContentStream contentStream, PDFont font1,String insertValue, int pageNumber) throws Exception {
-//		if(pageNumber == 2) {
-//			
-//		}
-		contentStream.setCharacterSpacing(1);
-		if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
-			contentStream.setFont(font1, 8);	
-		}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
-			contentStream.setFont(font1, 7);	
-		}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
-			contentStream.setFont(font1, 6);	
+		if(pageNumber == 2) {
+			if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+				contentStream.setFont(font1, 6);	
+			}else {
+				contentStream.setFont(font1, 11);
+			}
+		}else if(pageNumber == 3) {
+			if(!insertValue.isEmpty() && insertValue.length() > 30 && insertValue.length() < 40 ) {
+				contentStream.setFont(font1, 9);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 40 && insertValue.length() < 50 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
+				contentStream.setFont(font1, 6);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+				contentStream.setFont(font1, 5);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80) {
+				contentStream.setFont(font1, 4);	
+			}else {
+				contentStream.setFont(font1, 11);
+			}
+		}else if(pageNumber == 4) {
+			if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
+				contentStream.setFont(font1, 10);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
+				contentStream.setFont(font1, 9);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+				contentStream.setFont(font1, 6);	
+			}else {
+				contentStream.setFont(font1, 11);
+			}
+		}else if(pageNumber == 7) {
+			if(!insertValue.isEmpty() && insertValue.length() > 10 && insertValue.length() < 20 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 20 && insertValue.length() < 30 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 30 && insertValue.length() < 40 ) {
+				contentStream.setFont(font1, 6);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 40 && insertValue.length() < 50 ) {
+				contentStream.setFont(font1, 5);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
+				contentStream.setFont(font1, 4);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 60) {
+				contentStream.setFont(font1, 3);	
+			}else {
+				contentStream.setFont(font1, 11);
+			}
+		}else if(pageNumber == 9) {
+			if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
+				contentStream.setFont(font1, 10);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
+				contentStream.setFont(font1, 9);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+				contentStream.setFont(font1, 6);	
+			}else {
+				contentStream.setFont(font1, 11);
+			}
+		}else if(pageNumber == 12) {
+			if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
+				contentStream.setFont(font1, 10);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
+				contentStream.setFont(font1, 9);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+				contentStream.setFont(font1, 6);	
+			}else {
+				contentStream.setFont(font1, 11);
+			}
+		}else if(pageNumber == 14) {
+			if(!insertValue.isEmpty() && insertValue.length() > 28 && insertValue.length() < 38 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 38 && insertValue.length() < 48 ) {
+				contentStream.setFont(font1, 9);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 48 && insertValue.length() < 58 ) {
+				contentStream.setFont(font1, 8);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 58 && insertValue.length() < 68 ) {
+				contentStream.setFont(font1, 7);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 68 && insertValue.length() < 78 ) {
+				contentStream.setFont(font1, 6);	
+			}else {
+				contentStream.setFont(font1, 5);
+			}
 		}else {
 			contentStream.setFont(font1, 11);
 		}
+		
 		return contentStream;
 	}
 
