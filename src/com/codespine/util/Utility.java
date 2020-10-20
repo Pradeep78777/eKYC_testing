@@ -514,16 +514,27 @@ public class Utility {
 		return txnId;
 	}
 
-	public static String getSignFromNsdl(String dcoumentLocation, String documentToBeSavedLocation, String receivedXml
-			) {
+	/**
+	 * Get the signed document from the NSDL
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dcoumentLocation
+	 * @param documentToBeSavedLocation
+	 * @param receivedXml
+	 * @param applicantName
+	 * @param city
+	 * @return
+	 */
+	public static String getSignFromNsdl(String dcoumentLocation, String documentToBeSavedLocation, String receivedXml,
+			String applicantName, String city) {
 		String responseText = null;
 		try {
 			String pathToPDF = dcoumentLocation;
 			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
 			int serverTime = 10;
 			int pageNumberToInsertSignatureStamp = 17;
-			String nameToShowOnSignatureStamp = "Test";
-			String locationToShowOnSignatureStamp = "Test";
+			String nameToShowOnSignatureStamp = applicantName.toUpperCase();
+			String locationToShowOnSignatureStamp = city.toUpperCase();
 			String reasonForSign = "";
 			int xCo_ordinates = 10;
 			int yCo_ordinates = 190;
