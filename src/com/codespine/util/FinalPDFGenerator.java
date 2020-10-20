@@ -110,15 +110,16 @@ public class FinalPDFGenerator {
 		List<String> urls = getAttachedDocumentURLs(Integer.parseInt(application_id));
 		if(urls != null) {
 			for(String url:urls) {
+				String replacedURL = StringUtil.replace(url, " ", "%20");
 				if(StringUtil.isStrContainsWithEqIgnoreCase(url,".pdf")) {
-					InputStream inputStream = new URL(url).openStream();
+					InputStream inputStream = new URL(replacedURL).openStream();
 					PDPageTree mergePD = document.getPages();
 					PDDocument pddDocument2 = PDDocument.load(inputStream);
 					mergePD.insertAfter(pddDocument2.getPage(0),document.getPage(16));
 					pddDocument2.close();
 					inputStream.close();
 				}else {
-					InputStream in = new URL(url).openStream();
+					InputStream in = new URL(replacedURL).openStream();
 					BufferedImage bimg = ImageIO.read(in);
 					float width = bimg.getWidth();
 					float height = bimg.getHeight();

@@ -99,4 +99,16 @@ public class StringUtil {
 		}
 		return isContains;
 	}
+	public static boolean isStringContainsSpecialChars(String name){
+		boolean isContains = false;
+		char[] splChars ={ '\'', '\"', '&', '%', ':' };
+		
+		for(int index=0;index<splChars.length;index++){
+			if(!(name.indexOf(splChars[index]) == -1)){
+				isContains = true;
+				break;
+			}
+		}
+		return isContains;
+	}
 }
