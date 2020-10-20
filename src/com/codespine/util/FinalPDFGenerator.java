@@ -74,7 +74,7 @@ public class FinalPDFGenerator {
 	}
 
 	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto, String folderName) throws Exception {
-		File file = new File(sourceFilePath);
+		File file = new File(sourceFilePath+ eKYCConstant.PDF_FILE_EXTENSION);
 		String application_id = eKYCdto.getForPDFKeyValue().get("application_id");
 		if(StringUtil.isNullOrEmpty(folderName)) {
 			long timeInmillsecods = System.currentTimeMillis();
@@ -199,7 +199,7 @@ public class FinalPDFGenerator {
 	private static void pdfTickInserter(PDType0Font font,int pageNumber,PDDocument document, int xValue, int yValue) throws IOException {
 		PDPage page = document.getPage(pageNumber);
 	   	PDPageContentStream stream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-	    String ascii4 ="✓";
+	   	String ascii4 ="✓";
 	    stream.beginText();
 	    stream.setFont(font, 12);
 	    stream.moveTextPositionByAmount(xValue,yValue);

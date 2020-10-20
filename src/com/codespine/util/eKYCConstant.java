@@ -91,13 +91,14 @@ public class eKYCConstant {
 	public static final String COMMA_SEPERATOR = ",";
 	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
 
-	public static final String FILE_PATH = "TESTING_FILE_PATH";
+	public static final String FILE_PATH = "FILE_PATH";
 	public static final String CONSTANT_PDF_NAME = "CONSTANT_PDF_NAME";
 	public static final String GENERATED_PDF_NAME = "GENERATED_PDF_NAME";
 	public static final String JPG_FILE_EXTENSION = ".jpg";
 	public static final String PDF_FILE_EXTENSION = ".pdf";
 	public static final String WINDOWS_FORMAT_SLASH = "//";
 	public static final String EKYC_DOCUMENT = "EKYC_DOCUMENT";
+	public static final String SIGNED_EKYC_DOCUMENT = "SIGNED_EKYC_DOCUMENT";
 
 	public static final String EXPIRY_TIME = "expiryInMilleseconds";
 
@@ -112,4 +113,9 @@ public class eKYCConstant {
 	public static final String TEMP_FILE_XML_DOCUMENTS = "tempXMLFiles";
 	
 	public static final String DOCUMENT_FILE_NAEM = "constantPDFName";
+	
+	public static final String SIGNED_FINAL_DOCUMENT_NAME = "KYC_V6_signedFinal.pdf";
+	
+	public static final String SIGNED_FINAL_RESPONSE_TEXT = "finalResponse";
+	
 }

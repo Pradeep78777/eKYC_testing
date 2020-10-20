@@ -835,9 +835,10 @@ public class eKYCDAO {
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", rSet.getString("bank_account_no"));
-					json.put("half_date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(),DateUtil.DDMMYY));
-					json.put("date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(),DateUtil.DDMMYYYY));
-					json.put("reverse_full_date",DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(),DateUtil.YYYYMMDD));
+					json.put("half_date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYY));
+					json.put("date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYYYY));
+					json.put("reverse_full_date",
+							DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.YYYYMMDD));
 					json.put("last_financial_date", DateUtil.getLastFinancialYearTo(DateUtil.getTodayDate()));
 					result.setAccount_type(rSet.getString("account_type"));
 					json.put("account_type", rSet.getString("account_type"));
@@ -1477,7 +1478,8 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT column_name,coordinates,page_number,is_default,is_value_reduced FROM tbl_pdf_orgins order by page_number asc ");
+			pStmt = conn.prepareStatement(
+					" SELECT column_name,coordinates,page_number,is_default,is_value_reduced FROM tbl_pdf_orgins order by page_number asc ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1574,7 +1576,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT attachement_url FROM tbl_application_attachements where application_id = ? and attachement_type = ? ");
+					" SELECT attachement_url FROM tbl_application_attachements where application_id = ? and attachement_type = ? order by last_update desc ");
 			pStmt.setInt(paromPos++, application_id);
 			pStmt.setString(paromPos++, attachementType);
 			rSet = pStmt.executeQuery();
@@ -1819,6 +1821,76 @@ public class eKYCDAO {
 			}
 		}
 		return result;
+	}
+
+	public String getEsignedDocument(int application_id, String signedEkycDocument) {
+		String fileLocation = "";
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT attachement_url FROM tbl_application_attachements where application_id = ? and attachement_type = ? order by last_update desc");
+			pStmt.setInt(paromPos++, application_id);
+			pStmt.setString(paromPos++, signedEkycDocument);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					fileLocation = rSet.getString("attachement_url");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return fileLocation;
+	}
+
+	/**
+	 * Update the txn status for the given txn
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param txnStatus
+	 * @param txn
+	 * @return
+	 */
+	public boolean updateTxnStatus(int txnStatus, String txn) {
+		int count = 0;
+		boolean isSuccessFull = false;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		try {
+			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(" UPDATE tbl_txn_details SET txn_status = ? , updated_on = ? where  txn = ? ");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, txnStatus);
+			pStmt.setString(paramPos++, txn);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				isSuccessFull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return isSuccessFull;
 	}
 
 }

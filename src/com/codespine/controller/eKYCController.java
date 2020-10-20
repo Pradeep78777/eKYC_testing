@@ -43,6 +43,7 @@ public class eKYCController {
 		}
 		return eKYCController;
 	}
+
 	AccesslogDTO accessLog = new AccesslogDTO();
 	String contentType = "content-type";
 	@Context
@@ -397,7 +398,8 @@ public class eKYCController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getEsignXml")
-	public ResponseDTO getXmlEncode(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) throws Exception {
+	public ResponseDTO getXmlEncode(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto)
+			throws Exception {
 		ResponseDTO response = new ResponseDTO();
 		/*
 		 * TO insert Access log into data base
@@ -429,7 +431,7 @@ public class eKYCController {
 
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (eKYCdto != null) {
-			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto,null);
+			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto, null);
 			if (StringUtil.isNotNullOrEmpty(eKYCPdfFileLocation)) {
 				eKYCDAO.getInstance().insertAttachementDetails(eKYCPdfFileLocation, eKYCConstant.EKYC_DOCUMENT,
 						applicationId);
@@ -469,6 +471,26 @@ public class eKYCController {
 		// pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getDocumentLink(pDto);
+		return response;
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getEsignedDocument")
+	public ResponseDTO getEsignedDocument(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		// Utility.inputAccessLogDetails(accessLog, pDto,
+		// pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getEsignedDocument(pDto);
 		return response;
 	}
 
@@ -690,11 +712,9 @@ public class eKYCController {
 
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getNsdlXML")
-	public ResponseDTO getNsdlXML(@FormDataParam("msg") String msg) {
-		ResponseDTO response = new ResponseDTO();
-		response = eKYCService.getInstance().getNsdlXML(msg);
+	public Response getNsdlXML(@FormDataParam("msg") String msg) {
+		Response response = eKYCService.getInstance().getNsdlXML(msg);
 		return response;
 	}
 

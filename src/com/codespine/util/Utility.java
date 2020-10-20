@@ -34,6 +34,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.codespine.cache.CacheController;
+import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AccesslogDTO;
 import com.codespine.service.AccessLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -236,7 +237,7 @@ public class Utility {
 				}
 			});
 			try {
-//				String hs = msg;
+				// String hs = msg;
 				builder.append(msg);
 				MimeMessage message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
@@ -328,7 +329,7 @@ public class Utility {
 	public static String getXmlForEsign(int applicationId, String folderName) {
 		String response = "";
 		try {
-			String pathToPDF = folderName + "\\" + CSEnvVariables.getProperty(eKYCConstant.DOCUMENT_FILE_NAEM);
+			String pathToPDF = folderName;
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
 			String responseUrl = "http://rest.irongates.in/eKYCService/eKYC/getNsdlXML";
@@ -513,17 +514,19 @@ public class Utility {
 		return txnId;
 	}
 
-	public static void getSignFromNsdl(String dcoumentLocation, String documentToBeSavedLocation, String receivedXml) {
+	public static String getSignFromNsdl(String dcoumentLocation, String documentToBeSavedLocation, String receivedXml
+			) {
+		String responseText = null;
 		try {
 			String pathToPDF = dcoumentLocation;
 			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
 			int serverTime = 10;
-			int pageNumberToInsertSignatureStamp = 1;
+			int pageNumberToInsertSignatureStamp = 17;
 			String nameToShowOnSignatureStamp = "Test";
 			String locationToShowOnSignatureStamp = "Test";
 			String reasonForSign = "";
-			int xCo_ordinates = 100;
-			int yCo_ordinates = 100;
+			int xCo_ordinates = 10;
+			int yCo_ordinates = 190;
 			int signatureWidth = 200;
 			int signatureHeight = 50;
 			String pdfPassword = "";
@@ -531,11 +534,11 @@ public class Utility {
 			String returnPath = documentToBeSavedLocation;
 			try {
 				EsignApplication eSignApp = new EsignApplication();
-				String signedDocument = eSignApp.getSignOnDocument(esignXml, pathToPDF, tickImagePath, serverTime,
+				responseText = eSignApp.getSignOnDocument(esignXml, pathToPDF, tickImagePath, serverTime,
 						pageNumberToInsertSignatureStamp, nameToShowOnSignatureStamp, locationToShowOnSignatureStamp,
 						reasonForSign, xCo_ordinates, yCo_ordinates, signatureWidth, signatureHeight, pdfPassword,
 						returnPath);
-				System.out.println(signedDocument);
+				System.out.println("Response from NSDL" + responseText);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -543,6 +546,6 @@ public class Utility {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		return responseText;
 	}
 }
