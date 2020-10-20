@@ -32,48 +32,6 @@ public class FinalPDFGenerator {
 //	static String destinationFilePath = "C:\\Users\\user\\Downloads\\" + "1.pdf";
 
 	public static void main(String[] args) throws Exception {
-		File file = new File(sourceFilePath);
-		PDDocument document = PDDocument.load(file);
-//		String val = "AAAAAIIIII WWWWWWWWWW AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";// AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";// 153
-//		String val1 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//142 - 
-//		String val2 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//131 - 
-//		String val3 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//120 - 
-//		String val4 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//109 - 
-//		String val5 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//98 - 
-//		String val6 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//87 - 
-//		String val7 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//76 - 
-//		String val8 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//65 - 
-//		String val9 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//54 - 
-//		String val10 ="AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA";//43 - size 10
-		PDPage page = document.getPage(0);
-		PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
-		contentStream.beginText();
-//		PDRectangle mediaBox = page.getMediaBox();
-//		System.out.println("Width:" + mediaBox.getWidth());
-//		System.out.println("Height:" + mediaBox.getHeight());
-		File f = new File("C:\\Users\\user\\Downloads\\MonospaceTypewriter.ttf");
-		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
-//		if(!val.isEmpty() && val.length() > 70 && val.length() < 80 ) {
-//			contentStream.setFont(font1, 5);	
-//		}else if(!val.isEmpty() && val.length() > 80 && val.length() < 90 ) {
-//			contentStream.setFont(font1, 4);	
-//		}else if(!val.isEmpty() && val.length() > 90 && val.length() < 110 ) {
-//			contentStream.setFont(font1, 6);	
-//		}else if(!val.isEmpty() && val.length() > 100 && val.length() < 110 ) {
-//			contentStream.setFont(font1, 2);	
-//		}
-//		else {
-			contentStream.setFont(font1, 10);
-//		}
-		contentStream.newLineAtOffset(500, 200);
-		contentStream.setCharacterSpacing(1);
-		contentStream.showText("A");
-		contentStream.endText();
-		contentStream.close();
-//		
-		document.save(destinationFilePath);
-		System.out.println("pdf Generated");
-		document.close();
 	}
 
 	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto, String folderName) throws Exception {
