@@ -51,7 +51,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id , mobile_otp, mobile_no_verified, email_id, email_activated, application_status"
+					" SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, application_status"
 							+ " FROM tbl_application_master where mobile_number = ? and delete_flag = ? ");
 			pStmt.setLong(paromPos++, pDto.getMobile_number());
 			pStmt.setLong(paromPos++, 0);
@@ -60,6 +60,7 @@ public class eKYCDAO {
 				while (rSet.next()) {
 					result = new PersonalDetailsDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setMobile_number(rSet.getLong("mobile_number"));
 					result.setOtp(rSet.getInt("mobile_otp"));
 					result.setMobile_number_verified(rSet.getInt("mobile_no_verified"));
 					result.setEmail(rSet.getString("email_id"));
@@ -228,6 +229,37 @@ public class eKYCDAO {
 			pStmt.setInt(parompos++, otp);
 			pStmt.setTimestamp(parompos++, timestamp);
 			pStmt.setInt(parompos++, applicationId);
+			pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * To update the otp for the given application Id
+	 * 
+	 * @param otp
+	 * @param applicationId
+	 */
+	public void updateOtpForMobilenumber(int otp, long mobileNumber) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_application_master SET mobile_otp = ? , last_updated = ? where mobile_number = ? ");
+			int parompos = 1;
+			pStmt.setInt(parompos++, otp);
+			pStmt.setTimestamp(parompos++, timestamp);
+			pStmt.setLong(parompos++, mobileNumber);
 			pStmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1568,7 +1600,7 @@ public class eKYCDAO {
 	}
 
 	public String getDocumentLink(int application_id, String attachementType) {
-		String fileLocation = "";
+		String fileLocation = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rSet = null;
