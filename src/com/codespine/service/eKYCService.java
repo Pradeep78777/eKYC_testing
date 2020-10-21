@@ -63,8 +63,12 @@ public class eKYCService {
 		PersonalDetailsDTO checkUser = peKYCDao.checkExistingUser(pDto);
 		if (checkUser != null && checkUser.getApplication_id() > 0) {
 			/**
-			 * 
+			 * Send Otp to the given mobile number
 			 */
+			String otp = Utility.generateOTP();
+			peKYCDao.updateOtpForApplicationId(Integer.parseInt(otp), checkUser.getApplication_id());
+			Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
+
 			result = new PersonalDetailsDTO();
 			result.setApplication_id(checkUser.getApplication_id());
 			result.setApplicationStatus(checkUser.getApplicationStatus());
@@ -72,12 +76,6 @@ public class eKYCService {
 			 * Check the user given the same email id or not
 			 */
 			if (checkUser.getEmail().equalsIgnoreCase(pDto.getEmail())) {
-				/**
-				 * Send Otp to the given mobile number
-				 */
-				String otp = Utility.generateOTP();
-				peKYCDao.updateOtpForApplicationId(Integer.parseInt(otp), checkUser.getApplication_id());
-				Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
 				/**
 				 * Check the otp and email is verified
 				 */
@@ -870,7 +868,7 @@ public class eKYCService {
 				String fileName = "";
 				if (contentDisposition.getFileName() != null) {
 					checkId = eKYCDAO.getInstance().checkFileUploaded(applicationId, proofType);
-					fileName = contentDisposition.getFileName();
+					fileName = contentDisposition.getFileName().trim();
 					InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
 					int read = 0;
 					String filePath = eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//"
