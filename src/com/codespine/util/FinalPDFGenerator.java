@@ -74,7 +74,7 @@ public class FinalPDFGenerator {
 				if (StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()))
 						&& !StringUtil.isEqual(DTO.getColumn_name(), eKYCConstant.IMAGE)) {
 					pdfTextInserter(DTO.getPage_number(),document,eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()),
-							xValue, yValue, DTO.getIs_value_reduced());
+							xValue, yValue, DTO.getIs_value_reduced(),DTO.getColumn_name());
 				} else if (StringUtil.isEqual(DTO.getColumn_name(), eKYCConstant.IMAGE)) {
 					String URL = eKYCDAO.getInstance().getDocumentLink(Integer.parseInt(application_id),eKYCConstant.EKYC_PHOTO);
 					if(StringUtil.isNotNullOrEmpty(URL)) {
@@ -95,7 +95,7 @@ public class FinalPDFGenerator {
 					int xValue = Integer.parseInt(orgs[0]);
 					int yValue = Integer.parseInt(orgs[1]);
 					String columnValue = StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "");
-					pdfTextInserter(DTO.getPage_number(),document,columnValue, xValue, yValue, DTO.getIs_value_reduced());
+					pdfTextInserter(DTO.getPage_number(),document,columnValue, xValue, yValue, DTO.getIs_value_reduced(),DTO.getColumn_name());
 				} else {
 					JSONParser parser = new JSONParser();
 					JSONObject json = (JSONObject) parser.parse(coordinates);
@@ -186,11 +186,12 @@ public class FinalPDFGenerator {
 	 * @param xValue
 	 * @param yValue
 	 * @param resizeRequired
+	 * @param ColumnName 
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "deprecation", "resource" })
-	public static void pdfTextInserter(int pageNumber,PDDocument document,String insertValue, int xValue, int yValue,int resizeRequired) throws Exception {
+	public static void pdfTextInserter(int pageNumber,PDDocument document,String insertValue, int xValue, int yValue,int resizeRequired, String ColumnName) throws Exception {
 		PDPage page = document.getPage(pageNumber);
 	   	PDPageContentStream contentStream = new PDPageContentStream(document, page,AppendMode.APPEND, true);
 		contentStream.beginText();
@@ -199,9 +200,9 @@ public class FinalPDFGenerator {
 		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
 		if (resizeRequired > 0) {
 			contentStream.setCharacterSpacing(1);
-			contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber);
+			contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber,ColumnName);
 		} else {
-			contentStream.setFont(font1, 11);
+			contentStream.setFont(font1, 10);
 			contentStream.setCharacterSpacing(5);
 		}
 		contentStream.newLineAtOffset(xValue, yValue);
@@ -293,10 +294,11 @@ public class FinalPDFGenerator {
 	 * @param font1
 	 * @param insertValue
 	 * @param pageNumber
+	 * @param columnName 
 	 * @return
 	 * @throws Exception
 	 */
-	private static PDPageContentStream changeInputTextSizes(PDPageContentStream contentStream, PDFont font1,String insertValue, int pageNumber) throws Exception {
+	private static PDPageContentStream changeInputTextSizes(PDPageContentStream contentStream, PDFont font1,String insertValue, int pageNumber, String columnName) throws Exception {
 		if(pageNumber == 2) {
 			if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
 				contentStream.setFont(font1, 8);	
@@ -307,7 +309,7 @@ public class FinalPDFGenerator {
 			}else if(!insertValue.isEmpty() && insertValue.length() > 110 ) {
 				contentStream.setFont(font1, 5);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else if(pageNumber == 3) {
 			if(!insertValue.isEmpty() && insertValue.length() > 30 && insertValue.length() < 40 ) {
@@ -323,7 +325,7 @@ public class FinalPDFGenerator {
 			}else if(!insertValue.isEmpty() && insertValue.length() > 80) {
 				contentStream.setFont(font1, 4);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else if(pageNumber == 4) {
 			if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
@@ -339,7 +341,7 @@ public class FinalPDFGenerator {
 			}else if(!insertValue.isEmpty() && insertValue.length() > 110 ) {
 				contentStream.setFont(font1, 5);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else if(pageNumber == 7) {
 			if(!insertValue.isEmpty() && insertValue.length() > 10 && insertValue.length() < 20 ) {
@@ -355,74 +357,74 @@ public class FinalPDFGenerator {
 			}else if(!insertValue.isEmpty() && insertValue.length() > 60) {
 				contentStream.setFont(font1, 3);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else if(pageNumber == 9) {
 			if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
-				contentStream.setFont(font1, 10);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
 				contentStream.setFont(font1, 9);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
 				contentStream.setFont(font1, 8);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
 				contentStream.setFont(font1, 7);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
 				contentStream.setFont(font1, 6);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 110 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
 				contentStream.setFont(font1, 5);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 110 ) {
+				contentStream.setFont(font1, 4);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else if(pageNumber == 12) {
 			if(!insertValue.isEmpty() && insertValue.length() > 50 && insertValue.length() < 60 ) {
-				contentStream.setFont(font1, 10);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
 				contentStream.setFont(font1, 9);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 60 && insertValue.length() < 70 ) {
 				contentStream.setFont(font1, 8);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 70 && insertValue.length() < 80 ) {
 				contentStream.setFont(font1, 7);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 80 && insertValue.length() < 90 ) {
 				contentStream.setFont(font1, 6);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 110 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 90 && insertValue.length() < 110 ) {
 				contentStream.setFont(font1, 5);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 110 ) {
+				contentStream.setFont(font1, 4);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else if(pageNumber == 14) {
 			if(!insertValue.isEmpty() && insertValue.length() > 28 && insertValue.length() < 38 ) {
-				contentStream.setFont(font1, 8);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 38 && insertValue.length() < 48 ) {
 				contentStream.setFont(font1, 9);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 48 && insertValue.length() < 58 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 38 && insertValue.length() < 48 ) {
 				contentStream.setFont(font1, 8);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 58 && insertValue.length() < 68 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 48 && insertValue.length() < 58 ) {
 				contentStream.setFont(font1, 7);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 68 && insertValue.length() < 78 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 58 && insertValue.length() < 68 ) {
 				contentStream.setFont(font1, 6);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 78 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 68 && insertValue.length() < 78 ) {
 				contentStream.setFont(font1, 5);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 78 ) {
+				contentStream.setFont(font1, 4);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else if(pageNumber == 16) {
 			if(!insertValue.isEmpty() && insertValue.length() > 25 && insertValue.length() < 35 ) {
-				contentStream.setFont(font1, 8);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 35 && insertValue.length() < 45 ) {
 				contentStream.setFont(font1, 9);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 45 && insertValue.length() < 55 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 35 && insertValue.length() < 45 ) {
 				contentStream.setFont(font1, 8);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 55 && insertValue.length() < 65 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 45 && insertValue.length() < 55 ) {
 				contentStream.setFont(font1, 7);	
-			}else if(!insertValue.isEmpty() && insertValue.length() > 65 && insertValue.length() < 75 ) {
+			}else if(!insertValue.isEmpty() && insertValue.length() > 55 && insertValue.length() < 65 ) {
 				contentStream.setFont(font1, 6);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 65 && insertValue.length() < 75 ) {
+				contentStream.setFont(font1, 5);	
 			}else if(!insertValue.isEmpty() && insertValue.length() > 75 ) {
-				contentStream.setFont(font1,5);	
+				contentStream.setFont(font1,4);	
 			}else {
-				contentStream.setFont(font1, 11);
+				contentStream.setFont(font1, 10);
 			}
 		}else {
-			contentStream.setFont(font1, 11);
+			contentStream.setFont(font1, 10);
 		}
 		
 		return contentStream;
