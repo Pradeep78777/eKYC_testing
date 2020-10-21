@@ -459,19 +459,8 @@ public class eKYCController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getDocumentLink")
 	public ResponseDTO getDocumentLink(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
-		ResponseDTO response = new ResponseDTO();
-		/*
-		 * TO insert Access log into data base
-		 */
-		accessLog.setDevice_ip(request.getRemoteAddr());
-		accessLog.setUser_agent(request.getHeader("user-agent"));
-		accessLog.setUri(requestContext.getUriInfo().getPath());
-		accessLog.setCreated_on(created_on);
-		// Utility.inputAccessLogDetails(accessLog, pDto,
-		// pDto.getApplication_id() + "");
-
-		response = eKYCService.getInstance().getDocumentLink(pDto);
-		return response;
+		ResponseDTO repsonse = eKYCService.getInstance().getDocumentLink(pDto);
+		return repsonse;
 	}
 
 	@POST
@@ -738,4 +727,42 @@ public class eKYCController {
 
 		return response;
 	}
+
+	/**
+	 * To resend otp to given mobile number
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param requestContext
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/resendOtp")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO resendOTP(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = eKYCService.getInstance().resendOTP(pDto);
+		return response;
+	}
+
+	// /**
+	// * Method to resend the mail verification
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param requestContext
+	// * @param pDto
+	// * @return
+	// */
+	// @POST
+	// @Path("/resendEmailVerification")
+	// @Consumes(MediaType.APPLICATION_JSON)
+	// @Produces(MediaType.APPLICATION_JSON)
+	// public ResponseDTO resendEmailVerification(@Context
+	// ContainerRequestContext requestContext,
+	// PersonalDetailsDTO pDto) {
+	// ResponseDTO response = new ResponseDTO();
+	// response = eKYCService.getInstance().resendEmailVerification(pDto);
+	// return response;
+	// }
 }
