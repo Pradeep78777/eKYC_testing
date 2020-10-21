@@ -98,6 +98,7 @@ public class eKYCConstant {
 	public static final String PDF_FILE_EXTENSION = ".pdf";
 	public static final String WINDOWS_FORMAT_SLASH = "//";
 	public static final String EKYC_DOCUMENT = "EKYC_DOCUMENT";
+	public static final String EKYC_PHOTO = "PHOTO";
 	public static final String SIGNED_EKYC_DOCUMENT = "SIGNED_EKYC_DOCUMENT";
 
 	public static final String EXPIRY_TIME = "expiryInMilleseconds";
