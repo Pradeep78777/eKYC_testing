@@ -652,19 +652,39 @@ public class eKYCService {
 	 */
 	public ResponseDTO getDocumentLink(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		PersonalDetailsDTO result = null;
-		if (pDto.getApplication_id() > 0) {
-			result = new PersonalDetailsDTO();
-			String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(),
-					eKYCConstant.EKYC_DOCUMENT);
-			result.setEsign_document(documentLink);
-			response.setStatus(eKYCConstant.SUCCESS_STATUS);
-			response.setMessage(eKYCConstant.SUCCESS_MSG);
-			response.setResult(result);
-		} else {
-			response.setStatus(eKYCConstant.FAILED_STATUS);
-			response.setMessage(eKYCConstant.FAILED_MSG);
-			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		try {
+			PersonalDetailsDTO result = null;
+			if (pDto.getApplication_id() > 0) {
+				result = new PersonalDetailsDTO();
+				String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(),
+						eKYCConstant.EKYC_DOCUMENT);
+				if (documentLink != null && !documentLink.isEmpty()) {
+					result.setEsign_document(documentLink);
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setMessage(eKYCConstant.SUCCESS_MSG);
+					response.setResult(result);
+				} else {
+					ResponseDTO xmlResult = getXmlEncode(pDto);
+					if (xmlResult.getStatus() == eKYCConstant.SUCCESS_STATUS) {
+						documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(),
+								eKYCConstant.EKYC_DOCUMENT);
+						result.setEsign_document(documentLink);
+						response.setStatus(eKYCConstant.SUCCESS_STATUS);
+						response.setMessage(eKYCConstant.SUCCESS_MSG);
+						response.setResult(result);
+					} else {
+						response.setStatus(eKYCConstant.FAILED_STATUS);
+						response.setMessage(eKYCConstant.FAILED_MSG);
+						response.setMessage(eKYCConstant.FAILED_MSG);
+					}
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return response;
 	}
@@ -1126,9 +1146,9 @@ public class eKYCService {
 		return response;
 	}
 
-//	public ResponseDTO resendEmailVerification(PersonalDetailsDTO pDto) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	// public ResponseDTO resendEmailVerification(PersonalDetailsDTO pDto) {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 }

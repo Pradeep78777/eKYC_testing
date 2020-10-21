@@ -241,7 +241,7 @@ public class eKYCDAO {
 			}
 		}
 	}
-	
+
 	/**
 	 * To update the otp for the given application Id
 	 * 
@@ -1600,7 +1600,7 @@ public class eKYCDAO {
 	}
 
 	public String getDocumentLink(int application_id, String attachementType) {
-		String fileLocation = "";
+		String fileLocation = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		ResultSet rSet = null;
