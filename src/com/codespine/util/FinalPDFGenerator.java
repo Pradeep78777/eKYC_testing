@@ -40,9 +40,9 @@ public class FinalPDFGenerator {
 	static String destinationFilePath =  filePath;
 
 	public static void main(String[] args) throws Exception {
-		PDDocument pdDoc = PDDocument.load(new File("C:\\apache-tomcat-8.5.35\\webapps\\e_sign\\file\\uploads\\KYC_V6.pdf"));
-		int i = pdDoc.getNumberOfPages();
-		System.out.println(i);
+//		PDDocument pdDoc = PDDocument.load(new File("C:\\apache-tomcat-8.5.35\\webapps\\e_sign\\file\\uploads\\KYC_V6.pdf"));
+//		int i = pdDoc.getNumberOfPages();
+//		System.out.println(i);
 		
 	}
 	/**
@@ -104,12 +104,14 @@ public class FinalPDFGenerator {
 					JSONParser parser = new JSONParser();
 					JSONObject json = (JSONObject) parser.parse(coordinates);
 					if (StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()))) {
-						String A = (String) json
+						String coordinate = (String) json
 								.get(eKYCdto.getForPDFKeyValue().get(DTO.getColumn_name()).toLowerCase());
-						String[] orgs1 = StringUtil.split(A, eKYCConstant.COMMA_SEPERATOR);
-						int xValue1 = Integer.parseInt(orgs1[0]);
-						int yValue1 = Integer.parseInt(orgs1[1]);
-						pdfTickInserter(font,DTO.getPage_number(),document, xValue1, yValue1);
+						if(StringUtil.isNotNullOrEmpty(coordinate)){
+							String[] orgs1 = StringUtil.split(coordinate, eKYCConstant.COMMA_SEPERATOR);
+							int xValue1 = Integer.parseInt(orgs1[0]);
+							int yValue1 = Integer.parseInt(orgs1[1]);
+							pdfTickInserter(font,DTO.getPage_number(),document, xValue1, yValue1);
+						}
 					}
 				}
 			}
@@ -160,6 +162,8 @@ public class FinalPDFGenerator {
 					}
 					out.flush();
 					out.close();
+					is.close();
+					os.close();
 					PDImageXObject  pdImage = null;
 					if(StringUtil.isStrContainsWithEqIgnoreCase(url, "png")) {
 						File f = new File(imagePath);
