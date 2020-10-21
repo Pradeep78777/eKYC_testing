@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -532,7 +533,8 @@ public class Utility {
 			String pathToPDF = dcoumentLocation;
 			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
 			int serverTime = 10;
-			int pageNumberToInsertSignatureStamp = 17;
+			PDDocument pdDoc = PDDocument.load(new File(pathToPDF));
+			int pageNumberToInsertSignatureStamp = pdDoc.getNumberOfPages();
 			String nameToShowOnSignatureStamp = applicantName.toUpperCase();
 			String locationToShowOnSignatureStamp = city.toUpperCase();
 			String reasonForSign = "";
