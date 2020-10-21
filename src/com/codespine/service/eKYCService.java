@@ -1137,8 +1137,8 @@ public class eKYCService {
 			Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
 		} else {
 			String otp = Utility.generateOTP();
-			peKYCDao.updateOtpForMobilenumber(Integer.parseInt(otp), pDto.getApplication_id());
-			Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
+			peKYCDao.updateOtpForMobilenumber(Integer.parseInt(otp), pDto.getMobile_number());
+			Utility.sendMessage(pDto.getMobile_number(), Integer.parseInt(otp));
 		}
 		response.setStatus(eKYCConstant.SUCCESS_STATUS);
 		response.setMessage(eKYCConstant.SUCCESS_MSG);
