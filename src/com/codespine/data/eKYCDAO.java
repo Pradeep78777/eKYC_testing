@@ -863,7 +863,7 @@ public class eKYCDAO {
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
 					json.put("account_holder_name", rSet.getString("account_holder_name").toUpperCase());
-					result.setIfsc_code(rSet.getString("ifsc_code"));
+					result.setIfsc_code(rSet.getString("ifsc_code").toUpperCase());
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", rSet.getString("bank_account_no"));
