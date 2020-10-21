@@ -40,6 +40,10 @@ public class FinalPDFGenerator {
 	static String destinationFilePath =  filePath;
 
 	public static void main(String[] args) throws Exception {
+		PDDocument pdDoc = PDDocument.load(new File("C:\\apache-tomcat-8.5.35\\webapps\\e_sign\\file\\uploads\\KYC_V6.pdf"));
+		int i = pdDoc.getNumberOfPages();
+		System.out.println(i);
+		
 	}
 	/**
 	 * Mrthod to construct pdf for ESIGN 
