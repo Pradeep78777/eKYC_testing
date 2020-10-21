@@ -78,7 +78,8 @@ public class FinalPDFGenerator {
 				} else if (StringUtil.isEqual(DTO.getColumn_name(), eKYCConstant.IMAGE)) {
 					String URL = eKYCDAO.getInstance().getDocumentLink(Integer.parseInt(application_id),eKYCConstant.EKYC_PHOTO);
 					if(StringUtil.isNotNullOrEmpty(URL)) {
-						pdfimageInserter(DTO.getPage_number(),document,xValue,yValue, URL,application_id,finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH);
+						String replacedURL = StringUtil.replace(URL, " ", "%20");
+						pdfimageInserter(DTO.getPage_number(),document,xValue,yValue, replacedURL,application_id,finalSestinationFilePath+eKYCConstant.WINDOWS_FORMAT_SLASH);
 //					}else {
 //						pdfimageInserter(DTO.getPage_number(),document,xValue, yValue, "13.jpg", application_id,finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH);
 					}
