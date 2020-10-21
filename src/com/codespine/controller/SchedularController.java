@@ -35,4 +35,18 @@ public class SchedularController {
 		response = SchedularService.getInstance().updatePostalCodes();
 		return response;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	@POST
+	@Path("/updateIfscCodeDetails")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO updateIfscCodeDetails() {
+		ResponseDTO response = new ResponseDTO();
+		response = SchedularService.getInstance().updateIfscCodeDetails();
+		return response;
+	}
 }

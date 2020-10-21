@@ -1103,4 +1103,32 @@ public class eKYCService {
 		return response;
 	}
 
+	/**
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO resendOTP(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		PersonalDetailsDTO checkUser = peKYCDao.checkExistingUser(pDto);
+		if (checkUser != null && checkUser.getApplication_id() > 0) {
+			String otp = Utility.generateOTP();
+			peKYCDao.updateOtpForApplicationId(Integer.parseInt(otp), checkUser.getApplication_id());
+			Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
+		} else {
+			String otp = Utility.generateOTP();
+			peKYCDao.updateOtpForMobilenumber(Integer.parseInt(otp), pDto.getApplication_id());
+			Utility.sendMessage(checkUser.getMobile_number(), Integer.parseInt(otp));
+		}
+		response.setStatus(eKYCConstant.SUCCESS_STATUS);
+		response.setMessage(eKYCConstant.SUCCESS_MSG);
+		response.setReason(eKYCConstant.OTP_SENT_SUCESSFULLY);
+		return response;
+	}
+
+//	public ResponseDTO resendEmailVerification(PersonalDetailsDTO pDto) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
 }
