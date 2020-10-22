@@ -127,7 +127,7 @@ public class FinalPDFGenerator {
 					PDPageTree mergePD = document.getPages();
 					PDDocument pddDocument2 = PDDocument.load(inputStream);
 					mergePD.insertAfter(pddDocument2.getPage(0),document.getPage(16));
-					pddDocument2.close();
+//					pddDocument2.close();
 					inputStream.close();
 				}else {
 					InputStream in = new URL(replacedURL).openStream();
@@ -448,7 +448,8 @@ public class FinalPDFGenerator {
 		List<FileUploadDTO>  fileUploadDTOs = eKYCDAO.getInstance().getUploadedFile(application_id);
 		for(FileUploadDTO fileUploadDTO:fileUploadDTOs) {
 			if(StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.EKYC_DOCUMENT)
-					&& StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.EKYC_PHOTO)) {
+					&& StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.EKYC_PHOTO)
+					&& StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.SIGNED_EKYC_DOCUMENT)) {
 				if(urls == null) {
 					urls = new ArrayList<String>();
 				}
