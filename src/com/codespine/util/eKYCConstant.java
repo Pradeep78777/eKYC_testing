@@ -74,6 +74,15 @@ public class eKYCConstant {
 	public static final int EXCH_UPDATED = 8;
 	public static final int ATTACHEMENT_UPLOADED = 9;
 
+	public static final int APPLICATION_STARTED_BY_ADMIN = 10;
+	public static final int PAN_CARD_VERIFIED = 11;
+	public static final int BASIC_DETAILS_VERIFIED = 12;
+	public static final int COMMUNICATION_ADDRESS_VERIFIED = 13;
+	public static final int PERMANENT_ADDRESS_VERIFIED = 14;
+	public static final int BANK_DETAILS_VERIFIED = 15;
+	public static final int EXCH_VERIFIED = 16;
+	public static final int ATTACHEMENT_VERIFIED = 17;
+
 	public static final String MESSAGE_URL = "messageURl";
 	public static final String MESSAGE_USERNAME = "messageUserName";
 	public static final String MESSAGE_PASSWORD = "messagePassword";
@@ -112,11 +121,37 @@ public class eKYCConstant {
 	public static final String FILE_PATH_NEWDOCUMENT = "filePathFirstXml";
 	public static final String FILE_PATH_EXAMPLE_DOCUMENT = "exampleDocumentFilePath";
 	public static final String TEMP_FILE_XML_DOCUMENTS = "tempXMLFiles";
-	
+
 	public static final String DOCUMENT_FILE_NAEM = "constantPDFName";
-	
+
 	public static final String SIGNED_FINAL_DOCUMENT_NAME = "KYC_V6_signedFinal.pdf";
-	
+
 	public static final String SIGNED_FINAL_RESPONSE_TEXT = "finalResponse";
-	
+
+	/**
+	 * Message for ADMIN starts
+	 */
+	public static final String SOME_PARAMTERS_ARE_MISSING = "Some parameters are missing";
+	public static final String PAN_APPROVED = "Pan approved sucessfully";
+	public static final String PAN_REJECTED = "Pan rejected sucessfullty";
+
+	public static final String PERSONAL_DETAILS_APPROVED = "Personal details approved sucessfully";
+	public static final String PERSONAL_DETAILS_REJECTED = "Persaonal details rejected sucessfullty";
+
+	public static final String BANK_DETAILS_APPROVED = "Bank Details approved sucessfully";
+	public static final String BANK_DETAILS_REJECTED = "Bank Details rejected sucessfullty";
+
+	public static final String COMMUNICATION_ADDRESS_DETAILS_APPROVED = "Communication address details approved sucessfully";
+	public static final String COMMUNICATION_ADDRESS_DETAILS_REJECTED = "Communication address details rejected sucessfullty";
+
+	public static final String PERMANENT_ADDRESS_DETAILS_APPROVED = "Permannent address details approved sucessfully";
+	public static final String PERMANENT_ADDRESS_DETAILS_REJECTED = "Permannent address details rejected sucessfullty";
+
+	public static final String ATTACHEMENTS_DETAILS_APPROVED = "Attachements Details approved sucessfully";
+	public static final String ATTACHEMENTS_DETAILS_REJECTED = "Attachements Details rejected sucessfullty";
+
+	public static final String ADMIN_STARTED_VALIDATING_APPLICATION = "Admin Started validating application";
+
+	public static final String REJECT_OR_APPROVE = "Please provide any actions";
+
 }

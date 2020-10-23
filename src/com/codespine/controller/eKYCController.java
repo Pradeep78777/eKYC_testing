@@ -30,7 +30,6 @@ import com.codespine.service.eKYCService;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.FinalPDFGenerator;
 import com.codespine.util.StringUtil;
-import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 @Path("/eKYC")
@@ -722,9 +721,8 @@ public class eKYCController {
 		accessLog.setCreated_on(created_on);
 		// Utility.inputAccessLogDetails(accessLog, sampleBase64, "");
 
-		String randomString = Utility.randomAlphaNumericNew(256);
-		long currentTime = System.currentTimeMillis();
-
+//		String randomString = Utility.randomAlphaNumericNew(256);
+//		long currentTime = System.currentTimeMillis();
 		return response;
 	}
 
