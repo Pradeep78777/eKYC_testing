@@ -798,17 +798,15 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_bank_account_details(application_id, account_holder_name, ifsc_code, bank_account_no,verified, "
-							+ "verification_count, created_on) VALUES (?,?,?,?,?,?,?) "
+					"INSERT INTO tbl_bank_account_details(application_id, account_holder_name, ifsc_code, bank_account_no, "
+							+ " created_on) VALUES (?,?,?,?,?) "
 							+ "ON DUPLICATE KEY UPDATE application_id = ? , account_holder_name = ? , ifsc_code = ? , "
-							+ "bank_account_no = ?, verified = ? ,verification_count = ? , last_updated = ?");
+							+ "bank_account_no = ?, last_updated = ?");
 			int paramPos = 1;
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
 			pStmt.setString(paramPos++, pDto.getIfsc_code());
 			pStmt.setString(paramPos++, pDto.getBank_account_no());
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 0);
 			pStmt.setTimestamp(paramPos++, timestamp);
 			/**
 			 * on Duplicate key
@@ -817,8 +815,6 @@ public class eKYCDAO {
 			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
 			pStmt.setString(paramPos++, pDto.getIfsc_code());
 			pStmt.setString(paramPos++, pDto.getBank_account_no());
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 0);
 			pStmt.setTimestamp(paramPos++, timestamp);
 			count = pStmt.executeUpdate();
 		} catch (Exception e) {
