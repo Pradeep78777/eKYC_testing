@@ -8,6 +8,7 @@ import com.codespine.dto.ApplicationLogDTO;
 import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
+import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 public class AdminService {
@@ -514,8 +515,16 @@ public class AdminService {
 			boolean isSuccessfull = AdminDAO.getInstance().endApplication(pDto);
 			if (isSuccessfull) {
 				AdminDAO.getInstance().updateInApplicationMaster(pDto);
-				/*
-				 * TODO: Send to email to the given application id
+				PersonalDetailsDTO userDetails = AdminDAO.getInstance().getUserDetails(pDto.getApplicationId());
+				if (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 0) {
+					Utility.applicationApprovedMessage(userDetails.getEmail(), userDetails.getApplicant_name());
+				} else if (pDto.getIsApprove() == 0 && pDto.getIsRejected() == 1) {
+					List<ApplicationLogDTO> result = AdminDAO.getInstance().rejectedDocuments(pDto.getApplicationId());
+					Utility.applicationRejectedMessage(userDetails.getEmail(), userDetails.getApplicant_name(), result);
+				}
+				/**
+				 * Get applicant name and email address for the given
+				 * application id
 				 */
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);

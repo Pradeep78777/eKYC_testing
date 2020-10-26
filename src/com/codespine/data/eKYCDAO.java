@@ -15,9 +15,11 @@ import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
+import com.codespine.dto.IfscCodeDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
+import com.codespine.dto.PostalCodesDTO;
 import com.codespine.dto.esignDTO;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.DBUtil;
@@ -1926,5 +1928,105 @@ public class eKYCDAO {
 		}
 		return isSuccessFull;
 	}
+
+	/**
+	 * Method to get search results for the given postal Codes
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	public List<PostalCodesDTO> getPostalCode(PostalCodesDTO dto) {
+		List<PostalCodesDTO> response = null;
+		PostalCodesDTO result = null;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT pin_code, district_code, city_name ,district_name, state_name, status FROM tbl_pincode where pin_code like '"
+							+ dto.getPin_code() + "%' limit 100");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<PostalCodesDTO>();
+				while (rSet.next()) {
+					result = new PostalCodesDTO();
+					result.setPin_code(rSet.getString("pin_code"));
+					result.setDistrict_code(rSet.getInt("district_code"));
+					result.setCity_name(rSet.getString("city_name"));
+					result.setDistrict_name(rSet.getString("district_name"));
+					result.setState_name(rSet.getString("state_name"));
+					result.setStatus(rSet.getString("status"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pStmt.close();
+				conn.close();
+				rSet.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	public List<IfscCodeDTO> getIfscCode(IfscCodeDTO dto) {
+		List<IfscCodeDTO> response = null;
+		IfscCodeDTO result = null;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT bank_id, micr_code, ifc_code, bank_name, bank_address_1, bank_address_2, bank_address_3, "
+							+ "bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, bank_phone_2, unique_id, "
+							+ "bank_email, bank_contact_name, bank_contact_designation FROM tbl_ifsccode_details where ifc_code like '"
+							+ dto.getIfc_code() + "%' limit 100");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<IfscCodeDTO>();
+				while (rSet.next()) {
+					result = new IfscCodeDTO();
+					result.setBank_id(rSet.getInt("bank_id"));
+					result.setMicr_code(rSet.getString("micr_code"));
+					result.setIfc_code(rSet.getString("ifc_code"));
+					result.setBank_name(rSet.getString("bank_name"));
+					result.setBank_address_1(rSet.getString("bank_address_1"));
+					result.setBank_address_2(rSet.getString("bank_address_2"));
+					result.setBank_address_3(rSet.getString("bank_address_3"));
+					result.setBank_city(rSet.getString("bank_city"));
+					result.setBank_state(rSet.getString("bank_state"));
+					result.setBank_country(rSet.getString("bank_country"));
+					result.setBank_zip_code(rSet.getString("bank_zip_code"));
+					result.setBank_phone_1(rSet.getString("bank_phone_1"));
+					result.setBank_phone_2(rSet.getString("bank_phone_2"));
+					result.setUnique_id(rSet.getString("unique_id"));
+					result.setBank_email(rSet.getString("bank_email"));
+					result.setBank_contact_name(rSet.getString("bank_contact_name"));
+					result.setBank_contact_designation(rSet.getString("bank_contact_designation"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pStmt.close();
+				conn.close();
+				rSet.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	
 
 }

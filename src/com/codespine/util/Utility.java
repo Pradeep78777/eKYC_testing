@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -35,8 +36,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.codespine.cache.CacheController;
-import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AccesslogDTO;
+import com.codespine.dto.ApplicationLogDTO;
 import com.codespine.service.AccessLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsdl.esign.preverifiedNo.controller.EsignApplication;
@@ -560,5 +561,127 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return responseText;
+	}
+
+	/**
+	 * method to send the application approve mail to the application registered
+	 * Email
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param email
+	 * @param applicantName
+	 * @return
+	 */
+	public static String applicationApprovedMessage(String email, String applicantName) {
+		StringBuilder builder = new StringBuilder();
+		String status = eKYCConstant.FAILED_MSG;
+		try {
+			Properties properties = new Properties();
+			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
+			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
+			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.auth", "true");
+			properties.put("mail.smtp.debug", "true");
+			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
+							CSEnvVariables.getProperty(eKYCConstant.PASSWORD));
+				}
+			});
+			try {
+				String hs = "<!DOCTYPE html><html><head><style>*{font-family:'Open Sans',"
+						+ " Helvetica, Arial;color: #1e3465}table {margin-left:100px;font-family: arial, sans-serif;border-collapse:"
+						+ " separate;}td, th {border: 1px solid #1e3465;text-align: left;padding: 8px;}"
+						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
+						+ "<div  style='font-size:14px'><p><b>Hi " + applicantName
+						+ ",</b></p><br><p>Your application information and documents are successfully verified and accepted. "
+						+ "You will receive an email with your account details shortly with login credentials. </p>"
+						+ "<br><p>Thank you for choosing Zebu Etrade and we wish you all the best </p></div>"
+						+ "<div><p align='left'>" + "<b>Regards,"
+						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
+				builder.append(hs);
+				MimeMessage message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
+				message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.trim()));
+				message.setSubject("Zebull E-Kyc Application status");
+				BodyPart messageBodyPart1 = new MimeBodyPart();
+				messageBodyPart1.setContent(builder.toString(), "text/html");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(messageBodyPart1);
+				message.setContent(multipart);
+				Transport.send(message);
+				status = eKYCConstant.SUCCESS_MSG;
+			} catch (MessagingException ex) {
+				ex.printStackTrace();
+				status = eKYCConstant.FAILED_MSG;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+
+	public static String applicationRejectedMessage(String email, String applicantName,
+			List<ApplicationLogDTO> rejectedDoumnets) {
+		StringBuilder builder = new StringBuilder();
+		StringBuilder documentsBuilder = new StringBuilder();
+		String status = eKYCConstant.FAILED_MSG;
+		ApplicationLogDTO tempDto = null;
+		String tempString = null;
+		try {
+			Properties properties = new Properties();
+			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
+			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
+			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.auth", "true");
+			properties.put("mail.smtp.debug", "true");
+			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
+							CSEnvVariables.getProperty(eKYCConstant.PASSWORD));
+				}
+			});
+			try {
+				for (int itr = 0; itr < rejectedDoumnets.size(); itr++) {
+					String newline = System.getProperty("line.separator");
+					tempDto = new ApplicationLogDTO();
+					tempDto = rejectedDoumnets.get(itr);
+					tempString = "<p>" + tempDto.getVerification_module() + " : " + tempDto.getNotes() + newline
+							+ "</p>";
+					documentsBuilder.append(tempString);
+				}
+				String hs = "<!DOCTYPE html><html><head><style>*{font-family:'Open Sans',"
+						+ " Helvetica, Arial;color: #1e3465}table {margin-left:100px;font-family: arial, sans-serif;border-collapse:"
+						+ " separate;}td, th {border: 1px solid #1e3465;text-align: left;padding: 8px;}"
+						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
+						+ "<div  style='font-size:14px'><p><b>Hi " + applicantName
+						+ ",</b> <p>YYour application information and documents "
+						+ "are verified and the team has found some discrepancies or issues. Please find below the "
+						+ "notes from accounts team. </p> <b> " + documentsBuilder + "</b><br> "
+						+ "<p>We request you to take the remedial action using the the below link. Please reach out to our support team on 9XXXXXXXX for any further information</p></div>"
+						+ "<div><p align='left'>" + "<b>Regards,"
+						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
+				builder.append(hs);
+				MimeMessage message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
+				message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.trim()));
+				message.setSubject("Zebull E-Kyc Application status");
+				BodyPart messageBodyPart1 = new MimeBodyPart();
+				messageBodyPart1.setContent(builder.toString(), "text/html");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(messageBodyPart1);
+				message.setContent(multipart);
+				Transport.send(message);
+				status = eKYCConstant.SUCCESS_MSG;
+			} catch (MessagingException ex) {
+				ex.printStackTrace();
+				status = eKYCConstant.FAILED_MSG;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
 	}
 }

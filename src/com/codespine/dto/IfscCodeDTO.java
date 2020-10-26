@@ -18,6 +18,7 @@ public class IfscCodeDTO {
 	private String bank_email;
 	private String bank_contact_name;
 	private String bank_contact_designation;
+	private String address;
 	public int getBank_id() {
 		return bank_id;
 	}
@@ -119,6 +120,12 @@ public class IfscCodeDTO {
 	}
 	public void setBank_contact_designation(String bank_contact_designation) {
 		this.bank_contact_designation = bank_contact_designation;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
 	}
 	
 }

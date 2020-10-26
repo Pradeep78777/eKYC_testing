@@ -22,8 +22,10 @@ import com.codespine.dto.AccesslogDTO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
+import com.codespine.dto.IfscCodeDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
+import com.codespine.dto.PostalCodesDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
 import com.codespine.service.eKYCService;
@@ -721,8 +723,8 @@ public class eKYCController {
 		accessLog.setCreated_on(created_on);
 		// Utility.inputAccessLogDetails(accessLog, sampleBase64, "");
 
-//		String randomString = Utility.randomAlphaNumericNew(256);
-//		long currentTime = System.currentTimeMillis();
+		// String randomString = Utility.randomAlphaNumericNew(256);
+		// long currentTime = System.currentTimeMillis();
 		return response;
 	}
 
@@ -741,6 +743,38 @@ public class eKYCController {
 	public ResponseDTO resendOTP(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		response = eKYCService.getInstance().resendOTP(pDto);
+		return response;
+	}
+
+	/**
+	 * Method to get search results for given postal codes
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getPostalCode")
+	public ResponseDTO getPostalCode(PostalCodesDTO dto) {
+		ResponseDTO response = eKYCService.getInstance().getPostalCode(dto);
+		return response;
+	}
+
+	/**
+	 * Method to get the IFSC Code details for the given IFSC Code
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getIfscCode")
+	public ResponseDTO getIfscCode(IfscCodeDTO dto) {
+		ResponseDTO response = eKYCService.getInstance().getIfscCode(dto);
 		return response;
 	}
 
