@@ -27,6 +27,8 @@ public class PersonalDetailsDTO {
 	private String esign_Xml;
 	private Map<String,String>  forPDFKeyValue;
 	private String esign_document;
+	private String pancard;
+	private String dob;
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
 	}
@@ -205,6 +207,18 @@ public class PersonalDetailsDTO {
 	}
 	public void setEsign_document(String esign_document) {
 		this.esign_document = esign_document;
+	}
+	public String getPancard() {
+		return pancard;
+	}
+	public void setPancard(String pancard) {
+		this.pancard = pancard;
+	}
+	public String getDob() {
+		return dob;
+	}
+	public void setDob(String dob) {
+		this.dob = dob;
 	}
 	
 }

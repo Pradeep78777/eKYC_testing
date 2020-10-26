@@ -31,7 +31,7 @@ public class SchedularDAO {
 							+ "VALUES(?,?,?,?,?)");
 			for (PostalCodesDTO itr : finalPostalCodes) {
 				int paramPos = 1;
-				pStmt.setInt(paramPos++, itr.getPin_code());
+				pStmt.setString(paramPos++, itr.getPin_code());
 				pStmt.setInt(paramPos++, itr.getDistrict_code());
 				pStmt.setString(paramPos++, itr.getDistrict_name());
 				pStmt.setString(paramPos++, itr.getState_name());

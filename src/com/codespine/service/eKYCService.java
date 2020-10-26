@@ -24,8 +24,10 @@ import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
+import com.codespine.dto.IfscCodeDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
+import com.codespine.dto.PostalCodesDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
 import com.codespine.dto.esignDTO;
@@ -1143,6 +1145,48 @@ public class eKYCService {
 		response.setStatus(eKYCConstant.SUCCESS_STATUS);
 		response.setMessage(eKYCConstant.SUCCESS_MSG);
 		response.setReason(eKYCConstant.OTP_SENT_SUCESSFULLY);
+		return response;
+	}
+
+	/**
+	 * Method to get search results for given postal codes
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	public ResponseDTO getPostalCode(PostalCodesDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		List<PostalCodesDTO> results = eKYCDAO.getInstance().getPostalCode(dto);
+		if (results != null && results.size() > 0) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setResult(results);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the IFSC Code details for given IFSC code
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	public ResponseDTO getIfscCode(IfscCodeDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		List<IfscCodeDTO> results = eKYCDAO.getInstance().getIfscCode(dto);
+		if (results != null && results.size() > 0) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setResult(results);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+		}
 		return response;
 	}
 

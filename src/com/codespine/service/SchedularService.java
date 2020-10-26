@@ -42,7 +42,7 @@ public class SchedularService {
 				String[] inArr = thisLine.split("\\~");
 				paramObj = new PostalCodesDTO();
 				if (inArr != null) {
-					paramObj.setPin_code(Integer.parseInt(inArr[0]));
+					paramObj.setPin_code(inArr[0]);
 					paramObj.setDistrict_code(Integer.parseInt(inArr[1]));
 					paramObj.setDistrict_name(inArr[2]);
 					paramObj.setState_name(inArr[4]);

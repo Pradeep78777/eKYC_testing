@@ -55,6 +55,16 @@ public class AdminDAO {
 					result.setEmail_id_verified(rSet.getInt("a.email_activated"));
 					result.setApplicationStatus(rSet.getInt("a.application_status"));
 					result.setApplicant_name(rSet.getString("b.applicant_name"));
+					result.setMothersName(rSet.getString("b.mothersName"));
+					result.setFathersName(rSet.getString("b.fathersName"));
+					result.setGender(rSet.getString("b.gender"));
+					result.setMarital_status(rSet.getString("b.marital_status"));
+					result.setAnnual_income(rSet.getString("b.annual_income"));
+					result.setTrading_experience(rSet.getString("b.trading_experience"));
+					result.setOccupation(rSet.getString("b.occupation"));
+					result.setPolitically_exposed(rSet.getString("b.politically_exposed"));
+					result.setPancard(rSet.getString("c.pan_card"));
+					result.setDob(rSet.getString("c.dob"));
 					response.add(result);
 				}
 			}
@@ -406,6 +416,95 @@ public class AdminDAO {
 			}
 		}
 		return issuccessfull;
+	}
+
+	/**
+	 * Method to get the user details by given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public PersonalDetailsDTO getUserDetails(int applicationId) {
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement("SELECT a.mobile_number, a.email_id ,b.applicant_name "
+					+ "FROM tbl_application_master A inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+					+ "where a.application_id = ?");
+			pStmt.setLong(paromPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PersonalDetailsDTO();
+					result.setMobile_number(rSet.getLong("mobile_number"));
+					result.setEmail(rSet.getString("email_id"));
+					result.setApplicant_name(rSet.getString("b.applicant_name"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Method to get the rejected Documents for the given
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public List<ApplicationLogDTO> rejectedDocuments(int applicationId) {
+		List<ApplicationLogDTO> response = null;
+		ApplicationLogDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT verification_module, start_time, end_time, status, notes FROM tbl_application_status_log where application_id = ? and status = ? ");
+			pStmt.setInt(paromPos++, applicationId);
+			pStmt.setInt(paromPos++, 0);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<ApplicationLogDTO>();
+				while (rSet.next()) {
+					result = new ApplicationLogDTO();
+					result.setVerification_module(rSet.getString("verification_module"));
+					result.setStart_time(rSet.getString("start_time"));
+					result.setEnd_time(rSet.getString("end_time"));
+					result.setStatus(rSet.getInt("status"));
+					result.setNotes(rSet.getString("notes"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
 	}
 
 }
