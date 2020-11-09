@@ -181,4 +181,20 @@ public class AdminController {
 		return response;
 	}
 
+	/**
+	 * Method 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/getApplicationStatus")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getApplicationStatus(AdminDTO pDto) {
+		ResponseDTO response = AdminService.getInstance().getApplicationStatus(pDto);
+		return response;
+	}
+
+
 }

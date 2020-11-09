@@ -89,8 +89,18 @@ public class eKYCConstant {
 	public static final String MESSAGE_SENDER = "messageFrom";
 	public static final String MESSAGE_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins";
 
-	public static final String PROJ_DIR = "C://apache-tomcat-8.5.35//webapps//e_sign//";
-	public static final String SITE_URL_FILE = "http://rest.irongates.in//e_sign/";
+	/**
+	 * File path for Local
+	 */
+//	public static final String PROJ_DIR = "C://apache-tomcat-8.5.35//webapps//e_sign//";
+//	public static final String SITE_URL_FILE = "http://rest.irongates.in//e_sign/";
+//	public static final String UPLOADS_DIR = "file//uploads//";
+	
+	/**
+	 *File path for Live
+	 */
+	public static final String PROJ_DIR = "usr//share//tomcat9//webapps//e_sign//";
+	public static final String SITE_URL_FILE = "https://beta.zebull.in:8080//e_sign/";
 	public static final String UPLOADS_DIR = "file//uploads//";
 
 	public static final String FILE_UPLOAD_SUCESSFULL = "Document uploaded Sucessfully";
@@ -98,7 +108,7 @@ public class eKYCConstant {
 	public static final String IMAGE = "IMG";
 	public static final String TICK = "TICK";
 	public static final String COMMA_SEPERATOR = ",";
-	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
+//	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
 
 	public static final String FILE_PATH = "FILE_PATH";
 	public static final String CONSTANT_PDF_NAME = "CONSTANT_PDF_NAME";

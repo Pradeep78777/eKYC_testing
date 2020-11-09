@@ -224,6 +224,9 @@ public class eKYCService {
 					// String fatherName = (String) tempResult.get("lastName");
 					dummResult.setApplicant_name(panCardname);
 					// dummResult.setFathersName(fatherName);
+					pDto.setFirst_name(firstName);
+					pDto.setMiddle_name(middleName);
+					pDto.setLast_name(lastName);
 					pDto.setApplicant_name(panCardname);
 					// pDto.setFathersName(fatherName);
 					ResponseDTO topResult = new ResponseDTO();

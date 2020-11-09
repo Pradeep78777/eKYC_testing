@@ -657,7 +657,7 @@ public class Utility {
 						+ " separate;}td, th {border: 1px solid #1e3465;text-align: left;padding: 8px;}"
 						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
 						+ "<div  style='font-size:14px'><p><b>Hi " + applicantName
-						+ ",</b> <p>YYour application information and documents "
+						+ ",</b> <p>Your application information and documents "
 						+ "are verified and the team has found some discrepancies or issues. Please find below the "
 						+ "notes from accounts team. </p> <b> " + documentsBuilder + "</b><br> "
 						+ "<p>We request you to take the remedial action using the the below link. Please reach out to our support team on 9XXXXXXXX for any further information</p></div>"
