@@ -296,17 +296,17 @@ public class AdminDAO {
 	}
 
 	/**
-	 * Method to update the admin status
+	 * Method to Insert the admin status
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param pDto
 	 * @return
 	 */
-	public boolean updateAdminStatus(int applicationId, String verificationModule, boolean isApproved, String notes) {
+	public boolean insertAdminStatus(int applicationId, String verificationModule, boolean isApproved, String notes) {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		boolean issuccessfull = false;
-		int status = 0;
+		int status = 2;
 		if (isApproved) {
 			status = 1;
 		}
@@ -319,6 +319,44 @@ public class AdminDAO {
 			pStmt.setString(parompos++, verificationModule);
 			pStmt.setInt(parompos++, status);
 			pStmt.setString(parompos++, notes);
+			issuccessfull = pStmt.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return issuccessfull;
+	}
+
+	/**
+	 * Method to update the admin status
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public boolean updateAdminStatus(int applicationId, String verificationModule, boolean isApproved, String notes) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		boolean issuccessfull = false;
+		int status = 2;
+		if (isApproved) {
+			status = 1;
+		}
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_application_status_log SET status = ? , notes = ? WHERE application_id = ? and verification_module = ? ");
+			int parompos = 1;
+			pStmt.setInt(parompos++, status);
+			pStmt.setString(parompos++, notes);
+			pStmt.setInt(parompos++, applicationId);
+			pStmt.setString(parompos++, verificationModule);
 			issuccessfull = pStmt.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -505,6 +543,37 @@ public class AdminDAO {
 			}
 		}
 		return response;
+	}
+
+	public int getAdminVerificationModules(int applicationId, String verificationModule) {
+		int tempId = 0;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(" SELECT id FROM tbl_application_status_log where application_id = ? and verification_module = ?");
+			pStmt.setInt(paromPos++, applicationId);
+			pStmt.setString(paromPos++, verificationModule);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					tempId = rSet.getInt("id");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return tempId;
 	}
 
 }

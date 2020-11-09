@@ -61,7 +61,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(true, "", pDto.getApplicationId(),
 						"tbl_pancard_details");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "PAN CARD DETAILS", true, "");
+					updateAdminStatus(pDto.getApplicationId(), "PAN CARD DETAILS", true, "");
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.PAN_APPROVED);
@@ -78,8 +78,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(false, pDto.getComments(), pDto.getApplicationId(),
 						"tbl_pancard_details");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "PAN CARD DETAILS", false,
-							pDto.getComments());
+					updateAdminStatus(pDto.getApplicationId(), "PAN CARD DETAILS", false, pDto.getComments());
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.PAN_REJECTED);
@@ -126,7 +125,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(true, "", pDto.getApplicationId(),
 						"tbl_account_holder_personal_details");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "PERSONAL DETAILS", true, "");
+					updateAdminStatus(pDto.getApplicationId(), "PERSONAL DETAILS", true, "");
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.PERSONAL_DETAILS_APPROVED);
@@ -143,8 +142,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(false, pDto.getComments(), pDto.getApplicationId(),
 						"tbl_account_holder_personal_details");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "PERSONAL DETAILS", false,
-							pDto.getComments());
+					updateAdminStatus(pDto.getApplicationId(), "PERSONAL DETAILS", false, pDto.getComments());
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.PERSONAL_DETAILS_REJECTED);
@@ -191,7 +189,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(true, "", pDto.getApplicationId(),
 						"tbl_bank_account_details");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "BANK DETAILS", true, "");
+					updateAdminStatus(pDto.getApplicationId(), "BANK DETAILS", true, "");
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.BANK_DETAILS_APPROVED);
@@ -208,8 +206,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(false, pDto.getComments(), pDto.getApplicationId(),
 						"tbl_bank_account_details");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "BANK DETAILS", false,
-							pDto.getComments());
+					updateAdminStatus(pDto.getApplicationId(), "BANK DETAILS", false, pDto.getComments());
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.BANK_DETAILS_REJECTED);
@@ -258,8 +255,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(true, "", pDto.getApplicationId(),
 						"tbl_communication_address");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "COMMUNICATION ADDRESS", true,
-							"");
+					updateAdminStatus(pDto.getApplicationId(), "COMMUNICATION ADDRESS", true, "");
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.COMMUNICATION_ADDRESS_DETAILS_APPROVED);
@@ -277,8 +273,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(false, pDto.getComments(), pDto.getApplicationId(),
 						"tbl_communication_address");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "COMMUNICATION ADDRESS", false,
-							pDto.getComments());
+					updateAdminStatus(pDto.getApplicationId(), "COMMUNICATION ADDRESS", false, pDto.getComments());
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.COMMUNICATION_ADDRESS_DETAILS_REJECTED);
@@ -326,7 +321,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(true, "", pDto.getApplicationId(),
 						"tbl_permanent_address");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "PERMANENT ADDRESS", true, "");
+					updateAdminStatus(pDto.getApplicationId(), "PERMANENT ADDRESS", true, "");
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.PERMANENT_ADDRESS_DETAILS_APPROVED);
@@ -343,8 +338,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().uploadAdminComments(false, pDto.getComments(), pDto.getApplicationId(),
 						"tbl_permanent_address");
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(), "PERMANENT ADDRESS", false,
-							pDto.getComments());
+					updateAdminStatus(pDto.getApplicationId(), "PERMANENT ADDRESS", false, pDto.getComments());
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.PERMANENT_ADDRESS_DETAILS_REJECTED);
@@ -392,8 +386,7 @@ public class AdminService {
 				result = AdminDAO.getInstance().updateAdminCommentForAttachments(true, "", pDto.getApplicationId(),
 						pDto.getAttachementType());
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(),
-							pDto.getAttachementType() + "ATTACHEMENT", true, "");
+					updateAdminStatus(pDto.getApplicationId(), pDto.getAttachementType() + "ATTACHEMENT", true, "");
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.ATTACHEMENTS_DETAILS_APPROVED);
@@ -410,8 +403,8 @@ public class AdminService {
 				result = AdminDAO.getInstance().updateAdminCommentForAttachments(false, pDto.getComments(),
 						pDto.getApplicationId(), pDto.getAttachementType());
 				if (result) {
-					AdminDAO.getInstance().updateAdminStatus(pDto.getApplicationId(),
-							pDto.getAttachementType() + "ATTACHEMENT", false, pDto.getComments());
+					updateAdminStatus(pDto.getApplicationId(), pDto.getAttachementType() + "ATTACHEMENT", false,
+							pDto.getComments());
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.ATTACHEMENTS_DETAILS_REJECTED);
@@ -540,5 +533,66 @@ public class AdminService {
 			response.setReason(eKYCConstant.SOME_PARAMTERS_ARE_MISSING);
 		}
 		return response;
+	}
+
+	/**
+	 * Method to get the application status for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getApplicationStatus(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null && pDto.getApplicationId() > 0) {
+			List<ApplicationLogDTO> result = AdminDAO.getInstance().checkApplicationStatus(pDto.getApplicationId());
+			if (result != null && result.size() > 0) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setResult(result);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.SOME_PARAMTERS_ARE_MISSING);
+		}
+		return response;
+	}
+
+	/**
+	 * Check and insert or update the admin Comments
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @param verificationModule
+	 * @param isApproved
+	 * @param notes
+	 */
+	public static void updateAdminStatus(int applicationId, String verificationModule, boolean isApproved,
+			String notes) {
+		int checkInserted = AdminDAO.getInstance().getAdminVerificationModules(applicationId, verificationModule);
+		if (checkInserted > 0) {
+			AdminDAO.getInstance().updateAdminStatus(applicationId, verificationModule, isApproved, notes);
+		} else {
+			AdminDAO.getInstance().insertAdminStatus(applicationId, verificationModule, isApproved, notes);
+		}
+
+	}
+
+	/**
+	 * Method to get the full Details about the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 */
+	public static void getDetailsForApplicationID(int applicationId) {
+		/**
+		 * To get all records for given application id
+		 */
+		
 	}
 }

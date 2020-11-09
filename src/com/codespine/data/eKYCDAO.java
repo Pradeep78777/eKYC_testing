@@ -849,8 +849,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(" SELECT id,application_id,account_holder_name,ifsc_code,"
-					+ "bank_account_no,account_type,verified_on,verified,verification_count "
-					+ "  FROM tbl_bank_account_details where application_id = ? ");
+					+ "bank_account_no,account_type FROM tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -872,9 +871,9 @@ public class eKYCDAO {
 					json.put("last_financial_date", DateUtil.getLastFinancialYearTo(DateUtil.getTodayDate()));
 					result.setAccount_type(rSet.getString("account_type"));
 					json.put("account_type", rSet.getString("account_type"));
-					result.setVerified_on(rSet.getString("verified_on"));
-					result.setVerified(rSet.getInt("verified"));
-					result.setVerification_count(rSet.getInt("verification_count"));
+					// result.setVerified_on(rSet.getString("verified_on"));
+					// result.setVerified(rSet.getInt("verified"));
+					// result.setVerification_count(rSet.getInt("verification_count"));
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -946,17 +945,23 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_pancard_details(application_id, pan_card,applicant_name , dob , created_on) VALUES (?,?,?,?,?) "
-							+ "ON DUPLICATE KEY UPDATE  application_id = ?, pan_card = ? , applicant_name = ? , dob = ? , last_updated = ?");
+					"INSERT INTO tbl_pancard_details(application_id, pan_card, applicant_name , first_name , middle_name , last_name , dob , created_on) VALUES (?,?,?,?,?,?,?,?) "
+							+ "ON DUPLICATE KEY UPDATE  application_id = ?, pan_card = ? , applicant_name = ? , first_name = ? , middle_name = ? , last_name = ? , dob = ? , last_updated = ?");
 			int paramPos = 1;
 			pStmt.setInt(paramPos++, pDto.getApplication_id());
-			pStmt.setString(paramPos++, pDto.getPan_card());
-			pStmt.setString(paramPos++, pDto.getApplicant_name());
+			pStmt.setString(paramPos++, pDto.getPan_card().toUpperCase());
+			pStmt.setString(paramPos++, pDto.getApplicant_name().toUpperCase());
+			pStmt.setString(paramPos++, pDto.getFirst_name().toUpperCase());
+			pStmt.setString(paramPos++, pDto.getMiddle_name().toUpperCase());
+			pStmt.setString(paramPos++, pDto.getLast_name().toUpperCase());
 			pStmt.setString(paramPos++, pDto.getDob());
 			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.setInt(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getPan_card());
 			pStmt.setString(paramPos++, pDto.getApplicant_name());
+			pStmt.setString(paramPos++, pDto.getFirst_name().toUpperCase());
+			pStmt.setString(paramPos++, pDto.getMiddle_name().toUpperCase());
+			pStmt.setString(paramPos++, pDto.getLast_name().toUpperCase());
 			pStmt.setString(paramPos++, pDto.getDob());
 			pStmt.setTimestamp(paramPos++, timestamp);
 			count = pStmt.executeUpdate();
@@ -2026,7 +2031,5 @@ public class eKYCDAO {
 		}
 		return response;
 	}
-
-	
 
 }
