@@ -553,7 +553,8 @@ public class AdminDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT id FROM tbl_application_status_log where application_id = ? and verification_module = ?");
+			pStmt = conn.prepareStatement(
+					" SELECT id FROM tbl_application_status_log where application_id = ? and verification_module = ?");
 			pStmt.setInt(paromPos++, applicationId);
 			pStmt.setString(paromPos++, verificationModule);
 			rSet = pStmt.executeQuery();
@@ -574,6 +575,46 @@ public class AdminDAO {
 			}
 		}
 		return tempId;
+	}
+
+	/**
+	 * Method to get the admin password from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public AdminDTO adminLogin(AdminDTO pDto) {
+		AdminDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT admin_email, admin_password FROM tbl_admin_details where admin_email = ? ");
+			pStmt.setString(paromPos++, pDto.getEmail());
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new AdminDTO();
+					result.setEmail(rSet.getString("admin_email"));
+					result.setPassword(rSet.getString("admin_password"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 }

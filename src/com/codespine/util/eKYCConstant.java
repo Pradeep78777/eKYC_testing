@@ -92,23 +92,26 @@ public class eKYCConstant {
 	/**
 	 * File path for Local
 	 */
-//	public static final String PROJ_DIR = "C://apache-tomcat-8.5.35//webapps//e_sign//";
-//	public static final String SITE_URL_FILE = "http://rest.irongates.in//e_sign/";
-//	public static final String UPLOADS_DIR = "file//uploads//";
-	
-	/**
-	 *File path for Live
-	 */
-	public static final String PROJ_DIR = "usr//share//tomcat9//webapps//e_sign//";
-	public static final String SITE_URL_FILE = "https://beta.zebull.in:8080//e_sign/";
+	public static final String PROJ_DIR = "D://Zebull E-Kyc//EKYC//e_sign//";
+	public static final String SITE_URL_FILE = "https://oa1.zebull.in//e_sign/";
 	public static final String UPLOADS_DIR = "file//uploads//";
+
+	/**
+	 * File path for Live
+	 */
+	// public static final String PROJ_DIR =
+	// "usr//share//tomcat9//webapps//e_sign//";
+	// public static final String SITE_URL_FILE =
+	// "https://beta.zebull.in:8080//e_sign/";
+	// public static final String UPLOADS_DIR = "file//uploads//";
 
 	public static final String FILE_UPLOAD_SUCESSFULL = "Document uploaded Sucessfully";
 	public static final String STRING = "STRING";
 	public static final String IMAGE = "IMG";
 	public static final String TICK = "TICK";
 	public static final String COMMA_SEPERATOR = ",";
-//	public static final String IMAGE_FILEPATH = "C:\\Users\\user\\Downloads\\";
+	// public static final String IMAGE_FILEPATH =
+	// "C:\\Users\\user\\Downloads\\";
 
 	public static final String FILE_PATH = "FILE_PATH";
 	public static final String CONSTANT_PDF_NAME = "CONSTANT_PDF_NAME";
@@ -164,4 +167,6 @@ public class eKYCConstant {
 
 	public static final String REJECT_OR_APPROVE = "Please provide any actions";
 
+	public static final String ACCESS_DENIED = "Access denied Only for Admin User";
+	public static final String PASSWORD_INVALID = "Entered password is invalid";
 }

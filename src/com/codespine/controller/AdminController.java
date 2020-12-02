@@ -22,6 +22,22 @@ public class AdminController {
 	}
 
 	/**
+	 * Method to login for admin using email and password
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	@POST
+	@Path("/adminLogin")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO adminLogin(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		response = AdminService.getInstance().adminLogin(pDto);
+		return response;
+	}
+
+	/**
 	 * Method to get all user records from data base
 	 * 
 	 * @author GOWRI SANKAR R
@@ -182,7 +198,8 @@ public class AdminController {
 	}
 
 	/**
-	 * Method 
+	 * Method
+	 * 
 	 * @author GOWRI SANKAR R
 	 * @param pDto
 	 * @return
@@ -195,6 +212,5 @@ public class AdminController {
 		ResponseDTO response = AdminService.getInstance().getApplicationStatus(pDto);
 		return response;
 	}
-
 
 }

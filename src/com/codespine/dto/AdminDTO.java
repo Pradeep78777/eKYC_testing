@@ -9,6 +9,8 @@ public class AdminDTO {
 	private String attachementType;
 	private String startTime;;
 	private String endTime;
+	private String email;
+	private String password;
 
 	public int getApplicationId() {
 		return applicationId;
@@ -64,6 +66,22 @@ public class AdminDTO {
 
 	public void setEndTime(String endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }
