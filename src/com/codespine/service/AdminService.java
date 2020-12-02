@@ -593,6 +593,35 @@ public class AdminService {
 		/**
 		 * To get all records for given application id
 		 */
-		
+
+	}
+
+	/**
+	 * Method to check the password for the admin User Id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO adminLogin(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		AdminDTO adminDetails = AdminDAO.getInstance().adminLogin(pDto);
+		if (adminDetails != null) {
+			String actualPassword = adminDetails.getPassword();
+			String givenEncryptedPassword = Utility.PasswordEncryption(pDto.getPassword());
+			if (actualPassword.equals(givenEncryptedPassword)) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.PASSWORD_INVALID);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.ACCESS_DENIED);
+		}
+		return response;
 	}
 }

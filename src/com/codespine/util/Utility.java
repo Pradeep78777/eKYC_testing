@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -303,6 +305,7 @@ public class Utility {
 		} else {
 			resp = nsdlResponse.split("\\^");
 		}
+		System.out.println(resp.length);
 		if (resp.length > 3) {
 			response.put("responseCode", resp[0]);
 			response.put("panCard", resp[1]);
@@ -313,7 +316,9 @@ public class Utility {
 			response.put("panTittle", resp[6]);
 			response.put("lastUpdatedDate", resp[7]);
 			response.put("nameOnCard", resp[8]);
-			response.put("aadhaar seeding status", resp[9]);
+			if (resp.length > 9) {
+				response.put("aadhaar seeding status", resp[9]);
+			}
 		} else {
 			response.put("responseCode", resp[0]);
 			response.put("panCard", resp[1]);
@@ -334,7 +339,7 @@ public class Utility {
 			String pathToPDF = folderName;
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
-			String responseUrl = "http://rest.irongates.in/eKYCService/eKYC/getNsdlXML";
+			String responseUrl = "https://oa2.zebull.in/eKYCService/eKYC/getNsdlXML";
 			String p12CertificatePath = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
 			String p12CertiPwd = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
 			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
@@ -683,5 +688,36 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return status;
+	}
+
+	/**
+	 * Creating the MD5 text for the Password
+	 * 
+	 * @param passkey
+	 * @return
+	 */
+	public static String PasswordEncryption(String passkey) {
+		String MD5pass = "";
+		final byte[] defaultBytes = passkey.getBytes();
+		try {
+			final MessageDigest md5MsgDigest = MessageDigest.getInstance("MD5");
+			md5MsgDigest.reset();
+			md5MsgDigest.update(defaultBytes);
+			final byte messageDigest[] = md5MsgDigest.digest();
+
+			final StringBuffer hexString = new StringBuffer();
+			for (final byte element : messageDigest) {
+				final String hex = Integer.toHexString(0xFF & element);
+				if (hex.length() == 1) {
+					hexString.append('0');
+				}
+				hexString.append(hex);
+			}
+			passkey = hexString + "";
+		} catch (final NoSuchAlgorithmException nsae) {
+			nsae.printStackTrace();
+		}
+		MD5pass = passkey;
+		return MD5pass;
 	}
 }
