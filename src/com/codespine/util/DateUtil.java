@@ -135,9 +135,9 @@ public class DateUtil {
 	    int CurrentMonth = (calendar.get(Calendar.MONTH)+1);
 	    String financiyalYearTo="";
 	    if(CurrentMonth<4) {
-	        financiyalYearTo="3103"+(CurrentYear);
-	    } else {
 	        financiyalYearTo="3103"+(CurrentYear-1);
+	    } else {
+	        financiyalYearTo="3103"+(CurrentYear);
 	    }
 	    return financiyalYearTo;
 	}
