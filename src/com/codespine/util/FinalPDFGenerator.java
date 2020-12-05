@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -98,7 +99,13 @@ public class FinalPDFGenerator {
 					String[] orgs = StringUtil.split(coordinates, eKYCConstant.COMMA_SEPERATOR);
 					int xValue = Integer.parseInt(orgs[0]);
 					int yValue = Integer.parseInt(orgs[1]);
-					String columnValue = StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "");
+					String columnValue = "";
+					if(DTO.getIs_value_reduced() != 0 && DTO.getIs_value_reduced() > 0 ) {
+						 Map<String,String>  annualIncomeMap = Utility.annualIncomeMap();
+						columnValue = annualIncomeMap.get(eKYCdto.getForPDFKeyValue().get(StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "")));
+					}else {
+						columnValue = StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "");
+					}
 					pdfTextInserter(DTO.getPage_number(),document,columnValue, xValue, yValue, DTO.getIs_value_reduced(),DTO.getColumn_name());
 				} else {
 					JSONParser parser = new JSONParser();
@@ -211,7 +218,7 @@ public class FinalPDFGenerator {
 			contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber,ColumnName);
 		} else {
 			contentStream.setFont(font1, 10);
-			contentStream.setCharacterSpacing(5);
+			contentStream.setCharacterSpacing(3);
 		}
 		contentStream.newLineAtOffset(xValue, yValue);
 		String text = insertValue;

@@ -864,10 +864,10 @@ public class eKYCDAO {
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", rSet.getString("bank_account_no"));
-					json.put("half_date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYY));
-					json.put("date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYYYY));
+					json.put("half_date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYY_SLASH));
+					json.put("date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYYYY_SLASH));
 					json.put("reverse_full_date",
-							DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.YYYYMMDD));
+							DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.YYYYMMDD_SLASH));
 					json.put("last_financial_date", DateUtil.getLastFinancialYearTo(DateUtil.getTodayDate()));
 					result.setAccount_type(rSet.getString("account_type"));
 					json.put("account_type", rSet.getString("account_type"));
