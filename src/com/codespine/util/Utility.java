@@ -10,7 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -719,5 +721,14 @@ public class Utility {
 		}
 		MD5pass = passkey;
 		return MD5pass;
+	}
+	public static Map<String,String> annualIncomeMap(){
+		Map<String,String> incomeMap = new HashMap<String,String>();
+		incomeMap.put("below 1 lakh", "100000");
+		incomeMap.put("1l-5l", "500000");
+		incomeMap.put("5l-10l", "1000000");
+		incomeMap.put("10l-25l", "2500000");
+		incomeMap.put("above 25l", "3000000");
+		return incomeMap;
 	}
 }

@@ -8,15 +8,22 @@ import java.util.Date;
 
 public class DateUtil {
 	public static final String DDMMYYYY 					= "ddMMyyyy";
+	public static final String DDMMYYYY_SLASH 				= "dd/MM/yyyy";
 	public static final String DDMMYY 						= "ddMMyy";
+	public static final String DDMMYY_SLASH  				= "dd/MM/yy";
 	public static final String DD_MMM_YYYY_HH_MM_SS 		= "dd-MMM-yyyyHHmmss";
 	public static final String DD_MMM_YY					= "dd-MMM-yy";
 	public static final String DD_MMM_YYYY 					= "dd-MM-yyyy";
+	public static final String DD_MMM_YYYY_SLASH 			= "dd/MM/yyyy";
 	public static final String YYYYMMDD 					= "yyyyMMdd";
+	public static final String YYYYMMDD_SLASH  				= "yyyy/MM/dd";
 	public static final String YYYY_MM_DD 					= "yyyy-MM-dd";
 	public static final DateFormat DATEFORMAT_YYYYMMDD = new SimpleDateFormat(YYYYMMDD);
 	public static final DateFormat DATEFORMAT_DDMMYY = new SimpleDateFormat(DDMMYY);
 	public static final DateFormat DATEFORMAT_DDMMYYYY = new SimpleDateFormat(DDMMYYYY);
+	public static final DateFormat DATEFORMAT_YYYYMMDD_SLASH = new SimpleDateFormat(YYYYMMDD_SLASH);
+	public static final DateFormat DATEFORMAT_DDMMYY_SLASH = new SimpleDateFormat(DDMMYY_SLASH);
+	public static final DateFormat DATEFORMAT_DDMMYYYY_SLASH = new SimpleDateFormat(DDMMYYYY_SLASH);
 	public static String parseDate(Date date) {
 		String date2 = null; 
 		DateFormat formatter ; 
@@ -78,7 +85,7 @@ public class DateUtil {
 		SimpleDateFormat  formatter1 = null;
 		if(StringUtil.isNotNullOrEmpty(dateString)){
 			try {
-				formatter1 = new SimpleDateFormat(YYYYMMDD);
+				formatter1 = new SimpleDateFormat(YYYYMMDD_SLASH);
 				date = (Date) formatter1.parse((StringUtil.replace(dateString,"-","")));
 				changedDate = formatDate(date,DDMMYYYY);
 			} catch (ParseException e) {
