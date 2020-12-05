@@ -36,15 +36,6 @@ import com.codespine.util.eKYCConstant;
 
 @Path("/eKYC")
 public class eKYCController {
-	public static eKYCController eKYCController = null;
-
-	public static eKYCController getInstance() {
-		if (eKYCController == null) {
-			eKYCController = new eKYCController();
-		}
-		return eKYCController;
-	}
-
 	AccesslogDTO accessLog = new AccesslogDTO();
 	String contentType = "content-type";
 	@Context
@@ -778,23 +769,51 @@ public class eKYCController {
 		return response;
 	}
 
-	// /**
-	// * Method to resend the mail verification
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param requestContext
-	// * @param pDto
-	// * @return
-	// */
-	// @POST
-	// @Path("/resendEmailVerification")
-	// @Consumes(MediaType.APPLICATION_JSON)
-	// @Produces(MediaType.APPLICATION_JSON)
-	// public ResponseDTO resendEmailVerification(@Context
-	// ContainerRequestContext requestContext,
-	// PersonalDetailsDTO pDto) {
-	// ResponseDTO response = new ResponseDTO();
-	// response = eKYCService.getInstance().resendEmailVerification(pDto);
-	// return response;
-	// }
+	/**
+	 * method to get the unique bank name for find the IFSC Code
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getUniqueBankName")
+	public ResponseDTO getUniqueBankName(IfscCodeDTO dto) {
+		ResponseDTO response = eKYCService.getInstance().getUniqueBankName(dto);
+		return response;
+	}
+
+	/**
+	 * Method to get the unique place by bank name
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getUniquePlaceByBankName")
+	public ResponseDTO getUniquePlaceByBankName(IfscCodeDTO dto) {
+		ResponseDTO response = eKYCService.getInstance().getUniquePlaceName(dto);
+		return response;
+	}
+
+	/**
+	 * Method to get the IFSC code
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getBankDetailsByPlace")
+	public ResponseDTO getBankDetailsByPlace(IfscCodeDTO dto) {
+		ResponseDTO response = eKYCService.getInstance().getBankDetailsByPlace(dto);
+		return response;
+	}
 }
