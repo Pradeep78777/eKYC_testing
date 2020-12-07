@@ -764,6 +764,7 @@ public class eKYCService {
 			applicationMasterDTO.setCommunicationAddressRequired(true);
 			applicationMasterDTO.setPanCardDetailRequired(true);
 			applicationMasterDTO.setPermanentAddressRequired(true);
+			applicationMasterDTO.setExchDetailsRequired(true);
 			eKYCDTO = eKYCHelper.getInstance().populateRerquiredFields(applicationMasterDTO, eKYCDTO);
 		}
 		return eKYCDTO;

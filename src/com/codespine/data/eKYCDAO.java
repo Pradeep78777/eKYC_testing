@@ -734,6 +734,7 @@ public class eKYCDAO {
 					json.put("flat_no", rSet.getString("flat_no").toUpperCase());
 					result.setStreet(rSet.getString("street"));
 					json.put("street", rSet.getString("street").toUpperCase());
+					json.put("flatNo_street_city", json.put("flat_no", rSet.getString("flat_no").toUpperCase()) +", "+ rSet.getString("street").toUpperCase() + ", "+ rSet.getString("city").toUpperCase());
 					result.setPin(rSet.getInt("pin"));
 					json.put("pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
@@ -743,6 +744,7 @@ public class eKYCDAO {
 					json.put("district", rSet.getString("district").toUpperCase());
 					result.setState(rSet.getString("state"));
 					json.put("state", rSet.getString("state").toUpperCase());
+					json.put("district_state_country", rSet.getString("district").toUpperCase() +", "+ rSet.getString("state").toUpperCase()+", "+json.put("country", "INDIA")+", "+json.put("pin", Integer.toString(rSet.getInt("pin"))));
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -1261,6 +1263,7 @@ public class eKYCDAO {
 		ExchDetailsDTO result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		HashMap<String, String> json = null;
 		ResultSet rSet = null;
 		try {
 			int paromPos = 1;
@@ -1273,18 +1276,53 @@ public class eKYCDAO {
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new ExchDetailsDTO();
+					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setNse_eq(rSet.getInt("nse_eq"));
+					if(rSet.getInt("nse_eq") != 0 && rSet.getInt("nse_eq") > 0) {
+						json.put("nse_eq", "nse_eq");
+					}
 					result.setBse_eq(rSet.getInt("bse_eq"));
+					if(rSet.getInt("bse_eq") != 0 && rSet.getInt("bse_eq") > 0) {
+						json.put("bse_eq", "bse_eq");
+					}
 					result.setMf(rSet.getInt("mf"));
+//					if(rSet.getInt("mf") != 0 && rSet.getInt("mf") > 0) {
+//						json.put("mf", "mf");
+//					}
 					result.setNse_fo(rSet.getInt("nse_fo"));
+					if(rSet.getInt("nse_fo") != 0 && rSet.getInt("nse_fo") > 0) {
+						json.put("nse_fo", "nse_fo");
+					}
 					result.setBse_fo(rSet.getInt("bse_fo"));
+					if(rSet.getInt("bse_fo") != 0 && rSet.getInt("bse_fo") > 0) {
+						json.put("bse_fo", "bse_fo");
+					}
 					result.setCds(rSet.getInt("cds"));
+					if(rSet.getInt("cds") != 0 && rSet.getInt("cds") > 0) {
+						json.put("cds", "cds");
+					}
 					result.setBcd(rSet.getInt("bcd"));
+					if(rSet.getInt("bcd") != 0 && rSet.getInt("bcd") > 0) {
+						json.put("bcd", "bcd");
+					}
 					result.setMcx(rSet.getInt("mcx"));
+					if(rSet.getInt("mcx") != 0 && rSet.getInt("mcx") > 0) {
+						json.put("mcx","mcx");
+					}
 					result.setIcex(rSet.getInt("icex"));
+					if(rSet.getInt("icex") != 0 && rSet.getInt("icex") > 0) {
+						json.put("icex", "icex");
+					}
 					result.setNse_com(rSet.getInt("nse_com"));
+					if(rSet.getInt("nse_com") != 0 && rSet.getInt("nse_com") > 0) {
+						json.put("nse_com", "nse_com");
+					}
 					result.setBse_com(rSet.getInt("bse_com"));
+					if(rSet.getInt("bse_com") != 0 && rSet.getInt("bse_com") > 0) {
+						json.put("bse_com", "bse_com");
+					}
+					result.setForPDFKeyValue(json);
 				}
 			}
 		} catch (Exception e) {

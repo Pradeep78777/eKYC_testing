@@ -63,6 +63,9 @@ public class FinalPDFGenerator {
 		String finalSestinationFilePath = destinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id+ eKYCConstant.WINDOWS_FORMAT_SLASH+folderName;
 		File dir = new File(finalSestinationFilePath);
 		String finalPDFName = eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME) + eKYCConstant.PDF_FILE_EXTENSION;
+		if(StringUtil.isNotNullOrEmpty(eKYCdto.getForPDFKeyValue().get("pan_card"))) {
+			finalPDFName = eKYCdto.getForPDFKeyValue().get("pan_card") + eKYCConstant.PDF_FILE_EXTENSION;
+		}
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
@@ -133,7 +136,14 @@ public class FinalPDFGenerator {
 					InputStream inputStream = new URL(replacedURL).openStream();
 					PDPageTree mergePD = document.getPages();
 					PDDocument pddDocument2 = PDDocument.load(inputStream);
-					mergePD.insertAfter(pddDocument2.getPage(0),document.getPage(16));
+					PDPageTree mergePD1 = pddDocument2.getPages();
+					int x = 16;
+					if(mergePD1.getCount() > 1) {
+					    for(PDPage page : mergePD1) {
+					    	mergePD.insertAfter(page,document.getPage(x));
+					    	x++;
+					    }
+				    }
 //					pddDocument2.close();
 					inputStream.close();
 				}else {
