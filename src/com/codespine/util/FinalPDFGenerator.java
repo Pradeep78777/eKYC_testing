@@ -102,7 +102,7 @@ public class FinalPDFGenerator {
 					String columnValue = "";
 					if(DTO.getIs_value_reduced() != 0 && DTO.getIs_value_reduced() > 0 ) {
 						 Map<String,String>  annualIncomeMap = Utility.annualIncomeMap();
-						columnValue = annualIncomeMap.get(eKYCdto.getForPDFKeyValue().get(StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "")));
+						columnValue = annualIncomeMap.get((eKYCdto.getForPDFKeyValue().get((StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "")).toLowerCase())).toLowerCase());
 					}else {
 						columnValue = StringUtil.replace(DTO.getColumn_name(), "DEFAULT_", "");
 					}
@@ -217,8 +217,8 @@ public class FinalPDFGenerator {
 			contentStream.setCharacterSpacing(1);
 			contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber,ColumnName);
 		} else {
-			contentStream.setFont(font1, 10);
-			contentStream.setCharacterSpacing(3);
+			contentStream.setFont(font1, 8);
+			contentStream.setCharacterSpacing(1);
 		}
 		contentStream.newLineAtOffset(xValue, yValue);
 		String text = insertValue;
