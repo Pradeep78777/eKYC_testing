@@ -20,6 +20,7 @@ public class eKYCConstant {
 	 */
 	public static final String NEW_USER_SUCESS = "Please verify OTP and email";
 	public static final String APPLICATION_ID_ERROR = "Application id cannot be zero";
+	public static final String EMAIL_NOT_VERIFIED = "Please verify the email and come back";
 
 	/**
 	 * To send email
@@ -169,4 +170,14 @@ public class eKYCConstant {
 
 	public static final String ACCESS_DENIED = "Access denied Only for Admin User";
 	public static final String PASSWORD_INVALID = "Entered password is invalid";
+
+	/**
+	 * Back Url and parameters
+	 */
+	public static final String BACK_OFFICE_URL = "backOfficeBaseUrl";
+
+	public static final String SEARCH_BY_PHONE = "mobileNo";
+	public static final String SEARCH_BY_EMAIL = "clientEmail";
+	public static final String SEARCH_BY_PANCARD = "panNo";
+
 }
