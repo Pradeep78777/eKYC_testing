@@ -945,7 +945,7 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT id,application_id,account_holder_name,ifsc_code,"
+			pStmt = conn.prepareStatement(" SELECT id,application_id,bank_name,micr_code,account_holder_name,ifsc_code,"
 					+ "bank_account_no,account_type FROM tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
@@ -955,6 +955,10 @@ public class eKYCDAO {
 					json = new HashMap<String, String>();
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setBankName(rSet.getString("bank_name"));
+					json.put("bank_name", rSet.getString("bank_name").toUpperCase());
+					result.setMicrCode(rSet.getString("micr_code"));
+					json.put("micr_code", rSet.getString("micr_code").toUpperCase());
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
 					json.put("account_holder_name", rSet.getString("account_holder_name").toUpperCase());
 					result.setIfsc_code(rSet.getString("ifsc_code").toUpperCase());
