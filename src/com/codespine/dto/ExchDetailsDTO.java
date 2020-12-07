@@ -1,5 +1,7 @@
 package com.codespine.dto;
 
+import java.util.Map;
+
 public class ExchDetailsDTO {
 	private int application_id;
 	private int nse_eq;
@@ -13,6 +15,8 @@ public class ExchDetailsDTO {
 	private int icex;
 	private int nse_com;
 	private int bse_com;
+	private Map<String, String> forPDFKeyValue;
+	
 	public int getApplication_id() {
 		return application_id;
 	}
@@ -84,6 +88,12 @@ public class ExchDetailsDTO {
 	}
 	public void setBse_com(int bse_com) {
 		this.bse_com = bse_com;
+	}
+	public Map<String, String> getForPDFKeyValue() {
+		return forPDFKeyValue;
+	}
+	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
+		this.forPDFKeyValue = forPDFKeyValue;
 	}
 	
 	

@@ -27,6 +27,7 @@ public class ApplicationMasterDTO {
 	private boolean isPanCardDetailRequired;
 	private boolean isPermanentAddressRequired;
 	private boolean isTPAccessLogRequired;
+	private boolean isExchDetailsRequired;
 	private Map<String,String>  forPDFKeyValue;
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -165,6 +166,12 @@ public class ApplicationMasterDTO {
 	}
 	public void setTPAccessLogRequired(boolean isTPAccessLogRequired) {
 		this.isTPAccessLogRequired = isTPAccessLogRequired;
+	}
+	public boolean isExchDetailsRequired() {
+		return isExchDetailsRequired;
+	}
+	public void setExchDetailsRequired(boolean isExchDetailsRequired) {
+		this.isExchDetailsRequired = isExchDetailsRequired;
 	}
 
 }

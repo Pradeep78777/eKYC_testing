@@ -10,6 +10,7 @@ public class eKYCDTO {
 		private BankDetailsDTO bankDetailsDTO;
 		private PanCardDetailsDTO panCardDetailsDTO;
 		private PersonalDetailsDTO personalDetailsDTO;
+		private ExchDetailsDTO exchDetailsDTO;
 		private ResponseDTO responseDTO;
 		private List<ApplicationMasterDTO> ApplicationMasterDTOs;
 		private List<AddressDTO> addressDTOs;
@@ -20,6 +21,7 @@ public class eKYCDTO {
 		private List<ResponseDTO> responseDTOs;
 		private AccountHolderDetailsDTO accountHolderDetailsDTO;
 		private List<AccountHolderDetailsDTO> accountHolderDetailsDTOs;
+		private List<ExchDetailsDTO> exchDetailsDTOs;
 		private Map<String,String>  forPDFKeyValue; 
 		public ApplicationMasterDTO getApplicationMasterDTO() {
 			return applicationMasterDTO;
@@ -122,6 +124,18 @@ public class eKYCDTO {
 		}
 		public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
 			this.forPDFKeyValue = forPDFKeyValue;
+		}
+		public ExchDetailsDTO getExchDetailsDTO() {
+			return exchDetailsDTO;
+		}
+		public void setExchDetailsDTO(ExchDetailsDTO exchDetailsDTO) {
+			this.exchDetailsDTO = exchDetailsDTO;
+		}
+		public List<ExchDetailsDTO> getExchDetailsDTOs() {
+			return exchDetailsDTOs;
+		}
+		public void setExchDetailsDTOs(List<ExchDetailsDTO> exchDetailsDTOs) {
+			this.exchDetailsDTOs = exchDetailsDTOs;
 		}
 		
 }
