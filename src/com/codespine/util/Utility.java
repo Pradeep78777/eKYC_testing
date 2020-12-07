@@ -724,11 +724,11 @@ public class Utility {
 	}
 	public static Map<String,String> annualIncomeMap(){
 		Map<String,String> incomeMap = new HashMap<String,String>();
-		incomeMap.put("below 1 lakh", "100000");
-		incomeMap.put("1l-5l", "500000");
-		incomeMap.put("5l-10l", "1000000");
-		incomeMap.put("10l-25l", "2500000");
-		incomeMap.put("above 25l", "3000000");
+		incomeMap.put("below 1 lakh", "1,00,000");
+		incomeMap.put("1l-5l", "5,00,000");
+		incomeMap.put("5l-10l", "10,00,000");
+		incomeMap.put("10l-25l", "25,00,000");
+		incomeMap.put("above 25l", "30,00,000");
 		return incomeMap;
 	}
 }

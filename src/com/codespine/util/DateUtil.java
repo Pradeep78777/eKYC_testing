@@ -81,14 +81,15 @@ public class DateUtil {
 	}
 	public static String parseDateStringForDOB(String dateString) {
 		String changedDate = "";
-		Date date = null;
-		SimpleDateFormat  formatter1 = null;
+//		Date date = null;
+//		SimpleDateFormat  formatter1 = null;
 		if(StringUtil.isNotNullOrEmpty(dateString)){
 			try {
-				formatter1 = new SimpleDateFormat(YYYYMMDD_SLASH);
-				date = (Date) formatter1.parse((StringUtil.replace(dateString,"-","")));
-				changedDate = formatDate(date,DDMMYYYY);
-			} catch (ParseException e) {
+//				formatter1 = new SimpleDateFormat(YYYYMMDD_SLASH);
+//				date = (Date) formatter1.parse((StringUtil.replace(dateString,"-","")));
+//				changedDate = formatDate(date,YYYYMMDD_SLASH);
+				changedDate = StringUtil.replace(dateString,"-","/");
+			} catch (Exception e) {
 				System.out.println("Exception :" + e);
 			}
 		}
@@ -116,9 +117,9 @@ public class DateUtil {
 	    int CurrentMonth = (calendar.get(Calendar.MONTH)+1);
 	    String financiyalYearFrom="";
 	    if(CurrentMonth<4) {
-	        financiyalYearFrom="0104"+(CurrentYear-1);
+	        financiyalYearFrom="01/04/"+(CurrentYear-1);
 	    } else {
-	        financiyalYearFrom="0104"+(CurrentYear);
+	        financiyalYearFrom="01/04/"+(CurrentYear);
 	    }
 	    return financiyalYearFrom;
 	}
@@ -129,9 +130,9 @@ public class DateUtil {
 	    int CurrentMonth = (calendar.get(Calendar.MONTH)+1);
 	    String financiyalYearTo="";
 	    if(CurrentMonth<4) {
-	        financiyalYearTo="3103"+(CurrentYear);
+	        financiyalYearTo="31/03/"+(CurrentYear);
 	    } else {
-	        financiyalYearTo="3103"+(CurrentYear+1);
+	        financiyalYearTo="31/03/"+(CurrentYear+1);
 	    }
 	    return financiyalYearTo;
 	}
@@ -142,9 +143,9 @@ public class DateUtil {
 	    int CurrentMonth = (calendar.get(Calendar.MONTH)+1);
 	    String financiyalYearTo="";
 	    if(CurrentMonth<4) {
-	        financiyalYearTo="3103"+(CurrentYear-1);
+	        financiyalYearTo="31/03/"+(CurrentYear-1);
 	    } else {
-	        financiyalYearTo="3103"+(CurrentYear);
+	        financiyalYearTo="31/03/"+(CurrentYear);
 	    }
 	    return financiyalYearTo;
 	}
