@@ -180,4 +180,8 @@ public class eKYCConstant {
 	public static final String SEARCH_BY_EMAIL = "clientEmail";
 	public static final String SEARCH_BY_PANCARD = "panNo";
 
+	public static final String PHONE_EXISTS_WITH_BACK_OFFICE = "Invalid Phone. You have already created the account with Zebull using this registered mobile number";
+	public static final String EMAIL_EXISTS_WITH_BACK_OFFICE = "Invalid Email. You have already created the account with Zebull using this registered email";
+	public static final String PAN_EXISTS_WITH_BACK_OFFICE = "Invalid Pan. You have already created the account with Zebull using this registered email";
+
 }

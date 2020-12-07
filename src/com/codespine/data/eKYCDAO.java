@@ -945,7 +945,7 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT id,application_id,account_holder_name,ifsc_code,"
+			pStmt = conn.prepareStatement(" SELECT id,application_id,bank_name,micr_code,account_holder_name,ifsc_code,"
 					+ "bank_account_no,account_type FROM tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
@@ -955,14 +955,20 @@ public class eKYCDAO {
 					json = new HashMap<String, String>();
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
+					result.setBankName(rSet.getString("bank_name"));
+					json.put("bank_name", rSet.getString("bank_name").toUpperCase());
+					result.setMicrCode(rSet.getString("micr_code"));
+					json.put("micr_code", rSet.getString("micr_code").toUpperCase());
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
 					json.put("account_holder_name", rSet.getString("account_holder_name").toUpperCase());
 					result.setIfsc_code(rSet.getString("ifsc_code").toUpperCase());
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", rSet.getString("bank_account_no"));
-					json.put("half_date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYY_SLASH));
-					json.put("date", DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYYYY_SLASH));
+					json.put("half_date",
+							DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYY_SLASH));
+					json.put("date",
+							DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.DDMMYYYY_SLASH));
 					json.put("reverse_full_date",
 							DateUtil.formatDate(DateUtil.getNewDateWithCurrentTime(), DateUtil.YYYYMMDD_SLASH));
 					json.put("last_financial_date", DateUtil.getLastFinancialYearTo(DateUtil.getTodayDate()));
@@ -1003,10 +1009,12 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_pancard_details(application_id, pan_card, applicant_name , first_name , middle_name , last_name , dob , created_on) VALUES (?,?,?,?,?,?,?,?) ");
+					"INSERT INTO tbl_pancard_details(application_id, pan_card, aadhar_no , applicant_name , first_name , middle_name , last_name , dob , "
+							+ " created_on) VALUES (?,?,?,?,?,?,?,?,?) ");
 			int paramPos = 1;
 			pStmt.setInt(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getPan_card().toUpperCase());
+			pStmt.setLong(paramPos++, pDto.getAadharNo());
 			pStmt.setString(paramPos++, pDto.getApplicant_name().toUpperCase());
 			pStmt.setString(paramPos++, pDto.getFirst_name().toUpperCase());
 			pStmt.setString(paramPos++, pDto.getMiddle_name().toUpperCase());
@@ -1043,10 +1051,11 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"UPDATE tbl_pancard_details SET  pan_card = ? , applicant_name = ? , first_name = ? , middle_name = ? , last_name = ? , "
+					"UPDATE tbl_pancard_details SET  pan_card = ? , aadhar_no = ? ,  applicant_name = ? , first_name = ? , middle_name = ? , last_name = ? , "
 							+ "dob = ? , last_updated = ? where application_id = ?");
 			int paramPos = 1;
 			pStmt.setString(paramPos++, pDto.getPan_card());
+			pStmt.setLong(paramPos++, pDto.getAadharNo());
 			pStmt.setString(paramPos++, pDto.getApplicant_name());
 			pStmt.setString(paramPos++, pDto.getFirst_name().toUpperCase());
 			pStmt.setString(paramPos++, pDto.getMiddle_name().toUpperCase());
@@ -1088,7 +1097,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id,pan_card,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
+					" SELECT application_id,pan_card,aadhar_no,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1097,7 +1106,9 @@ public class eKYCDAO {
 					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setPan_card(rSet.getString("pan_card"));
+					result.setAadharNo(rSet.getLong("aadhar_no"));
 					json.put("pan_card", rSet.getString("pan_card").toUpperCase());
+					json.put("aadhar_no", String.valueOf(rSet.getLong("aadhar_no")));
 					result.setDob(rSet.getString("dob"));
 					json.put("dob", DateUtil.parseDateStringForDOB(rSet.getString("dob")));
 					result.setMothersName(rSet.getString("mothersName"));

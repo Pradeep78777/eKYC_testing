@@ -62,36 +62,44 @@ public class eKYCService {
 	 * @return
 	 */
 	public ResponseDTO newRegistration(PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		/*
+		 * Check phone number and email with the Back office
+		 */
+		if (pDto.getMobile_owner().equalsIgnoreCase("self") && pDto.getEmail_owner().equalsIgnoreCase("self")) {
+			/**
+			 * first check the email from back Office already registered or not
+			 */
+			String emailResponse = checkExistingData(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_EMAIL),
+					pDto.getEmail());
+			if (emailResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
+
+				/**
+				 * Check the mobile number is already registered or not
+				 */
+				String mobileResponse = checkExistingData(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_PHONE),
+						pDto.getMobile_number() + "");
+				if (mobileResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
+					response = registerWithNewUser(pDto);
+					return response;
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+					response.setReason(eKYCConstant.PHONE_EXISTS_WITH_BACK_OFFICE);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.EMAIL_EXISTS_WITH_BACK_OFFICE);
+			}
+
+		}
+		return response;
+	}
+
+	private ResponseDTO registerWithNewUser(PersonalDetailsDTO pDto) {
 		PersonalDetailsDTO result = null;
 		ResponseDTO response = new ResponseDTO();
-		// /*
-		// * Check phone number and email with the Back office
-		// */
-		// if (pDto.getMobile_owner().equalsIgnoreCase("self") &&
-		// pDto.getEmail_owner().equalsIgnoreCase("self")) {
-		// /**
-		// *
-		// */
-		// String emailResponse =
-		// checkExistingData(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_EMAIL),
-		// pDto.getEmail());
-		// if (emailResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
-		//
-		// String mobileResponse =
-		// checkExistingData(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_PHONE),
-		// pDto.getMobile_number() + "");
-		// if (mobileResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
-		//
-		// } else {
-		//
-		// }
-		//
-		// } else {
-		//
-		// }
-		//
-		// }
-
 		PersonalDetailsDTO checkUser = peKYCDao.checkExistingUser(pDto);
 		if (checkUser != null && checkUser.getApplication_id() > 0) {
 			/**

@@ -15,18 +15,20 @@ public class PanCardDetailsDTO {
 	private String mothersName;
 	private String fathersName;
 	private String applicant_name;
-	private Map<String,String>  forPDFKeyValue;
+	private Map<String, String> forPDFKeyValue;
 	private String first_name;
 	private String middle_name;
 	private String last_name;
-	
-	
+	private long aadharNo;
+
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
 	}
+
 	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
 		this.forPDFKeyValue = forPDFKeyValue;
 	}
+
 	public int getId() {
 		return id;
 	}
@@ -122,23 +124,37 @@ public class PanCardDetailsDTO {
 	public void setApplicant_name(String applicant_name) {
 		this.applicant_name = applicant_name;
 	}
+
 	public String getFirst_name() {
 		return first_name;
 	}
+
 	public void setFirst_name(String first_name) {
 		this.first_name = first_name;
 	}
+
 	public String getMiddle_name() {
 		return middle_name;
 	}
+
 	public void setMiddle_name(String middle_name) {
 		this.middle_name = middle_name;
 	}
+
 	public String getLast_name() {
 		return last_name;
 	}
+
 	public void setLast_name(String last_name) {
 		this.last_name = last_name;
+	}
+
+	public long getAadharNo() {
+		return aadharNo;
+	}
+
+	public void setAadharNo(long aadharNo) {
+		this.aadharNo = aadharNo;
 	}
 
 }
