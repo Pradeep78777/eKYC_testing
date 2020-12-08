@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.json.simple.JSONObject;
@@ -92,7 +91,28 @@ public class eKYCService {
 				response.setMessage(eKYCConstant.FAILED_MSG);
 				response.setReason(eKYCConstant.EMAIL_EXISTS_WITH_BACK_OFFICE);
 			}
-
+		} else if (pDto.getMobile_owner().equalsIgnoreCase("self") && !pDto.getEmail_owner().equalsIgnoreCase("self")) {
+			String mobileResponse = checkExistingData(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_PHONE),
+					pDto.getMobile_number() + "");
+			if (mobileResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
+				response = registerWithNewUser(pDto);
+				return response;
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.PHONE_EXISTS_WITH_BACK_OFFICE);
+			}
+		} else if (!pDto.getMobile_owner().equalsIgnoreCase("self") && pDto.getEmail_owner().equalsIgnoreCase("self")) {
+			String emailResponse = checkExistingData(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_EMAIL),
+					pDto.getEmail());
+			if (emailResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
+				response = registerWithNewUser(pDto);
+				return response;
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.EMAIL_EXISTS_WITH_BACK_OFFICE);
+			}
 		}
 		return response;
 	}
@@ -235,59 +255,75 @@ public class eKYCService {
 		PanCardDetailsDTO dummResult = new PanCardDetailsDTO();
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
-			/**
-			 * To create the create the jks file for the given application id
-			 */
-			NsdlPanVerificationRestService.pfx2JksFile(pDto.getApplication_id());
-			/**
-			 * To create the sig file from the jks file
-			 */
-			NsdlPanVerificationRestService.pkcs7Generate(pDto.getApplication_id(), pDto.getPan_card());
-			/**
-			 * TO get the result from the NSDL
-			 */
-			String result = NsdlPanVerificationRestService.apiCallForPanVerififcation(pDto.getApplication_id(),
+			String panResponse = checkExistingData(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_PANCARD),
 					pDto.getPan_card());
-			if (result != null && !result.equalsIgnoreCase("")) {
+			if (panResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
 				/**
-				 * Change the String response to json Response
+				 * Check pan assigned with any other application id
 				 */
-				JSONObject tempResult = Utility.stringToJson(result);
-				String panStatus = (String) tempResult.get("panCardStatus");
-				if (panStatus != null && !panStatus.equalsIgnoreCase(" ") && panStatus.equalsIgnoreCase("E")) {
-					String firstName = (String) tempResult.get("firstName");
-					String middleName = (String) tempResult.get("middleName");
-					String lastName = (String) tempResult.get("lastName");
-					String panCardname = firstName + " " + middleName + " " + lastName;
-					// String fatherName = (String) tempResult.get("lastName");
-					dummResult.setApplicant_name(panCardname);
-					// dummResult.setFathersName(fatherName);
-					pDto.setFirst_name(firstName);
-					pDto.setMiddle_name(middleName);
-					pDto.setLast_name(lastName);
-					pDto.setApplicant_name(panCardname);
-					// pDto.setFathersName(fatherName);
-					ResponseDTO topResult = new ResponseDTO();
-					topResult = updatePanCard(pDto);
-					if (topResult.getStatus() == eKYCConstant.SUCCESS_STATUS) {
-						response.setStatus(eKYCConstant.SUCCESS_STATUS);
-						response.setMessage(eKYCConstant.SUCCESS_MSG);
-						response.setReason(eKYCConstant.PAN_CARD_DETAILS_SAVED);
-						response.setResult(dummResult);
+				
+				
+				
+				/**
+				 * To create the create the jks file for the given application
+				 * id
+				 */
+				NsdlPanVerificationRestService.pfx2JksFile(pDto.getApplication_id());
+				/**
+				 * To create the sig file from the jks file
+				 */
+				NsdlPanVerificationRestService.pkcs7Generate(pDto.getApplication_id(), pDto.getPan_card());
+				/**
+				 * TO get the result from the NSDL
+				 */
+				String result = NsdlPanVerificationRestService.apiCallForPanVerififcation(pDto.getApplication_id(),
+						pDto.getPan_card());
+				if (result != null && !result.equalsIgnoreCase("")) {
+					/**
+					 * Change the String response to json Response
+					 */
+					JSONObject tempResult = Utility.stringToJson(result);
+					String panStatus = (String) tempResult.get("panCardStatus");
+					if (panStatus != null && !panStatus.equalsIgnoreCase(" ") && panStatus.equalsIgnoreCase("E")) {
+						String firstName = (String) tempResult.get("firstName");
+						String middleName = (String) tempResult.get("middleName");
+						String lastName = (String) tempResult.get("lastName");
+						String panCardname = firstName + " " + middleName + " " + lastName;
+						// String fatherName = (String)
+						// tempResult.get("lastName");
+						dummResult.setApplicant_name(panCardname);
+						// dummResult.setFathersName(fatherName);
+						pDto.setFirst_name(firstName);
+						pDto.setMiddle_name(middleName);
+						pDto.setLast_name(lastName);
+						pDto.setApplicant_name(panCardname);
+						// pDto.setFathersName(fatherName);
+						ResponseDTO topResult = new ResponseDTO();
+						topResult = updatePanCard(pDto);
+						if (topResult.getStatus() == eKYCConstant.SUCCESS_STATUS) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setReason(eKYCConstant.PAN_CARD_DETAILS_SAVED);
+							response.setResult(dummResult);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						}
 					} else {
 						response.setStatus(eKYCConstant.FAILED_STATUS);
 						response.setMessage(eKYCConstant.FAILED_MSG);
-						response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+						response.setReason(eKYCConstant.INVALID_PANCARD);
 					}
 				} else {
 					response.setStatus(eKYCConstant.FAILED_STATUS);
 					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INVALID_PANCARD);
+					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 				}
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);
-				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+				response.setReason(eKYCConstant.PAN_EXISTS_WITH_BACK_OFFICE);
 			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -1355,19 +1391,12 @@ public class eKYCService {
 	private String checkExistingData(String needToCheck, String checkValue) {
 		String response = eKYCConstant.FAILED_MSG;
 		Object backOfficeResponse = BackOfficeRestService.getInstance().checkExistingCustomer(needToCheck, checkValue);
-		if (backOfficeResponse.getClass() == JSONObject.class) {
-			System.out.println(backOfficeResponse.toString());
+		if (backOfficeResponse != null) {
 			return response;
 		} else {
-			String tempString = (String) backOfficeResponse;
-			String[] resp = tempString.split(",");
-			int statusCode = Integer.parseInt(StringUtils.substringAfter(resp[0], ":"));
-			System.out.println(statusCode);
-			String errorMessage = StringUtils.substringAfter(resp[1], ":");
-			System.out.println(errorMessage);
 			response = eKYCConstant.SUCCESS_MSG;
+			return response;
 		}
-		return response;
 	}
 
 	/**

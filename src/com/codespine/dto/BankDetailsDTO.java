@@ -16,6 +16,7 @@ public class BankDetailsDTO {
 	private Map<String, String> forPDFKeyValue;
 	private String micrCode;
 	private String bankName;
+	private String bankAddress;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -111,6 +112,14 @@ public class BankDetailsDTO {
 
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
+	}
+
+	public String getBankAddress() {
+		return bankAddress;
+	}
+
+	public void setBankAddress(String bankAddress) {
+		this.bankAddress = bankAddress;
 	}
 
 }

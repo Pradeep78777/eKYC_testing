@@ -864,12 +864,14 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_bank_account_details(application_id, bank_name , micr_code , account_holder_name, ifsc_code, bank_account_no, "
-							+ " created_on) VALUES (?,?,?,?,?,?,?) ");
+					"INSERT INTO tbl_bank_account_details(application_id, bank_name , micr_code ,account_type , bank_address , account_holder_name, ifsc_code, bank_account_no, "
+							+ " created_on) VALUES (?,?,?,?,?,?,?,?,?) ");
 			int paramPos = 1;
 			pStmt.setLong(paramPos++, pDto.getApplication_id());
 			pStmt.setString(paramPos++, pDto.getBankName());
 			pStmt.setString(paramPos++, pDto.getMicrCode());
+			pStmt.setString(paramPos++, pDto.getAccount_type());
+			pStmt.setString(paramPos++, pDto.getBankAddress());
 			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
 			pStmt.setString(paramPos++, pDto.getIfsc_code());
 			pStmt.setString(paramPos++, pDto.getBank_account_no());
@@ -904,11 +906,13 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"UPDATE tbl_bank_account_details SET bank_name = ? , micr_code = ? , account_holder_name = ? , ifsc_code = ? , "
+					"UPDATE tbl_bank_account_details SET bank_name = ? , micr_code = ?, account_type = ? , bank_address = ? , account_holder_name = ? , ifsc_code = ? , "
 							+ "bank_account_no = ?, last_updated = ? where application_id = ?");
 			int paramPos = 1;
 			pStmt.setString(paramPos++, pDto.getBankName());
 			pStmt.setString(paramPos++, pDto.getMicrCode());
+			pStmt.setString(paramPos++, pDto.getAccount_type());
+			pStmt.setString(paramPos++, pDto.getBankAddress());
 			pStmt.setString(paramPos++, pDto.getAccount_holder_name());
 			pStmt.setString(paramPos++, pDto.getIfsc_code());
 			pStmt.setString(paramPos++, pDto.getBank_account_no());
@@ -947,8 +951,9 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT id,application_id,bank_name,micr_code,account_holder_name,ifsc_code,"
-					+ "bank_account_no,account_type FROM tbl_bank_account_details where application_id = ? ");
+			pStmt = conn.prepareStatement(
+					" SELECT id,application_id,bank_name,micr_code, bank_address, account_type,account_holder_name,ifsc_code,"
+							+ "bank_account_no,account_type FROM tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -960,6 +965,8 @@ public class eKYCDAO {
 					result.setBankName(rSet.getString("bank_name"));
 					json.put("bank_name", rSet.getString("bank_name").toUpperCase());
 					result.setMicrCode(rSet.getString("micr_code"));
+					result.setBankAddress(rSet.getString("bank_address"));
+					json.put("bank_address", rSet.getString("bank_address"));
 					json.put("micr_code", rSet.getString("micr_code").toUpperCase());
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
 					json.put("account_holder_name", rSet.getString("account_holder_name").toUpperCase());
