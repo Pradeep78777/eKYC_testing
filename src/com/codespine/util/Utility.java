@@ -100,13 +100,19 @@ public class Utility {
 		StringBuilder builder = new StringBuilder();
 		String status = eKYCConstant.FAILED_MSG;
 		try {
+
+			// Get system properties
 			Properties properties = new Properties();
+			// Setup mail server
 			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
 			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
 			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.auth", "true");
 			properties.put("mail.smtp.debug", "true");
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			properties.put("mail.smtp.socketFactory.fallback", "false");
 			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
@@ -229,13 +235,18 @@ public class Utility {
 		StringBuilder builder = new StringBuilder();
 		String status = eKYCConstant.FAILED_MSG;
 		try {
+			// Get system properties
 			Properties properties = new Properties();
+			// Setup mail server
 			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
 			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
 			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.auth", "true");
 			properties.put("mail.smtp.debug", "true");
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			properties.put("mail.smtp.socketFactory.fallback", "false");
 			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
@@ -583,13 +594,18 @@ public class Utility {
 		StringBuilder builder = new StringBuilder();
 		String status = eKYCConstant.FAILED_MSG;
 		try {
+			// Get system properties
 			Properties properties = new Properties();
+			// Setup mail server
 			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
 			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
 			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.auth", "true");
 			properties.put("mail.smtp.debug", "true");
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			properties.put("mail.smtp.socketFactory.fallback", "false");
 			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
@@ -637,13 +653,18 @@ public class Utility {
 		ApplicationLogDTO tempDto = null;
 		String tempString = null;
 		try {
+			// Get system properties
 			Properties properties = new Properties();
+			// Setup mail server
 			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
 			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
 			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
 			properties.put("mail.smtp.auth", "true");
 			properties.put("mail.smtp.debug", "true");
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			properties.put("mail.smtp.socketFactory.fallback", "false");
 			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
@@ -722,13 +743,71 @@ public class Utility {
 		MD5pass = passkey;
 		return MD5pass;
 	}
-	public static Map<String,String> annualIncomeMap(){
-		Map<String,String> incomeMap = new HashMap<String,String>();
+
+	public static Map<String, String> annualIncomeMap() {
+		Map<String, String> incomeMap = new HashMap<String, String>();
 		incomeMap.put("below 1 lakh", "1,00,000");
 		incomeMap.put("1l-5l", "5,00,000");
 		incomeMap.put("5l-10l", "10,00,000");
 		incomeMap.put("10l-25l", "25,00,000");
 		incomeMap.put("above 25l", "30,00,000");
 		return incomeMap;
+	}
+
+	public static String mailUpdate(String msg, String email) {
+		StringBuilder builder = new StringBuilder();
+		String success = eKYCConstant.FAILED_MSG;
+		try {
+
+			// Get system properties
+			Properties properties = new Properties();
+			// Setup mail server
+			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
+			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
+			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.auth", "true");
+			properties.put("mail.smtp.debug", "true");
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			properties.put("mail.smtp.socketFactory.fallback", "false");
+			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
+							CSEnvVariables.getProperty(eKYCConstant.PASSWORD));
+				}
+			});
+			try {
+				String hs = "<!DOCTYPE html><html><head><style>*{font-family:'Open Sans',"
+						+ " Helvetica, Arial;color: #1e3465}table {margin-left:100px;font-family: arial, sans-serif;border-collapse:"
+						+ " separate;}td, th {border: 1px solid #1e3465;text-align: left;padding: 8px;}"
+						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
+						+ "<div  style='font-size:14px'><p>Hi Admin,</p><p>" + msg + "</p></div>"
+						+ "<div><p align='left'>" + "<b>Regards,"
+						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
+				builder.append(hs);
+				MimeMessage message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+				// message.addRecipient(Message.RecipientType.CC, new
+				// InternetAddress());
+				message.setSubject("Message From Zebu eTrade");
+				BodyPart messageBodyPart1 = new MimeBodyPart();
+				messageBodyPart1.setContent(builder.toString(), "text/html");
+				// messageBodyPart1.setContent(msg, "text/html;
+				// charset=utf-8");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(messageBodyPart1);
+				message.setContent(multipart);
+				// 7) send message
+				Transport.send(message);
+				success = eKYCConstant.SUCCESS_MSG;
+			} catch (MessagingException ex) {
+				ex.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return success;
 	}
 }
