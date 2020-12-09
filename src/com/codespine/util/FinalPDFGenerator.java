@@ -225,7 +225,12 @@ public class FinalPDFGenerator {
 		PDFont font1 = PDTrueTypeFont.loadTTF(document, f);
 		if (resizeRequired > 0) {
 			contentStream.setCharacterSpacing(1);
-			contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber,ColumnName);
+			if(pageNumber == 2 && StringUtil.isEqual(ColumnName,"reduced_city")) {
+//				contentStream.setFont(font1, 2);
+				contentStream = changeInputTextSizesForCity(contentStream,font1,insertValue,pageNumber,ColumnName);
+			}else {
+				contentStream = changeInputTextSizes(contentStream,font1,insertValue,pageNumber,ColumnName);
+			}
 		} else {
 			contentStream.setFont(font1, 8);
 			contentStream.setCharacterSpacing(1);
@@ -235,6 +240,23 @@ public class FinalPDFGenerator {
 		contentStream.showText(text);
 		contentStream.endText();
 		contentStream.close();
+	}
+	private static PDPageContentStream changeInputTextSizesForCity(PDPageContentStream contentStream, PDFont font1,
+			String insertValue, int pageNumber, String columnName) throws IOException {
+		if(pageNumber == 2) {
+			if(!insertValue.isEmpty() && insertValue.length() > 6 && insertValue.length() < 16 ) {
+				contentStream.setFont(font1, 5);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 16 && insertValue.length() < 26 ) {
+				contentStream.setFont(font1, 4);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 26 && insertValue.length() < 36 ) {
+				contentStream.setFont(font1, 3);	
+			}else if(!insertValue.isEmpty() && insertValue.length() > 36 ) {
+				contentStream.setFont(font1, 2);	
+			}else {
+				contentStream.setFont(font1, 10);
+			}
+		}
+		return contentStream;
 	}
 	/**
 	 * Method to insert images value in PDF 
@@ -308,6 +330,7 @@ public class FinalPDFGenerator {
 	   	String ascii4 ="✓";
 	    stream.beginText();
 	    stream.setFont(font, 12);
+	    stream.setNonStrokingColor(0, 0, 0);
 	    stream.moveTextPositionByAmount(xValue,yValue);
 	    stream.drawString(ascii4);
 	    stream.endText();

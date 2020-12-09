@@ -81,14 +81,13 @@ public class DateUtil {
 	}
 	public static String parseDateStringForDOB(String dateString) {
 		String changedDate = "";
-//		Date date = null;
-//		SimpleDateFormat  formatter1 = null;
+		Date date = null;
+		SimpleDateFormat  formatter1 = null;
 		if(StringUtil.isNotNullOrEmpty(dateString)){
 			try {
-//				formatter1 = new SimpleDateFormat(YYYYMMDD_SLASH);
-//				date = (Date) formatter1.parse((StringUtil.replace(dateString,"-","")));
-//				changedDate = formatDate(date,YYYYMMDD_SLASH);
-				changedDate = StringUtil.replace(dateString,"-","/");
+				formatter1 = new SimpleDateFormat(DateUtil.YYYYMMDD);
+				date = (Date) formatter1.parse((StringUtil.replace(dateString,"-","")));
+				changedDate = formatDate(date,DateUtil.DDMMYYYY_SLASH);
 			} catch (Exception e) {
 				System.out.println("Exception :" + e);
 			}
