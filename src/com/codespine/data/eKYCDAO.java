@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.simple.JSONObject;
+
 import com.codespine.dto.AccountHolderDetailsDTO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
@@ -27,6 +29,7 @@ import com.codespine.util.DateUtil;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
+@SuppressWarnings("unchecked")
 public class eKYCDAO {
 	public static eKYCDAO eKYCDAO = null;
 
@@ -734,7 +737,8 @@ public class eKYCDAO {
 					json.put("flat_no", rSet.getString("flat_no").toUpperCase());
 					result.setStreet(rSet.getString("street"));
 					json.put("street", rSet.getString("street").toUpperCase());
-					json.put("flatNo_street_city", json.put("flat_no", rSet.getString("flat_no").toUpperCase()) +", "+ rSet.getString("street").toUpperCase() + ", "+ rSet.getString("city").toUpperCase());
+					json.put("flatNo_street_city", json.put("flat_no", rSet.getString("flat_no").toUpperCase()) + ", "
+							+ rSet.getString("street").toUpperCase() + ", " + rSet.getString("city").toUpperCase());
 					result.setPin(rSet.getInt("pin"));
 					json.put("pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
@@ -744,7 +748,10 @@ public class eKYCDAO {
 					json.put("district", rSet.getString("district").toUpperCase());
 					result.setState(rSet.getString("state"));
 					json.put("state", rSet.getString("state").toUpperCase());
-					json.put("district_state_country", rSet.getString("district").toUpperCase() +", "+ rSet.getString("state").toUpperCase()+", "+json.put("country", "INDIA")+", "+json.put("pin", Integer.toString(rSet.getInt("pin"))));
+					json.put("district_state_country",
+							rSet.getString("district").toUpperCase() + ", " + rSet.getString("state").toUpperCase()
+									+ ", " + json.put("country", "INDIA") + ", "
+									+ json.put("pin", Integer.toString(rSet.getInt("pin"))));
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -963,13 +970,13 @@ public class eKYCDAO {
 					result.setId(rSet.getInt("id"));
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setBankName(rSet.getString("bank_name"));
-					json.put("bank_name", rSet.getString("bank_name").toUpperCase());
+					json.put("bank_name", rSet.getString("bank_name"));
 					result.setMicrCode(rSet.getString("micr_code"));
 					result.setBankAddress(rSet.getString("bank_address"));
 					json.put("bank_address", rSet.getString("bank_address"));
-					json.put("micr_code", rSet.getString("micr_code").toUpperCase());
+					json.put("micr_code", rSet.getString("micr_code"));
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
-					json.put("account_holder_name", rSet.getString("account_holder_name").toUpperCase());
+					json.put("account_holder_name", rSet.getString("account_holder_name"));
 					result.setIfsc_code(rSet.getString("ifsc_code").toUpperCase());
 					json.put("ifsc_code", rSet.getString("ifsc_code"));
 					result.setBank_account_no((rSet.getString("bank_account_no")));
@@ -1286,47 +1293,47 @@ public class eKYCDAO {
 					json = new HashMap<String, String>();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setNse_eq(rSet.getInt("nse_eq"));
-					if(rSet.getInt("nse_eq") != 0 && rSet.getInt("nse_eq") > 0) {
+					if (rSet.getInt("nse_eq") != 0 && rSet.getInt("nse_eq") > 0) {
 						json.put("nse_eq", "nse_eq");
 					}
 					result.setBse_eq(rSet.getInt("bse_eq"));
-					if(rSet.getInt("bse_eq") != 0 && rSet.getInt("bse_eq") > 0) {
+					if (rSet.getInt("bse_eq") != 0 && rSet.getInt("bse_eq") > 0) {
 						json.put("bse_eq", "bse_eq");
 					}
 					result.setMf(rSet.getInt("mf"));
-//					if(rSet.getInt("mf") != 0 && rSet.getInt("mf") > 0) {
-//						json.put("mf", "mf");
-//					}
+					// if(rSet.getInt("mf") != 0 && rSet.getInt("mf") > 0) {
+					// json.put("mf", "mf");
+					// }
 					result.setNse_fo(rSet.getInt("nse_fo"));
-					if(rSet.getInt("nse_fo") != 0 && rSet.getInt("nse_fo") > 0) {
+					if (rSet.getInt("nse_fo") != 0 && rSet.getInt("nse_fo") > 0) {
 						json.put("nse_fo", "nse_fo");
 					}
 					result.setBse_fo(rSet.getInt("bse_fo"));
-					if(rSet.getInt("bse_fo") != 0 && rSet.getInt("bse_fo") > 0) {
+					if (rSet.getInt("bse_fo") != 0 && rSet.getInt("bse_fo") > 0) {
 						json.put("bse_fo", "bse_fo");
 					}
 					result.setCds(rSet.getInt("cds"));
-					if(rSet.getInt("cds") != 0 && rSet.getInt("cds") > 0) {
+					if (rSet.getInt("cds") != 0 && rSet.getInt("cds") > 0) {
 						json.put("cds", "cds");
 					}
 					result.setBcd(rSet.getInt("bcd"));
-					if(rSet.getInt("bcd") != 0 && rSet.getInt("bcd") > 0) {
+					if (rSet.getInt("bcd") != 0 && rSet.getInt("bcd") > 0) {
 						json.put("bcd", "bcd");
 					}
 					result.setMcx(rSet.getInt("mcx"));
-					if(rSet.getInt("mcx") != 0 && rSet.getInt("mcx") > 0) {
-						json.put("mcx","mcx");
+					if (rSet.getInt("mcx") != 0 && rSet.getInt("mcx") > 0) {
+						json.put("mcx", "mcx");
 					}
 					result.setIcex(rSet.getInt("icex"));
-					if(rSet.getInt("icex") != 0 && rSet.getInt("icex") > 0) {
+					if (rSet.getInt("icex") != 0 && rSet.getInt("icex") > 0) {
 						json.put("icex", "icex");
 					}
 					result.setNse_com(rSet.getInt("nse_com"));
-					if(rSet.getInt("nse_com") != 0 && rSet.getInt("nse_com") > 0) {
+					if (rSet.getInt("nse_com") != 0 && rSet.getInt("nse_com") > 0) {
 						json.put("nse_com", "nse_com");
 					}
 					result.setBse_com(rSet.getInt("bse_com"));
-					if(rSet.getInt("bse_com") != 0 && rSet.getInt("bse_com") > 0) {
+					if (rSet.getInt("bse_com") != 0 && rSet.getInt("bse_com") > 0) {
 						json.put("bse_com", "bse_com");
 					}
 					result.setForPDFKeyValue(json);
@@ -1478,7 +1485,7 @@ public class eKYCDAO {
 	 * @param applicationId
 	 * @return
 	 */
-	public int insertAttachementDetails(String proofUrl, String proofType, int applicationId) {
+	public int insertAttachementDetails(String proofUrl, String proofType, int applicationId, String typeOfProof) {
 		int count = 0;
 		PreparedStatement pStmt = null;
 		Connection conn = null;
@@ -1486,12 +1493,13 @@ public class eKYCDAO {
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_application_attachements(application_id, attachement_type, attachement_url ,last_update, created_on) "
-							+ "VALUES (?,?,?,?,?)");
+					"INSERT INTO tbl_application_attachements(application_id, attachement_type, attachement_url, type_of_proof ,last_update, created_on) "
+							+ "VALUES (?,?,?,?,?,?)");
 			int paramPos = 1;
 			pStmt.setInt(paramPos++, applicationId);
 			pStmt.setString(paramPos++, proofType);
 			pStmt.setString(paramPos++, proofUrl);
+			pStmt.setString(paramPos++, typeOfProof);
 			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.setTimestamp(paramPos++, timestamp);
 			count = pStmt.executeUpdate();
@@ -1753,7 +1761,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT attachement_type , attachement_url FROM tbl_application_attachements where application_id = ? ");
+					" SELECT attachement_type , attachement_url , type_of_proof FROM tbl_application_attachements where application_id = ? ");
 			pStmt.setInt(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1761,6 +1769,7 @@ public class eKYCDAO {
 					result = new FileUploadDTO();
 					result.setProofType(rSet.getString("attachement_type"));
 					result.setProof(rSet.getString("attachement_url"));
+					result.setTypeOfProof(rSet.getString("type_of_proof"));
 					response.add(result);
 				}
 			}
@@ -1810,7 +1819,7 @@ public class eKYCDAO {
 		return dummyId;
 	}
 
-	public boolean updateAttachementDetails(String proofUrl, String proofType, int applicationId) {
+	public boolean updateAttachementDetails(String proofUrl, String proofType, int applicationId, String typeOfProof) {
 		int count = 0;
 		boolean isSuccessFull = false;
 		Connection conn = null;
@@ -1818,9 +1827,10 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" UPDATE tbl_application_attachements SET attachement_url = ?  where application_id = ? and attachement_type = ? ");
+					" UPDATE tbl_application_attachements SET attachement_url = ? , type_of_proof = ?   where application_id = ? and attachement_type = ? ");
 			int paramPos = 1;
 			pStmt.setString(paramPos++, proofUrl);
+			pStmt.setString(paramPos++, typeOfProof);
 			pStmt.setInt(paramPos++, applicationId);
 			pStmt.setString(paramPos++, proofType);
 			count = pStmt.executeUpdate();
@@ -2367,6 +2377,83 @@ public class eKYCDAO {
 					result.setBank_contact_name(rSet.getString("bank_contact_name"));
 					result.setBank_contact_designation(rSet.getString("bank_contact_designation"));
 					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pStmt.close();
+				conn.close();
+				rSet.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to update the document signed or download into the data base *
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 */
+	public void updateDocumentSignedOrDownloaded(boolean signed, int applicationId) {
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		try {
+			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+			conn = DBUtil.getConnection();
+			String query = "";
+			if (signed) {
+				query = "UPDATE tbl_application_master SET  document_signed = ? , last_updated = ?  where application_id = ?";
+			} else {
+				query = "UPDATE tbl_application_master SET  document_downloaded = ? , last_updated = ? where application_id = ?";
+			}
+			pStmt = conn.prepareStatement(query);
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, 1);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Method to get the Ivr details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param application_id
+	 * @return
+	 */
+	public JSONObject getIvrDetails(int application_id) {
+		JSONObject response = null;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT  ivr_image, ivr_lat, ivr_long FROM  tbl_ivr_capture where application_id = ? ");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, application_id);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					response = new JSONObject();
+					response.put("ivr_image", rSet.getString("ivr_image"));
+					response.put("ivr_lat", rSet.getString("ivr_lat"));
+					response.put("ivr_long", rSet.getString("ivr_long"));
 				}
 			}
 		} catch (Exception e) {

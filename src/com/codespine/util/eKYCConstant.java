@@ -171,6 +171,9 @@ public class eKYCConstant {
 	public static final String ACCESS_DENIED = "Access denied Only for Admin User";
 	public static final String PASSWORD_INVALID = "Entered password is invalid";
 
+	public static final String NO_BANK_FOUND = "No bank found";
+	public static final String NO_PLACE_FOUND = "No place found for selected bank";
+
 	/**
 	 * Back Url and parameters
 	 */
