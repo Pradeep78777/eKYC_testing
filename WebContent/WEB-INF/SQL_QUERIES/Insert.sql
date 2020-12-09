@@ -33,3 +33,14 @@ update ekyc.tbl_pdf_orgins set coordinates = '104,295' where id = 114 and page_n
 update ekyc.tbl_pdf_orgins set coordinates = '104,320' where id = 124 and page_number = 2;
 update ekyc.tbl_pdf_orgins set coordinates = '62,751' where id = 63  and page_number = 6;
 update ekyc.tbl_pdf_orgins set coordinates = '75,21' where id = 39 and page_number = 9;
+--12/09/2020
+update ekyc.tbl_pdf_orgins set column_name  = 'reduced_city' where id = 92;
+update ekyc.tbl_pdf_orgins set coordinates = '485,595' where id = 117;
+update ekyc.tbl_pdf_orgins set coordinates = '156,731' where id = 67;
+update ekyc.tbl_pdf_orgins set coordinates = '332,720' where id = 68;
+update ekyc.tbl_pdf_orgins set coordinates = '81,720' where id = 69;
+insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,is_value_reduced) values
+('nse_mf','{"nse_mf":"252,518"}',1,14,0),
+('bse_mf','{"bse_mf":"467,518"}',1,14,0);
+delete from ekyc.tbl_pdf_orgins where id in (23,24);
+
