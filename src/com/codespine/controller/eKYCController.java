@@ -370,7 +370,7 @@ public class eKYCController {
 	@Path("/fileUpload")
 	public ResponseDTO uploadProof(@Context ContainerRequestContext requestContext,
 			@FormDataParam("proof") FormDataBodyPart proof, @FormDataParam("proofType") String proofType,
-			@FormDataParam("applicationId") int applicationId) {
+			@FormDataParam("applicationId") int applicationId, @FormDataParam("typeOfProof") String typeOfProof) {
 		ResponseDTO response = new ResponseDTO();
 		/*
 		 * TO insert Access log into data base
@@ -382,7 +382,7 @@ public class eKYCController {
 		// Utility.inputAccessLogDetails(accessLog, proofType, applicationId +
 		// "");
 
-		response = eKYCService.getInstance().uploadProof(proof, proofType, applicationId);
+		response = eKYCService.getInstance().uploadProof(proof, proofType, applicationId, typeOfProof);
 		return response;
 	}
 
@@ -426,7 +426,7 @@ public class eKYCController {
 			String eKYCPdfFileLocation = FinalPDFGenerator.pdfInserterRequiredValues(eKYCdto, null);
 			if (StringUtil.isNotNullOrEmpty(eKYCPdfFileLocation)) {
 				eKYCDAO.getInstance().insertAttachementDetails(eKYCPdfFileLocation, eKYCConstant.EKYC_DOCUMENT,
-						applicationId);
+						applicationId, "");
 			}
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
@@ -657,6 +657,34 @@ public class eKYCController {
 		// pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getUploadedFile(pDto);
+		return response;
+	}
+
+	/**
+	 * Method to get the IVR details for the given Application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param requestContext
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getIvrDetails")
+	public ResponseDTO getIvrDetails(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		// Utility.inputAccessLogDetails(accessLog, pDto,
+		// pDto.getApplication_id() + "");
+
+		response = eKYCService.getInstance().getIvrDetails(pDto);
 		return response;
 	}
 

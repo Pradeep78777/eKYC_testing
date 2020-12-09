@@ -409,6 +409,10 @@ public class Utility {
 		byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
 		String path = location + "//" + applicationId + "_ivrImage." + extension;
 		File file = new File(path);
+		File foldercheck = new File(location);
+		if (!foldercheck.exists()) {
+			foldercheck.mkdirs();
+		}
 		try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
 			outputStream.write(data);
 		} catch (IOException e) {
