@@ -5,6 +5,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONValue;
+
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.eKYCConstant;
 
@@ -42,6 +45,18 @@ public class BackOfficeRestService {
 			String output;
 			while ((output = br1.readLine()) != null) {
 				object = output;
+				object = JSONValue.parse(output);
+				if (object == null) {
+					String tempString = (String) output;
+					String[] resp = tempString.split(",");
+					int statusCode = Integer.parseInt(StringUtils.substringAfter(resp[0], ":"));
+					if (statusCode == 0) {
+						return null;
+					} else {
+						return null;
+					}
+				}
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
