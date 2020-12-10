@@ -931,7 +931,7 @@ public class eKYCService {
 	public ResponseDTO getCommunicationAddress(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto.getApplication_id() > 0) {
-			AddressDTO result = peKYCDao.checkPermanentAddress(pDto.getApplication_id());
+			AddressDTO result = peKYCDao.checkCommunicationAddress(pDto.getApplication_id());
 			if (result != null) {
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
