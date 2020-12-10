@@ -743,6 +743,7 @@ public class eKYCDAO {
 					json.put("pin", Integer.toString(rSet.getInt("pin")));
 					result.setCity(rSet.getString("city"));
 					json.put("city", rSet.getString("city").toUpperCase());
+					json.put("reduced_city", rSet.getString("city").toUpperCase());
 					json.put("country", "INDIA");
 					result.setDistrict(rSet.getString("district"));
 					json.put("district", rSet.getString("district").toUpperCase());
@@ -1301,9 +1302,10 @@ public class eKYCDAO {
 						json.put("bse_eq", "bse_eq");
 					}
 					result.setMf(rSet.getInt("mf"));
-					// if(rSet.getInt("mf") != 0 && rSet.getInt("mf") > 0) {
-					// json.put("mf", "mf");
-					// }
+					if(rSet.getInt("mf") != 0 && rSet.getInt("mf") > 0) {
+						json.put("nse_mf", "nse_mf");
+						json.put("bse_mf", "bse_mf");
+					}
 					result.setNse_fo(rSet.getInt("nse_fo"));
 					if (rSet.getInt("nse_fo") != 0 && rSet.getInt("nse_fo") > 0) {
 						json.put("nse_fo", "nse_fo");
