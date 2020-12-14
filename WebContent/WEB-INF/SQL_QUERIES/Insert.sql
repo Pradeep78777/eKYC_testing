@@ -43,4 +43,6 @@ insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,
 ('nse_mf','{"nse_mf":"252,518"}',1,14,0),
 ('bse_mf','{"bse_mf":"467,518"}',1,14,0);
 delete from ekyc.tbl_pdf_orgins where id in (23,24);
-
+--12/12/2020
+insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,is_value_reduced) values
+('TICK','560,625',1,8,0);
