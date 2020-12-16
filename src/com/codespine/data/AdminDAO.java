@@ -7,9 +7,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.codespine.dto.AddressDTO;
 import com.codespine.dto.AdminDTO;
+import com.codespine.dto.ApplicationAttachementsDTO;
 import com.codespine.dto.ApplicationLogDTO;
+import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
+import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.DBUtil;
 import com.codespine.util.eKYCConstant;
@@ -617,4 +622,429 @@ public class AdminDAO {
 		return result;
 	}
 
+	/**
+	 * Method to get the user records from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	public List<PersonalDetailsDTO> getUserRecords() {
+		List<PersonalDetailsDTO> response = null;
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, mobile_number, mob_owner, mobile_no_verified, email_id, email_owner, email_activated, "
+							+ "otp_verified_on, email_activated_on, application_status, is_approved, is_rejected, document_signed, document_downloaded, "
+							+ "comments, last_updated, created_date FROM tbl_application_master");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<PersonalDetailsDTO>();
+				while (rSet.next()) {
+					result = new PersonalDetailsDTO();
+					result.setApplication_id(rSet.getInt("application_id"));
+					result.setMobile_number(rSet.getLong("mobile_number"));
+					result.setMobile_owner(rSet.getString("mob_owner"));
+					result.setMobile_number_verified(rSet.getInt("mobile_no_verified"));
+					result.setEmail(rSet.getString("email_id"));
+					result.setEmail_owner(rSet.getString("email_owner"));
+					result.setEmail_id_verified(rSet.getInt("email_activated"));
+					result.setOtpVerifiedAt(rSet.getString("otp_verified_on"));
+					result.setEmailVerifiedAt(rSet.getString("email_activated_on"));
+					result.setApplicationStatus(rSet.getInt("application_status"));
+					result.setIsAproved(rSet.getInt("is_approved"));
+					result.setIsRejected(rSet.getInt("is_rejected"));
+					result.setDocumentSigned(rSet.getInt("document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("document_downloaded"));
+					result.setComments(rSet.getString("comments"));
+					result.setLastUpdatedAt(rSet.getString("last_updated"));
+					result.setCreatedAt(rSet.getString("created_date"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the pan card details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationID
+	 * @return
+	 */
+	public PanCardDetailsDTO getPanCardDetails(int applicationID) {
+		PanCardDetailsDTO response = new PanCardDetailsDTO();
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			int paramPos = 1;
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, applicant_name, first_name, middle_name, last_name, pan_card, aadhar_no, dob, "
+							+ "pan_card_verified, is_approved, is_rejected, comments, last_updated, created_on "
+							+ "FROM tbl_pancard_details where application_id = ? ");
+			pStmt.setInt(paramPos++, applicationID);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					response = new PanCardDetailsDTO();
+					response.setApplication_id(rSet.getInt("application_id"));
+					response.setApplicant_name(rSet.getString("applicant_name"));
+					response.setFirst_name(rSet.getString("first_name"));
+					response.setMiddle_name(rSet.getString("middle_name"));
+					response.setLast_name(rSet.getString("last_name"));
+					response.setPan_card(rSet.getString("pan_card"));
+					response.setAadharNo(rSet.getLong("aadhar_no"));
+					response.setDob(rSet.getString("dob"));
+					response.setPan_card_verified(rSet.getInt("pan_card_verified"));
+					response.setIsAproved(rSet.getInt("is_approved"));
+					response.setIsRejected(rSet.getInt("is_rejected"));
+					response.setComments(rSet.getString("comments"));
+					response.setLastUpdatedAt(rSet.getString("last_updated"));
+					response.setCreatedAt(rSet.getString("created_on"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to personal details for given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param appliccationId
+	 * @return
+	 */
+	public PersonalDetailsDTO getPersonalDetails(int applicationId) {
+		PersonalDetailsDTO response = new PersonalDetailsDTO();
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			int paramPos = 1;
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, applicant_name, mothersName, fathersName, gender, marital_status, "
+							+ "annual_income, trading_experience, occupation, politically_exposed, "
+							+ "is_approved, is_rejected, comments, last_updated, created_on "
+							+ "FROM tbl_account_holder_personal_details where application_id = ? ");
+			pStmt.setInt(paramPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					response = new PersonalDetailsDTO();
+					response.setApplication_id(rSet.getInt("application_id"));
+					response.setApplicant_name(rSet.getString("applicant_name"));
+					response.setMothersName(rSet.getString("applicant_name"));
+					response.setFathersName(rSet.getString("applicant_name"));
+					response.setGender(rSet.getString("applicant_name"));
+					response.setMarital_status(rSet.getString("applicant_name"));
+					response.setAnnual_income(rSet.getString("applicant_name"));
+					response.setTrading_experience(rSet.getString("applicant_name"));
+					response.setOccupation(rSet.getString("applicant_name"));
+					response.setPolitically_exposed(rSet.getString("applicant_name"));
+					response.setIsAproved(rSet.getInt("is_approved"));
+					response.setIsRejected(rSet.getInt("is_rejected"));
+					response.setComments(rSet.getString("comments"));
+					response.setLastUpdatedAt(rSet.getString("last_updated"));
+					response.setCreatedAt(rSet.getString("created_on"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get communication address for the given applicatio id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public AddressDTO getCommunicationAddress(int applicationId) {
+		AddressDTO response = new AddressDTO();
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, flat_no, street, pin, city, district, state, is_approved, is_rejected, comments, created_on, last_updated "
+							+ "FROM tbl_communication_address where application_id = ? ");
+			pStmt.setInt(paramPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					response = new AddressDTO();
+					response.setApplication_id(rSet.getInt("application_id"));
+					response.setFlat_no(rSet.getString("flat_no"));
+					response.setStreet(rSet.getString("street"));
+					response.setPin(rSet.getInt("pin"));
+					response.setCity(rSet.getString("city"));
+					response.setDistrict(rSet.getString("district"));
+					response.setState(rSet.getString("state"));
+					response.setIsAproved(rSet.getInt("is_approved"));
+					response.setIsRejected(rSet.getInt("is_rejected"));
+					response.setComments(rSet.getString("comments"));
+					response.setLastUpdatedAt(rSet.getString("last_updated"));
+					response.setCreatedAt(rSet.getString("created_on"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get permanent address for the given applicatio id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public AddressDTO getPermanentAddress(int applicationId) {
+		AddressDTO response = new AddressDTO();
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, flat_no, street, pin, city, district, state, is_approved, is_rejected, comments, created_on, last_updated "
+							+ "FROM tbl_permanent_address where application_id = ? ");
+			pStmt.setInt(paramPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					response = new AddressDTO();
+					response.setApplication_id(rSet.getInt("application_id"));
+					response.setFlat_no(rSet.getString("flat_no"));
+					response.setStreet(rSet.getString("street"));
+					response.setPin(rSet.getInt("pin"));
+					response.setCity(rSet.getString("city"));
+					response.setDistrict(rSet.getString("district"));
+					response.setState(rSet.getString("state"));
+					response.setIsAproved(rSet.getInt("is_approved"));
+					response.setIsRejected(rSet.getInt("is_rejected"));
+					response.setComments(rSet.getString("comments"));
+					response.setLastUpdatedAt(rSet.getString("last_updated"));
+					response.setCreatedAt(rSet.getString("created_on"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the bank account details
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public BankDetailsDTO getBankDetails(int applicationId) {
+		BankDetailsDTO response = new BankDetailsDTO();
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, bank_name, micr_code, account_holder_name, ifsc_code, bank_account_no, "
+							+ "bank_address, account_type, is_approved, is_rejected, comments, last_updated, created_on "
+							+ "FROM tbl_bank_account_details where application_id = ? ");
+			pStmt.setInt(paramPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					response = new BankDetailsDTO();
+					response.setApplication_id(rSet.getInt("application_id"));
+					response.setBankName(rSet.getString("bank_name"));
+					response.setMicrCode(rSet.getString("micr_code"));
+					response.setAccount_holder_name(rSet.getString("account_holder_name"));
+					response.setIfsc_code(rSet.getString("ifsc_code"));
+					response.setBank_account_no(rSet.getString("bank_account_no"));
+					response.setBankAddress(rSet.getString("bank_address"));
+					response.setAccount_type(rSet.getString("account_type"));
+					response.setIsAproved(rSet.getInt("is_approved"));
+					response.setIsRejected(rSet.getInt("is_rejected"));
+					response.setComments(rSet.getString("comments"));
+					response.setLastUpdatedAt(rSet.getString("last_updated"));
+					response.setCreatedAt(rSet.getString("created_on"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the exch details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public ExchDetailsDTO getExchDetails(int applicationId) {
+		ExchDetailsDTO response = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, nse_eq, bse_eq, mf, nse_fo, bse_fo, cds, bcd, mcx, icex, nse_com, bse_com, last_updated, created_on "
+							+ "FROM tbl_exch_segments where application_id = ? ");
+			pStmt.setInt(paramPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					response = new ExchDetailsDTO();
+					response.setApplication_id(rSet.getInt("application_id"));
+					response.setNse_eq(rSet.getInt("nse_eq"));
+					response.setBse_eq(rSet.getInt("bse_eq"));
+					response.setMf(rSet.getInt("mf"));
+					response.setNse_fo(rSet.getInt("nse_fo"));
+					response.setBse_fo(rSet.getInt("bse_fo"));
+					response.setCds(rSet.getInt("cds"));
+					response.setBcd(rSet.getInt("bcd"));
+					response.setMcx(rSet.getInt("mcx"));
+					response.setIcex(rSet.getInt("icex"));
+					response.setNse_com(rSet.getInt("nse_com"));
+					response.setBse_com(rSet.getInt("bse_com"));
+					response.setLastUpdatedAt(rSet.getString("last_updated"));
+					response.setCreatedAt(rSet.getString("created_on"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the attchemets details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public List<ApplicationAttachementsDTO> getApplicationAttachementsDetails(int applicationId) {
+		List<ApplicationAttachementsDTO> response = null;
+		ApplicationAttachementsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT application_id, attachement_type, type_of_proof, attachement_url, is_approved, is_rejected, comments, last_update, created_on, delete_flag "
+							+ "FROM tbl_application_attachements where application_id = ? ");
+			pStmt.setInt(paramPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<ApplicationAttachementsDTO>();
+				while (rSet.next()) {
+					result = new ApplicationAttachementsDTO();
+					result.setApplication_id(rSet.getInt("application_id"));
+					result.setAttachement_type(rSet.getString("attachement_type"));
+					result.setType_of_proof(rSet.getString("type_of_proof"));
+					result.setAttachement_url(rSet.getString("attachement_url"));
+					result.setIsAproved(rSet.getInt("is_approved"));
+					result.setIsRejected(rSet.getInt("is_rejected"));
+					result.setComments(rSet.getString("comments"));
+					result.setLastUpdatedAt(rSet.getString("last_update"));
+					result.setCreatedAt(rSet.getString("created_on"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
 }

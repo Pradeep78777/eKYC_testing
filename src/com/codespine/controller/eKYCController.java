@@ -370,7 +370,8 @@ public class eKYCController {
 	@Path("/fileUpload")
 	public ResponseDTO uploadProof(@Context ContainerRequestContext requestContext,
 			@FormDataParam("proof") FormDataBodyPart proof, @FormDataParam("proofType") String proofType,
-			@FormDataParam("applicationId") int applicationId, @FormDataParam("typeOfProof") String typeOfProof) {
+			@FormDataParam("applicationId") int applicationId, @FormDataParam("typeOfProof") String typeOfProof,
+			@FormDataParam("pdfPassword") String pdfPassword) {
 		ResponseDTO response = new ResponseDTO();
 		/*
 		 * TO insert Access log into data base
@@ -382,7 +383,7 @@ public class eKYCController {
 		// Utility.inputAccessLogDetails(accessLog, proofType, applicationId +
 		// "");
 
-		response = eKYCService.getInstance().uploadProof(proof, proofType, applicationId, typeOfProof);
+		response = eKYCService.getInstance().uploadProof(proof, proofType, applicationId, typeOfProof, pdfPassword);
 		return response;
 	}
 
@@ -844,4 +845,40 @@ public class eKYCController {
 		ResponseDTO response = eKYCService.getInstance().getBankDetailsByPlace(dto);
 		return response;
 	}
+
+	/**
+	 * Method to generate the ipv link and sent it through the mobile and email
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getIPVlink")
+	public ResponseDTO getIPVlink(PersonalDetailsDTO dto) {
+		ResponseDTO response = eKYCService.getInstance().getIPVlink(dto);
+		return response;
+	}
+
+	/**
+	 * Method to check the given file is password protected or not
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param requestContext
+	 * @param proof
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/checkPasswordProtected")
+	public ResponseDTO checkPasswordProtected(@Context ContainerRequestContext requestContext,
+			@FormDataParam("proof") FormDataBodyPart proof) {
+		ResponseDTO response = new ResponseDTO();
+		response = eKYCService.getInstance().checkPasswordProtected(proof);
+		return response;
+	}
+
 }

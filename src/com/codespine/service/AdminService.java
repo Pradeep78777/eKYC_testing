@@ -1,11 +1,19 @@
 package com.codespine.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.JSONObject;
+
 import com.codespine.data.AdminDAO;
+import com.codespine.dto.AddressDTO;
 import com.codespine.dto.AdminDTO;
+import com.codespine.dto.ApplicationAttachementsDTO;
 import com.codespine.dto.ApplicationLogDTO;
+import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
+import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.util.Utility;
@@ -624,4 +632,152 @@ public class AdminService {
 		}
 		return response;
 	}
+
+	/**
+	 * Method to get all pending records
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public ResponseDTO getPendingRecords(AdminDTO pDto) {
+		List<JSONObject> finalRespone = new ArrayList<JSONObject>();
+		List<JSONObject> finalResult = new ArrayList<JSONObject>();
+		JSONObject result = new JSONObject();
+		JSONObject tempJson = null;
+		ResponseDTO response = new ResponseDTO();
+		List<PersonalDetailsDTO> allUserRecords = AdminDAO.getInstance().getUserRecords();
+		if (allUserRecords != null && allUserRecords.size() > 0) {
+			for (int itr = 0; itr < allUserRecords.size(); itr++) {
+				result = new JSONObject();
+				tempJson = new JSONObject();
+				finalResult = new ArrayList<JSONObject>();
+				PersonalDetailsDTO tempDto = allUserRecords.get(itr);
+				int applicationId = tempDto.getApplication_id();
+				int applicationStatus = tempDto.getApplicationStatus();
+				result.put("applicationId", applicationId);
+				result.put("applicationStatusTemp", applicationStatus);
+				if (applicationStatus == 2 || applicationStatus < 2) {
+					result.put("ApplicationStatus", tempDto);
+				} else if (applicationStatus > 2) {
+					result.put("ApplicationStatus", tempDto);
+					if (applicationStatus == 3) {
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+					} else if (applicationStatus == 4) {
+
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+						PersonalDetailsDTO personalDetailsDTO = AdminDAO.getInstance()
+								.getPersonalDetails(applicationId);
+						result.put("basicInformationDetails", personalDetailsDTO);
+
+					} else if (applicationStatus == 5) {
+
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+						PersonalDetailsDTO personalDetailsDTO = AdminDAO.getInstance()
+								.getPersonalDetails(applicationId);
+						result.put("basicInformationDetails", personalDetailsDTO);
+
+						AddressDTO communicationAddress = AdminDAO.getInstance().getCommunicationAddress(applicationId);
+						result.put("communicationAddress", communicationAddress);
+
+					} else if (applicationStatus == 6) {
+
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+						PersonalDetailsDTO personalDetailsDTO = AdminDAO.getInstance()
+								.getPersonalDetails(applicationId);
+						result.put("basicInformationDetails", personalDetailsDTO);
+
+						AddressDTO communicationAddress = AdminDAO.getInstance().getCommunicationAddress(applicationId);
+						result.put("communicationAddress", communicationAddress);
+
+						AddressDTO permanentAddress = AdminDAO.getInstance().getPermanentAddress(applicationId);
+						result.put("permanentAddress", permanentAddress);
+
+					} else if (applicationStatus == 7) {
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+						PersonalDetailsDTO personalDetailsDTO = AdminDAO.getInstance()
+								.getPersonalDetails(applicationId);
+						result.put("basicInformationDetails", personalDetailsDTO);
+
+						AddressDTO communicationAddress = AdminDAO.getInstance().getCommunicationAddress(applicationId);
+						result.put("communicationAddress", communicationAddress);
+
+						AddressDTO permanentAddress = AdminDAO.getInstance().getPermanentAddress(applicationId);
+						result.put("permanentAddress", permanentAddress);
+
+						BankDetailsDTO bankDetails = AdminDAO.getInstance().getBankDetails(applicationId);
+						result.put("bankDetails", bankDetails);
+
+					} else if (applicationStatus == 8) {
+
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+						PersonalDetailsDTO personalDetailsDTO = AdminDAO.getInstance()
+								.getPersonalDetails(applicationId);
+						result.put("basicInformationDetails", personalDetailsDTO);
+
+						AddressDTO communicationAddress = AdminDAO.getInstance().getCommunicationAddress(applicationId);
+						result.put("communicationAddress", communicationAddress);
+
+						AddressDTO permanentAddress = AdminDAO.getInstance().getPermanentAddress(applicationId);
+						result.put("permanentAddress", permanentAddress);
+
+						BankDetailsDTO bankDetails = AdminDAO.getInstance().getBankDetails(applicationId);
+						result.put("bankDetails", bankDetails);
+
+						ExchDetailsDTO exchDetails = AdminDAO.getInstance().getExchDetails(applicationId);
+						result.put("exchDetails", exchDetails);
+
+					} else if (applicationStatus == 9) {
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+						PersonalDetailsDTO personalDetailsDTO = AdminDAO.getInstance()
+								.getPersonalDetails(applicationId);
+						result.put("basicInformationDetails", personalDetailsDTO);
+
+						AddressDTO communicationAddress = AdminDAO.getInstance().getCommunicationAddress(applicationId);
+						result.put("communicationAddress", communicationAddress);
+
+						AddressDTO permanentAddress = AdminDAO.getInstance().getPermanentAddress(applicationId);
+						result.put("permanentAddress", permanentAddress);
+
+						BankDetailsDTO bankDetails = AdminDAO.getInstance().getBankDetails(applicationId);
+						result.put("bankDetails", bankDetails);
+
+						ExchDetailsDTO exchDetails = AdminDAO.getInstance().getExchDetails(applicationId);
+						result.put("exchDetails", exchDetails);
+
+						List<ApplicationAttachementsDTO> applicationAttachements = AdminDAO.getInstance()
+								.getApplicationAttachementsDetails(applicationId);
+						result.put("applicationAttachements", applicationAttachements);
+					}
+				}
+				// finalResult.add(result);
+				// tempJson.put(applicationId, finalResult);
+				finalRespone.add(result);
+			}
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setResult(finalRespone);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.NO_RECORD_FOUND);
+		}
+		return response;
+	}
+
 }

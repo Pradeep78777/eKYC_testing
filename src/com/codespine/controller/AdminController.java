@@ -213,4 +213,19 @@ public class AdminController {
 		return response;
 	}
 
+	/**
+	 * Method to get all pending records
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/getPendingRecords")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getPendingRecords(AdminDTO pDto) {
+		ResponseDTO response = AdminService.getInstance().getPendingRecords(pDto);
+		return response;
+	}
 }

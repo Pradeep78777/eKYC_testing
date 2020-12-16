@@ -20,6 +20,11 @@ public class PanCardDetailsDTO {
 	private String middle_name;
 	private String last_name;
 	private long aadharNo;
+	private int isAproved;
+	private int isRejected;
+	private String comments;
+	private String createdAt;
+	private String lastUpdatedAt;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -155,6 +160,46 @@ public class PanCardDetailsDTO {
 
 	public void setAadharNo(long aadharNo) {
 		this.aadharNo = aadharNo;
+	}
+
+	public int getIsAproved() {
+		return isAproved;
+	}
+
+	public void setIsAproved(int isAproved) {
+		this.isAproved = isAproved;
+	}
+
+	public int getIsRejected() {
+		return isRejected;
+	}
+
+	public void setIsRejected(int isRejected) {
+		this.isRejected = isRejected;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getLastUpdatedAt() {
+		return lastUpdatedAt;
+	}
+
+	public void setLastUpdatedAt(String lastUpdatedAt) {
+		this.lastUpdatedAt = lastUpdatedAt;
 	}
 
 }
