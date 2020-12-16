@@ -2475,4 +2475,38 @@ public class eKYCDAO {
 		return response;
 	}
 
+	public void updateIvrUrlDetails(int applicationId, String randomKey, String expiryDate) {
+		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"INSERT INTO tbl_accord_company_details(applicaiton_id, random_key, expiry_date, created_on, created_by)"
+							+ "VALUES(?,?,?,?,?)"
+							+ " ON DUPLICATE KEY UPDATE applicaiton_id = ? , random_key = ? , expiry_date = ? , updated_on = ? , updated_by = ?");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setString(paramPos++, randomKey);
+			pStmt.setString(paramPos++, expiryDate);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setString(paramPos++, randomKey);
+			pStmt.setString(paramPos++, expiryDate);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }

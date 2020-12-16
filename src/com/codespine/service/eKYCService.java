@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -1559,11 +1561,26 @@ public class eKYCService {
 		if (dto != null && dto.getApplication_id() > 0) {
 			PersonalDetailsDTO userDetails = eKYCDAO.getInstance().getProfileDetails(dto);
 			if (userDetails != null) {
+				/*
+				 * get the email and mobile from the user details in data base
+				 */
 				String userEmail = userDetails.getEmail();
-				Long userMobile = userDetails.getMobile_number();
+				/*
+				 * create the random key and store in data base and send to both
+				 * mobile and email
+				 */
 				String randomKey = Utility.randomAlphaNumeric();
 				String url = CSEnvVariables.getMethodNames(eKYCConstant.IVP_BASE_URL) + dto.getApplication_id()
 						+ "&randomKey=" + randomKey;
+				/**
+				 * url will valid for the 30 minutes
+				 */
+				Calendar currentTime = Calendar.getInstance();
+				currentTime.add(Calendar.MINUTE, 30);
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Utility.ivpMailUpdate(url, userEmail);
+				eKYCDAO.getInstance().updateIvrUrlDetails(dto.getApplication_id(), randomKey,
+						formatter.format(currentTime.getTime()));
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);
