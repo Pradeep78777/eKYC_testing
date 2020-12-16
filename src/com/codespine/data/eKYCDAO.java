@@ -56,7 +56,8 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, application_status"
+					" SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, application_status , "
+							+ "document_signed , document_downloaded"
 							+ " FROM tbl_application_master where mobile_number = ? and delete_flag = ? ");
 			pStmt.setLong(paromPos++, pDto.getMobile_number());
 			pStmt.setLong(paromPos++, 0);
@@ -71,6 +72,8 @@ public class eKYCDAO {
 					result.setEmail(rSet.getString("email_id"));
 					result.setEmail_id_verified(rSet.getInt("email_activated"));
 					result.setApplicationStatus(rSet.getInt("application_status"));
+					result.setDocumentSigned(rSet.getInt("document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("document_downloaded"));
 				}
 			}
 		} catch (Exception e) {
@@ -1302,7 +1305,7 @@ public class eKYCDAO {
 						json.put("bse_eq", "bse_eq");
 					}
 					result.setMf(rSet.getInt("mf"));
-					if(rSet.getInt("mf") != 0 && rSet.getInt("mf") > 0) {
+					if (rSet.getInt("mf") != 0 && rSet.getInt("mf") > 0) {
 						json.put("nse_mf", "nse_mf");
 						json.put("bse_mf", "bse_mf");
 					}

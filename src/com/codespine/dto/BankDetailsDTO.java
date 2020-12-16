@@ -17,6 +17,11 @@ public class BankDetailsDTO {
 	private String micrCode;
 	private String bankName;
 	private String bankAddress;
+	private int isAproved;
+	private int isRejected;
+	private String comments;
+	private String createdAt;
+	private String lastUpdatedAt;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -120,6 +125,46 @@ public class BankDetailsDTO {
 
 	public void setBankAddress(String bankAddress) {
 		this.bankAddress = bankAddress;
+	}
+
+	public int getIsAproved() {
+		return isAproved;
+	}
+
+	public void setIsAproved(int isAproved) {
+		this.isAproved = isAproved;
+	}
+
+	public int getIsRejected() {
+		return isRejected;
+	}
+
+	public void setIsRejected(int isRejected) {
+		this.isRejected = isRejected;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getLastUpdatedAt() {
+		return lastUpdatedAt;
+	}
+
+	public void setLastUpdatedAt(String lastUpdatedAt) {
+		this.lastUpdatedAt = lastUpdatedAt;
 	}
 
 }

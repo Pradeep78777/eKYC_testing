@@ -25,16 +25,28 @@ public class PersonalDetailsDTO {
 	private String fathersName;
 	private String applicant_name;
 	private String esign_Xml;
-	private Map<String,String>  forPDFKeyValue;
+	private Map<String, String> forPDFKeyValue;
 	private String esign_document;
 	private String pancard;
 	private String dob;
+	private int documentSigned;
+	private int documentDownloaded;
+	private String otpVerifiedAt;
+	private String emailVerifiedAt;
+	private int isAproved;
+	private int isRejected;
+	private String comments;
+	private String createdAt;
+	private String lastUpdatedAt;
+
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
 	}
+
 	public void setForPDFKeyValue(Map<String, String> forPDFKeyValue) {
 		this.forPDFKeyValue = forPDFKeyValue;
 	}
+
 	public int getId() {
 		return id;
 	}
@@ -202,23 +214,101 @@ public class PersonalDetailsDTO {
 	public void setEsign_Xml(String esign_Xml) {
 		this.esign_Xml = esign_Xml;
 	}
+
 	public String getEsign_document() {
 		return esign_document;
 	}
+
 	public void setEsign_document(String esign_document) {
 		this.esign_document = esign_document;
 	}
+
 	public String getPancard() {
 		return pancard;
 	}
+
 	public void setPancard(String pancard) {
 		this.pancard = pancard;
 	}
+
 	public String getDob() {
 		return dob;
 	}
+
 	public void setDob(String dob) {
 		this.dob = dob;
 	}
-	
+
+	public int getDocumentSigned() {
+		return documentSigned;
+	}
+
+	public void setDocumentSigned(int documentSigned) {
+		this.documentSigned = documentSigned;
+	}
+
+	public int getDocumentDownloaded() {
+		return documentDownloaded;
+	}
+
+	public void setDocumentDownloaded(int documentDownloaded) {
+		this.documentDownloaded = documentDownloaded;
+	}
+
+	public String getOtpVerifiedAt() {
+		return otpVerifiedAt;
+	}
+
+	public void setOtpVerifiedAt(String otpVerifiedAt) {
+		this.otpVerifiedAt = otpVerifiedAt;
+	}
+
+	public String getEmailVerifiedAt() {
+		return emailVerifiedAt;
+	}
+
+	public void setEmailVerifiedAt(String emailVerifiedAt) {
+		this.emailVerifiedAt = emailVerifiedAt;
+	}
+
+	public int getIsAproved() {
+		return isAproved;
+	}
+
+	public void setIsAproved(int isAproved) {
+		this.isAproved = isAproved;
+	}
+
+	public int getIsRejected() {
+		return isRejected;
+	}
+
+	public void setIsRejected(int isRejected) {
+		this.isRejected = isRejected;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getLastUpdatedAt() {
+		return lastUpdatedAt;
+	}
+
+	public void setLastUpdatedAt(String lastUpdatedAt) {
+		this.lastUpdatedAt = lastUpdatedAt;
+	}
+
 }

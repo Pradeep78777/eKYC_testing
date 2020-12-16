@@ -3,6 +3,7 @@ package com.codespine.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.json.simple.JSONObject;
@@ -136,6 +139,8 @@ public class eKYCService {
 			result = new PersonalDetailsDTO();
 			result.setApplication_id(checkUser.getApplication_id());
 			result.setApplicationStatus(checkUser.getApplicationStatus());
+			result.setDocumentDownloaded(checkUser.getDocumentDownloaded());
+			result.setDocumentSigned(checkUser.getDocumentSigned());
 			/**
 			 * Check the user given the same email id or not
 			 */
@@ -1083,7 +1088,8 @@ public class eKYCService {
 		return response;
 	}
 
-	public ResponseDTO uploadProof(FormDataBodyPart proof, String proofType, int applicationId, String typeOfProof) {
+	public ResponseDTO uploadProof(FormDataBodyPart proof, String proofType, int applicationId, String typeOfProof,
+			String pdfPassword) {
 		ResponseDTO response = new ResponseDTO();
 		try {
 			if (applicationId > 0) {
@@ -1094,6 +1100,9 @@ public class eKYCService {
 				if (contentDisposition.getFileName() != null) {
 					checkId = eKYCDAO.getInstance().checkFileUploaded(applicationId, proofType);
 					fileName = contentDisposition.getFileName().trim();
+					// if (fileName.endsWith(".pdf")) {
+					//
+					// }
 					InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
 					int read = 0;
 					String filePath = eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//"
@@ -1102,6 +1111,7 @@ public class eKYCService {
 					if (!dir.exists()) {
 						dir.mkdirs();
 					}
+
 					byte[] bytes = new byte[1024];
 					OutputStream out = new FileOutputStream(dir + "//" + fileName);
 					while ((read = is.read(bytes)) != -1) {
@@ -1109,6 +1119,19 @@ public class eKYCService {
 					}
 					out.flush();
 					out.close();
+					/**
+					 * Check the pdf is password protected or not
+					 */
+					if (fileName.endsWith(".PDF") || fileName.endsWith(".pdf")) {
+						File tempFilePath = new File(filePath + "//" + fileName);
+						PDDocument document = PDDocument.load(tempFilePath, pdfPassword);
+						if (document.isEncrypted()) {
+							document.setAllSecurityToBeRemoved(true);
+							document.save(tempFilePath);
+							document.close();
+						}
+					}
+
 					String proofUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + applicationId + "//"
 							+ proofType + "//" + fileName;
 					if (checkId > 0) {
@@ -1143,6 +1166,10 @@ public class eKYCService {
 				response.setMessage(eKYCConstant.FAILED_MSG);
 				response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
 			}
+		} catch (InvalidPasswordException ipe) {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.NOT_A_VALID_PASSWORD);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1516,6 +1543,78 @@ public class eKYCService {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.NO_BANK_FOUND);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to generate the ipv link and sent it through the mobile and email
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	public ResponseDTO getIPVlink(PersonalDetailsDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		if (dto != null && dto.getApplication_id() > 0) {
+			PersonalDetailsDTO userDetails = eKYCDAO.getInstance().getProfileDetails(dto);
+			if (userDetails != null) {
+				String userEmail = userDetails.getEmail();
+				Long userMobile = userDetails.getMobile_number();
+				String randomKey = Utility.randomAlphaNumeric();
+				String url = CSEnvVariables.getMethodNames(eKYCConstant.IVP_BASE_URL) + dto.getApplication_id()
+						+ "&randomKey=" + randomKey;
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.USER_DETAILS_NOT_FOUND);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to check the given file is password protected or not
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param proof
+	 * @return
+	 */
+	public ResponseDTO checkPasswordProtected(FormDataBodyPart proof) {
+		ResponseDTO response = new ResponseDTO();
+		FormDataBodyPart formDataBodyPart = proof;
+		FormDataContentDisposition contentDisposition = formDataBodyPart.getFormDataContentDisposition();
+		String fileName = "";
+		if (contentDisposition.getFileName() != null) {
+			fileName = contentDisposition.getFileName().trim();
+			if (fileName.endsWith(".pdf") || fileName.endsWith(".PDF")) {
+				InputStream is = formDataBodyPart.getEntityAs(InputStream.class);
+				try {
+					PDDocument document = PDDocument.load(is, "");
+					if (document.isEncrypted()) {
+						document.setAllSecurityToBeRemoved(true);
+						document.close();
+						response.setStatus(eKYCConstant.SUCCESS_STATUS);
+						response.setResult(true);
+					} else {
+						response.setStatus(eKYCConstant.SUCCESS_STATUS);
+						response.setResult(false);
+					}
+				} catch (InvalidPasswordException e) {
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setResult(true);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.NOT_IN_PDF_FORMAT);
+			}
 		}
 		return response;
 	}

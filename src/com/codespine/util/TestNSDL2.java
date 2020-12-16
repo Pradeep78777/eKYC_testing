@@ -1,14 +1,26 @@
 package com.codespine.util;
 
-import com.codespine.restservice.BackOfficeRestService;
+import java.io.File;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
 public class TestNSDL2 {
 	public static void main(String[] args) {
-//		String[] resp = null;
-//		Object object = BackOfficeRestService.getInstance()
-//				.checkExistingCustomer(CSEnvVariables.getMethodNames(eKYCConstant.SEARCH_BY_PANCARD), "FVEPS4255");
-		Utility.mailUpdate("kia", "rgssankar007@gmail.com");
-		
+		try {
+			File input = new File("D://Zebull E-Kyc//EKYC//e_sign//file//uploads//9//Pan Card//Protected-protected.pdf");
+			PDDocument document = PDDocument.load(input, "123456");
+			if (document.isEncrypted()) {
+				System.out.println("Password is valid");
+				document.setAllSecurityToBeRemoved(true);
+				document.save(input);
+				document.close();
+			}
+		} catch (InvalidPasswordException ipe) {
+			System.out.println("Encrypted");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
