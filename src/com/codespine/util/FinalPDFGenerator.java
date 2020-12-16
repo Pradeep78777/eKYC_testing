@@ -299,14 +299,14 @@ public class FinalPDFGenerator {
 		if(scaledWidth <= 100) {
 			if(scaledWidth > scaledHeight) {
 				changedYValue = (scaledWidth - scaledHeight)/2;
-			}else {
-				changedXValue = (scaledHeight - scaledWidth)/2;
+//			}else {
+//				changedXValue = (scaledHeight - scaledWidth)/2;
 			}
 		}else {
 			if(scaledHeight > scaledWidth) {
 				changedXValue = (scaledHeight - scaledWidth)/2;
-			}else {
-				changedYValue = (scaledWidth - scaledHeight)/2;
+//			}else {
+//				changedYValue = (scaledWidth - scaledHeight)/2;
 			}
 		}
 		BufferedImage scaledImg = Scalr.resize(bimg, scaledWidth, scaledHeight);

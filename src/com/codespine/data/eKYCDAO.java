@@ -754,8 +754,10 @@ public class eKYCDAO {
 					json.put("state", rSet.getString("state").toUpperCase());
 					json.put("district_state_country",
 							rSet.getString("district").toUpperCase() + ", " + rSet.getString("state").toUpperCase()
-									+ ", " + json.put("country", "INDIA") + ", "
-									+ json.put("pin", Integer.toString(rSet.getInt("pin"))));
+									+ ", INDIA, " + Integer.toString(rSet.getInt("pin")));
+					json.put("full_address",json.put("flat_no", rSet.getString("flat_no").toUpperCase()) + ", "
+							+ rSet.getString("street").toUpperCase() + ", " + rSet.getString("city").toUpperCase() + ", " + rSet.getString("district").toUpperCase() + ", " + rSet.getString("state").toUpperCase()
+							+ ", INDIA, " + Integer.toString(rSet.getInt("pin")));
 					result.setForPDFKeyValue(json);
 				}
 			}
