@@ -747,8 +747,9 @@ public class Utility {
 		MD5pass = passkey;
 		return MD5pass;
 	}
-	public static Map<String,String> annualIncomeMap(){
-		Map<String,String> incomeMap = new HashMap<String,String>();
+
+	public static Map<String, String> annualIncomeMap() {
+		Map<String, String> incomeMap = new HashMap<String, String>();
 		incomeMap.put("below 1 lakh", "90,000");
 		incomeMap.put("1l-5l", "4,00,000");
 		incomeMap.put("5l-10l", "9,00,000");
@@ -757,7 +758,15 @@ public class Utility {
 		return incomeMap;
 	}
 
-	public static String mailUpdate(String msg, String email) {
+	/**
+	 * Method to send the mail update to complete the IVR
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param msg
+	 * @param email
+	 * @return
+	 */
+	public static String ivpMailUpdate(String msg, String email) {
 		StringBuilder builder = new StringBuilder();
 		String success = eKYCConstant.FAILED_MSG;
 		try {
@@ -785,8 +794,8 @@ public class Utility {
 						+ " Helvetica, Arial;color: #1e3465}table {margin-left:100px;font-family: arial, sans-serif;border-collapse:"
 						+ " separate;}td, th {border: 1px solid #1e3465;text-align: left;padding: 8px;}"
 						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
-						+ "<div  style='font-size:14px'><p>Hi Admin,</p><p>" + msg + "</p></div>"
-						+ "<div><p align='left'>" + "<b>Regards,"
+						+ "<div  style='font-size:14px'><p>Hi User,</p><p>Please use this link to complete the IVR from any other device. Link will be valid for 30 min</p>"
+						+ "<p> " + msg + " </p></div>" + "<div><p align='left'>" + "<b>Regards,"
 						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
 				builder.append(hs);
 				MimeMessage message = new MimeMessage(session);
