@@ -51,3 +51,4 @@ insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,
 ('DEFAULT_1','118,295',1,2,0);
 update ekyc.tbl_pdf_orgins set column_name = 'DEFAULT_9' where id = 114;
 update ekyc.tbl_pdf_orgins set column_name = 'full_address' where id = 37;
+update ekyc.tbl_pdf_orgins set coordinates = '474,594' where  id = 117;
