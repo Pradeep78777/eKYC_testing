@@ -52,3 +52,7 @@ insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,
 update ekyc.tbl_pdf_orgins set column_name = 'DEFAULT_9' where id = 114;
 update ekyc.tbl_pdf_orgins set column_name = 'full_address' where id = 37;
 update ekyc.tbl_pdf_orgins set coordinates = '474,594' where  id = 117;
+--18/12/2020
+insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,is_value_reduced) values
+('ref_code','105,92',0,8,0),
+('ref_name','57,75',0,8,0);
