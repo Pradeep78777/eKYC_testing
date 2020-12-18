@@ -24,6 +24,7 @@ import org.imgscalr.Scalr;
 public class Test {
 	static String img1 = "http://rest.irongates.in/pic/0-1.jpg";
 	static String img2 = "http://rest.irongates.in/pic/1.png";
+	static String img4 = "http://rest.irongates.in/pic/photo.jpeg";
 	static String img3 = "https://oa1.zebull.in//e_sign/file//uploads//2//PHOTO//WhatsApp%20Image%202019-09-19%20at%209.12.49%20AM(2).jpeg";
 
 	public static void main(String[] args) throws InvalidPasswordException, IOException {
@@ -35,7 +36,7 @@ public class Test {
 //			pdfTextInserter(document, ".", 574, 594);
 //			pdfTextInserter(document, ".", 474, 698);
 //			pdfTextInserter(document, ".", 574, 698);
-			pdfimageInserter(0, document, 474.5f, 594, img3, "1", "C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
+			pdfimageInserter(0, document, 474.5f, 594, img4, "1", "C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
