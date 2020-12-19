@@ -63,4 +63,40 @@ public class BackOfficeRestService {
 		}
 		return object;
 	}
+
+	/**
+	 * Method to post the data to the back office
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param parameter
+	 * @param parameterValue
+	 * @return
+	 */
+	public Object postDataToBackEnd(String parameter) {
+		Object object = null;
+		try {
+			// String tempURl =
+			// CSEnvVariables.getMethodNames(eKYCConstant.POST_DATA_URL) + "?" +
+			// java.net.URLEncoder.encode(parameter, "UTF-8");
+			String tempURl = parameter.replace(" ", "%20");
+			System.out.println(tempURl);
+			URL url = new URL(CSEnvVariables.getMethodNames(eKYCConstant.POST_DATA_URL) + "?" + tempURl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Accept", "application/json");
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+			}
+			BufferedReader br1 = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			String output;
+			while ((output = br1.readLine()) != null) {
+				object = output;
+				System.out.println(object);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return object;
+	}
+
 }

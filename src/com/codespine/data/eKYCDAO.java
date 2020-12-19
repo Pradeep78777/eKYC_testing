@@ -26,6 +26,7 @@ import com.codespine.dto.esignDTO;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.DBUtil;
 import com.codespine.util.DateUtil;
+import com.codespine.util.StringUtil;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
@@ -57,7 +58,7 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					" SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, application_status , "
-							+ "document_signed , document_downloaded"
+							+ "document_signed , document_downloaded , email_owner , mob_owner"
 							+ " FROM tbl_application_master where mobile_number = ? and delete_flag = ? ");
 			pStmt.setLong(paromPos++, pDto.getMobile_number());
 			pStmt.setLong(paromPos++, 0);
@@ -74,6 +75,8 @@ public class eKYCDAO {
 					result.setApplicationStatus(rSet.getInt("application_status"));
 					result.setDocumentSigned(rSet.getInt("document_signed"));
 					result.setDocumentDownloaded(rSet.getInt("document_downloaded"));
+					result.setMobile_owner(rSet.getString("mob_owner"));
+					result.setEmail_owner(rSet.getString("email_owner"));
 				}
 			}
 		} catch (Exception e) {
@@ -154,8 +157,8 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"INSERT INTO tbl_application_master(mobile_number, mob_owner, mobile_otp, mobile_no_verified, email_id, email_owner, "
-							+ "email_activation_code, email_activated, application_status, last_updated, created_date) "
-							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+							+ "email_activation_code, email_activated, application_status , ref_code, last_updated, created_date) "
+							+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			int paramPos = 1;
 			pStmt.setLong(paramPos++, pDto.getMobile_number());
@@ -170,6 +173,7 @@ public class eKYCDAO {
 			pStmt.setString(paramPos++, randomKey);
 			pStmt.setInt(paramPos++, 0);
 			pStmt.setInt(paramPos++, 1);
+			pStmt.setString(paramPos++, pDto.getReffCode());
 			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.executeUpdate();
@@ -755,9 +759,11 @@ public class eKYCDAO {
 					json.put("district_state_country",
 							rSet.getString("district").toUpperCase() + ", " + rSet.getString("state").toUpperCase()
 									+ ", INDIA, " + Integer.toString(rSet.getInt("pin")));
-					json.put("full_address",json.put("flat_no", rSet.getString("flat_no").toUpperCase()) + ", "
-							+ rSet.getString("street").toUpperCase() + ", " + rSet.getString("city").toUpperCase() + ", " + rSet.getString("district").toUpperCase() + ", " + rSet.getString("state").toUpperCase()
-							+ ", INDIA, " + Integer.toString(rSet.getInt("pin")));
+					json.put("full_address", json.put("flat_no", rSet.getString("flat_no").toUpperCase()) + ", "
+							+ rSet.getString("street").toUpperCase() + ", " + rSet.getString("city").toUpperCase()
+							+ ", " + rSet.getString("district").toUpperCase() + ", "
+							+ rSet.getString("state").toUpperCase() + ", INDIA, "
+							+ Integer.toString(rSet.getInt("pin")));
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -1119,7 +1125,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id,pan_card,aadhar_no,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
+					" SELECT application_id , applicant_name , first_name , middle_name , last_name,pan_card,aadhar_no,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1140,6 +1146,11 @@ public class eKYCDAO {
 					json.put("nsdl_name", rSet.getString("nsdl_name"));
 					result.setNsdl_dob(rSet.getString("nsdl_dob"));
 					json.put("nsdl_dob", rSet.getString("nsdl_dob"));
+
+					result.setFirst_name(rSet.getString("first_name"));
+					result.setMiddle_name(rSet.getString("middle_name"));
+					result.setLast_name(rSet.getString("last_name"));
+					result.setApplicant_name(rSet.getString("applicant_name"));
 					result.setForPDFKeyValue(json);
 				}
 			}
@@ -1542,7 +1553,7 @@ public class eKYCDAO {
 			pStmt = conn
 					.prepareStatement(" SELECT application_id,mobile_number,mobile_no_verified,mob_owner,mobile_otp,"
 							+ "email_id,email_owner,email_activation_code,email_activated,otp_verified_on,"
-							+ "email_activated_on,application_status,last_updated,created_date"
+							+ "email_activated_on,application_status,last_updated,created_date ,ref_code "
 							+ " FROM tbl_application_master where application_id = ?  ");
 			pStmt.setInt(paromPos++, pDto.getApplication_id());
 			rSet = pStmt.executeQuery();
@@ -1569,6 +1580,9 @@ public class eKYCDAO {
 					result.setApplication_status(rSet.getInt("application_status"));
 					result.setLast_updated(rSet.getDate("last_updated"));
 					result.setCreated_date(rSet.getDate("created_date"));
+					if (StringUtil.isNotNullOrEmpty(rSet.getString("ref_code"))) {
+						json.put("ref_code", rSet.getString("ref_code").toUpperCase());
+					}
 					result.setForPDFKeyValue(json);
 
 				}

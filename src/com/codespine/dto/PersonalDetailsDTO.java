@@ -38,6 +38,9 @@ public class PersonalDetailsDTO {
 	private String comments;
 	private String createdAt;
 	private String lastUpdatedAt;
+	private String exactStatus;
+	private String exactTime;
+	private String reffCode;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -309,6 +312,30 @@ public class PersonalDetailsDTO {
 
 	public void setLastUpdatedAt(String lastUpdatedAt) {
 		this.lastUpdatedAt = lastUpdatedAt;
+	}
+
+	public String getExactStatus() {
+		return exactStatus;
+	}
+
+	public void setExactStatus(String exactStatus) {
+		this.exactStatus = exactStatus;
+	}
+
+	public String getExactTime() {
+		return exactTime;
+	}
+
+	public void setExactTime(String exactTime) {
+		this.exactTime = exactTime;
+	}
+
+	public String getReffCode() {
+		return reffCode;
+	}
+
+	public void setReffCode(String reffCode) {
+		this.reffCode = reffCode;
 	}
 
 }
