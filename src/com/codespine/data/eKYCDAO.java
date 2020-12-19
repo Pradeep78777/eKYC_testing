@@ -982,9 +982,9 @@ public class eKYCDAO {
 					json.put("bank_address", rSet.getString("bank_address"));
 					json.put("micr_code", rSet.getString("micr_code"));
 					result.setAccount_holder_name(rSet.getString("account_holder_name"));
-					json.put("account_holder_name", rSet.getString("account_holder_name"));
+					json.put("account_holder_name", rSet.getString("account_holder_name").toUpperCase());
 					result.setIfsc_code(rSet.getString("ifsc_code").toUpperCase());
-					json.put("ifsc_code", rSet.getString("ifsc_code"));
+					json.put("ifsc_code", rSet.getString("ifsc_code").toUpperCase());
 					result.setBank_account_no((rSet.getString("bank_account_no")));
 					json.put("bank_account_no", rSet.getString("bank_account_no"));
 					json.put("half_date",

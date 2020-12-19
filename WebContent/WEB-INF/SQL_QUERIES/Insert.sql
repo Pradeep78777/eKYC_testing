@@ -56,3 +56,17 @@ update ekyc.tbl_pdf_orgins set coordinates = '474,594' where  id = 117;
 insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,is_value_reduced) values
 ('ref_code','105,92',0,8,0),
 ('ref_name','57,75',0,8,0);
+--19/12/2020
+update ekyc.tbl_pdf_orgins set column_name = 'applicant_pan_card',is_value_reduced = 0 where id = 20 and page_number = 16;
+update ekyc.tbl_pdf_orgins set coordinates = '66,228'  where id = 27 and page_number = 12;
+update ekyc.tbl_pdf_orgins set coordinates = '240,213' where id = 28 and page_number = 12;
+update ekyc.tbl_pdf_orgins set coordinates = '66,214' where id = 29 and page_number = 12;
+update ekyc.tbl_pdf_orgins set coordinates = '104,403'  where id = 125 and page_number = 2;
+update ekyc.tbl_pdf_orgins set coordinates = '345,62'  where id = 90 and page_number = 2;
+update ekyc.tbl_pdf_orgins set coordinates = '442,91'  where id = 91 and page_number = 2;
+update ekyc.tbl_pdf_orgins set coordinates = '78,333'  where id = 78 and page_number = 3;
+update ekyc.tbl_pdf_orgins set coordinates = '78,320'  where id = 79 and page_number = 3;
+update ekyc.tbl_pdf_orgins set coordinates = '217,320'  where id = 80 and page_number = 3;
+update ekyc.tbl_pdf_orgins set coordinates = '291,290'  where id = 61 and page_number = 7;
+update ekyc.tbl_pdf_orgins set coordinates = '458,333'  where id = 119 and page_number = 2;
+

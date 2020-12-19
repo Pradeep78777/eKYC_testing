@@ -1,5 +1,7 @@
 package com.codespine.helper;
 
+import java.util.HashMap;
+
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AccountHolderDetailsDTO;
 import com.codespine.dto.AddressDTO;
@@ -9,6 +11,7 @@ import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.eKYCDTO;
+import com.codespine.util.StringUtil;
 
 public class eKYCHelper {
 	public static eKYCHelper eKYCHelper = null;
@@ -62,6 +65,12 @@ public class eKYCHelper {
 			if(panCardDetailsDTO != null) {
 				eKYCDTO.setPanCardDetailsDTO(panCardDetailsDTO);
 				eKYCDTO.getForPDFKeyValue().putAll(panCardDetailsDTO.getForPDFKeyValue());
+			}
+			if(StringUtil.isNotNullOrEmpty(eKYCDTO.getForPDFKeyValue().get("pan_card"))&&
+					StringUtil.isNotNullOrEmpty(eKYCDTO.getForPDFKeyValue().get("applicant_name"))) {
+				HashMap<String, String> json = new HashMap<String, String>();
+				json.put("applicant_pan_card",eKYCDTO.getForPDFKeyValue().get("applicant_name") + "  (" +eKYCDTO.getForPDFKeyValue().get("pan_card")+")");
+				eKYCDTO.getForPDFKeyValue().putAll(json);
 			}
 		}
 		if(applicationMasterDTO.isPermanentAddressRequired()) {
