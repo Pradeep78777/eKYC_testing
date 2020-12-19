@@ -212,7 +212,6 @@ public class FinalPDFGenerator {
 				i++;
 			}
 		}
-//		pdd.setTitle
 		document.save(new File(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName));
 		System.out.println("pdf Generated");
 		document.close();
