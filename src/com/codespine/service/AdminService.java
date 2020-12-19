@@ -643,16 +643,16 @@ public class AdminService {
 	@SuppressWarnings("unchecked")
 	public ResponseDTO getPendingRecords(AdminDTO pDto) {
 		List<JSONObject> finalRespone = new ArrayList<JSONObject>();
-		List<JSONObject> finalResult = new ArrayList<JSONObject>();
+		// List<JSONObject> finalResult = new ArrayList<JSONObject>();
 		JSONObject result = new JSONObject();
-		JSONObject tempJson = null;
+		// JSONObject tempJson = null;
 		ResponseDTO response = new ResponseDTO();
 		List<PersonalDetailsDTO> allUserRecords = AdminDAO.getInstance().getUserRecords();
 		if (allUserRecords != null && allUserRecords.size() > 0) {
 			for (int itr = 0; itr < allUserRecords.size(); itr++) {
 				result = new JSONObject();
-				tempJson = new JSONObject();
-				finalResult = new ArrayList<JSONObject>();
+				// tempJson = new JSONObject();
+				// finalResult = new ArrayList<JSONObject>();
 				PersonalDetailsDTO tempDto = allUserRecords.get(itr);
 				int applicationId = tempDto.getApplication_id();
 				int applicationStatus = tempDto.getApplicationStatus();
@@ -765,8 +765,6 @@ public class AdminService {
 						result.put("applicationAttachements", applicationAttachements);
 					}
 				}
-				// finalResult.add(result);
-				// tempJson.put(applicationId, finalResult);
 				finalRespone.add(result);
 			}
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
@@ -777,6 +775,11 @@ public class AdminService {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.NO_RECORD_FOUND);
 		}
+		return response;
+	}
+
+	public ResponseDTO postDataToBackOffice() {
+		ResponseDTO response = new ResponseDTO();
 		return response;
 	}
 

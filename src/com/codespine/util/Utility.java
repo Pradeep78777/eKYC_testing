@@ -10,6 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -770,10 +773,7 @@ public class Utility {
 		StringBuilder builder = new StringBuilder();
 		String success = eKYCConstant.FAILED_MSG;
 		try {
-
-			// Get system properties
 			Properties properties = new Properties();
-			// Setup mail server
 			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
 			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
 			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
@@ -801,17 +801,101 @@ public class Utility {
 				MimeMessage message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
-				// message.addRecipient(Message.RecipientType.CC, new
-				// InternetAddress());
 				message.setSubject("Message From Zebu eTrade");
 				BodyPart messageBodyPart1 = new MimeBodyPart();
 				messageBodyPart1.setContent(builder.toString(), "text/html");
-				// messageBodyPart1.setContent(msg, "text/html;
-				// charset=utf-8");
 				Multipart multipart = new MimeMultipart();
 				multipart.addBodyPart(messageBodyPart1);
 				message.setContent(multipart);
-				// 7) send message
+				Transport.send(message);
+				success = eKYCConstant.SUCCESS_MSG;
+			} catch (MessagingException ex) {
+				ex.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return success;
+	}
+
+	/**
+	 * 
+	 * Method to get the time taken
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	public static String getTimeTaken(String startTime, String endTime) {
+		String response = "";
+		SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+
+		Date d1 = null;
+		Date d2 = null;
+		try {
+			d1 = format.parse(startTime);
+			d2 = format.parse(endTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		// Get msec from each, and subtract.
+		long diff = d2.getTime() - d1.getTime();
+		long diffSeconds = diff / 1000 % 60;
+		long diffMinutes = diff / (60 * 1000) % 60;
+		long diffHours = diff / (60 * 60 * 1000);
+		long diffDays = diff / (60 * 60 * 24 * 1000);
+		response = diffDays + " Days " + diffHours + " Hours " + diffMinutes + " Minutes";
+		return response;
+	}
+
+	/**
+	 * Method to send the mail update to complete the IVR
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param msg
+	 * @param email
+	 * @return
+	 */
+	public static String sendOTPtoEmail(String otp, String email) {
+		StringBuilder builder = new StringBuilder();
+		String success = eKYCConstant.FAILED_MSG;
+		try {
+			Properties properties = new Properties();
+			properties.put("mail.smtp.host", CSEnvVariables.getProperty(eKYCConstant.HOST));
+			properties.put("mail.smtp.user", CSEnvVariables.getProperty(eKYCConstant.USER_NAME));
+			properties.put("mail.smtp.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.socketFactory.port", CSEnvVariables.getProperty(eKYCConstant.PORT));
+			properties.put("mail.smtp.auth", "true");
+			properties.put("mail.smtp.debug", "true");
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			properties.put("mail.smtp.socketFactory.fallback", "false");
+			Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(CSEnvVariables.getProperty(eKYCConstant.USER_NAME),
+							CSEnvVariables.getProperty(eKYCConstant.PASSWORD));
+				}
+			});
+			try {
+				String hs = "<!DOCTYPE html><html><head><style>*{font-family:'Open Sans',"
+						+ " Helvetica, Arial;color: #1e3465}table {margin-left:100px;font-family: arial, sans-serif;border-collapse:"
+						+ " separate;}td, th {border: 1px solid #1e3465;text-align: left;padding: 8px;}"
+						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
+						+ "<div  style='font-size:14px'><p>Hi User,</p><p>Your verification OTP for resume application is </p>"
+						+ "<p> " + otp + " </p></div>" + "<div><p align='left'>" + "<b>Regards,"
+						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
+				builder.append(hs);
+				MimeMessage message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+				message.setSubject("Message From Zebu eTrade");
+				BodyPart messageBodyPart1 = new MimeBodyPart();
+				messageBodyPart1.setContent(builder.toString(), "text/html");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(messageBodyPart1);
+				message.setContent(multipart);
 				Transport.send(message);
 				success = eKYCConstant.SUCCESS_MSG;
 			} catch (MessagingException ex) {

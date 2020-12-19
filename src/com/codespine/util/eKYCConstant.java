@@ -15,6 +15,9 @@ public class eKYCConstant {
 	public static final String ACTIVATIONLINK = "activateEmail";
 	public static final String REDIRECT_PAGE = "redirect_page";
 	public static final String OTP_SENT_SUCESSFULLY = "OTP sent to registered mobile number ";
+
+	public static final String OTP_SENT_SUCESSFULLY_MOBILE = "OTP sent to given mobile number ";
+	public static final String OTP_SENT_SUCESSFULLY_EMAIL = "OTP sent to given email";
 	/**
 	 * New User sucess and failure message
 	 */
@@ -180,6 +183,7 @@ public class eKYCConstant {
 	 * Back Url and parameters
 	 */
 	public static final String BACK_OFFICE_URL = "backOfficeBaseUrl";
+	public static final String POST_DATA_URL = "postURL";
 
 	public static final String SEARCH_BY_PHONE = "mobileNo";
 	public static final String SEARCH_BY_EMAIL = "clientEmail";
@@ -195,5 +199,8 @@ public class eKYCConstant {
 
 	public static final String IVP_BASE_URL = "ivpBaseURl";
 	public static final String NOT_IN_PDF_FORMAT = "Given file is not in PDF format";
+
+	public static final String NO_USER_FOUND = "No user found in the given details please login first.";
+	public static final String WRONG_INPUT = "Wrong Input";
 
 }

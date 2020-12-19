@@ -17,6 +17,7 @@ import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.DBUtil;
+import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 public class AdminDAO {
@@ -45,20 +46,22 @@ public class AdminDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
-							+ "a.application_status , b.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income,"
-							+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob FROM tbl_application_master A "
+							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
+							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+							+ "b.politically_exposed , c.pan_card ,c.dob FROM tbl_application_master A "
 							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 							+ "inner join tbl_pancard_details c on a.application_id = c.application_id order by a.created_date desc");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new PersonalDetailsDTO();
+					int applicationStatus = rSet.getInt("a.application_status");
 					result.setApplication_id(rSet.getInt("a.application_id"));
 					result.setMobile_number(rSet.getLong("a.mobile_number"));
 					result.setMobile_number_verified(rSet.getInt("a.mobile_no_verified"));
 					result.setEmail(rSet.getString("a.email_id"));
 					result.setEmail_id_verified(rSet.getInt("a.email_activated"));
-					result.setApplicationStatus(rSet.getInt("a.application_status"));
+					result.setApplicationStatus(applicationStatus);
 					result.setApplicant_name(rSet.getString("b.applicant_name"));
 					result.setMothersName(rSet.getString("b.mothersName"));
 					result.setFathersName(rSet.getString("b.fathersName"));
@@ -70,6 +73,19 @@ public class AdminDAO {
 					result.setPolitically_exposed(rSet.getString("b.politically_exposed"));
 					result.setPancard(rSet.getString("c.pan_card"));
 					result.setDob(rSet.getString("c.dob"));
+					result.setDocumentSigned(rSet.getInt("a.document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					if (applicationStatus < 2) {
+						result.setExactStatus("OTP Not yet verified");
+					} else if (applicationStatus > 2 || applicationStatus < 9) {
+						result.setExactStatus("In Process");
+					} else if (applicationStatus == 9 && rSet.getInt("a.document_signed") == 1) {
+						result.setExactStatus("ekyc document downloaded");
+					} else if (applicationStatus == 9 && rSet.getInt("a.document_downloaded") == 1) {
+						result.setExactStatus("ekyc signed and document downloaded");
+					} else if (applicationStatus > 9) {
+						result.setExactStatus("Completed");
+					}
 					response.add(result);
 				}
 			}
@@ -660,8 +676,12 @@ public class AdminDAO {
 					result.setDocumentSigned(rSet.getInt("document_signed"));
 					result.setDocumentDownloaded(rSet.getInt("document_downloaded"));
 					result.setComments(rSet.getString("comments"));
-					result.setLastUpdatedAt(rSet.getString("last_updated"));
-					result.setCreatedAt(rSet.getString("created_date"));
+					String lastUpdated = rSet.getString("last_updated");
+					result.setLastUpdatedAt(lastUpdated);
+					String createdOn = rSet.getString("created_date");
+					result.setCreatedAt(createdOn);
+					String exactTime = Utility.getTimeTaken(createdOn, lastUpdated);
+					result.setExactTime(exactTime);
 					response.add(result);
 				}
 			}
