@@ -82,6 +82,7 @@ public class eKYCController {
 		if (response.equals(eKYCConstant.SUCCESS_MSG)) {
 			try {
 				java.net.URI location = new java.net.URI(CSEnvVariables.getProperty(eKYCConstant.REDIRECT_PAGE));
+				System.out.println("EKYC Controller line no 85 URL " + location);
 				return Response.temporaryRedirect(location).build();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -845,7 +846,6 @@ public class eKYCController {
 		ResponseDTO response = eKYCService.getInstance().getBankDetailsByPlace(dto);
 		return response;
 	}
-
 
 	/**
 	 * Method to check the given file is password protected or not
