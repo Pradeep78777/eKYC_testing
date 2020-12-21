@@ -94,6 +94,7 @@ public class eKYCConstant {
 	public static final String MESSAGE_PASSWORD = "messagePassword";
 	public static final String MESSAGE_SENDER = "messageFrom";
 	public static final String MESSAGE_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins";
+	public static final String IPV_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins";
 
 	/**
 	 * File path for Local
@@ -202,5 +203,8 @@ public class eKYCConstant {
 
 	public static final String NO_USER_FOUND = "No user found in the given details please login first.";
 	public static final String WRONG_INPUT = "Wrong Input";
+
+	public static final String BITLY_BASEURL = "bitly_baseUrl";
+	public static final String BITLY_ACCESS_TOKEN = "bitly_access_token";
 
 }

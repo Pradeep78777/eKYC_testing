@@ -1,12 +1,18 @@
 package com.codespine.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import org.json.simple.JSONObject;
 
 import com.codespine.data.EkycApplicationDAO;
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
+import com.codespine.util.CSEnvVariables;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
@@ -168,6 +174,87 @@ public class EkycApplicationService {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.WRONG_INPUT);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to generate the ipv link and sent it through the mobile and email
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dto
+	 * @return
+	 */
+	public ResponseDTO getIPVlink(PersonalDetailsDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		if (dto != null && dto.getApplication_id() > 0) {
+			PersonalDetailsDTO userDetails = eKYCDAO.getInstance().getProfileDetails(dto);
+			if (userDetails != null) {
+				/*
+				 * get the email and mobile from the user details in data base
+				 */
+				String userEmail = userDetails.getEmail();
+				long mobileNumber = userDetails.getMobile_number();
+				/*
+				 * create the random key and store in data base and send to both
+				 * mobile and email
+				 */
+				String randomKey = Utility.randomAlphaNumeric();
+				String url = CSEnvVariables.getMethodNames(eKYCConstant.IVP_BASE_URL) + dto.getApplication_id()
+						+ "&randomKey=" + randomKey;
+				String bityURl = Utility.getBitlyLink(url);
+				/**
+				 * url will valid for the 30 minutes
+				 */
+				Calendar currentTime = Calendar.getInstance();
+				currentTime.add(Calendar.MINUTE, 30);
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				/**
+				 * update into the database
+				 */
+				eKYCDAO.getInstance().updateIvrUrlDetails(dto.getApplication_id(), randomKey,
+						formatter.format(currentTime.getTime()));
+				/**
+				 * send the link to both mail and message
+				 */
+				Utility.ivpMailUpdate(bityURl, userEmail);
+				Utility.sendIPVLink(mobileNumber, bityURl, "");
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.USER_DETAILS_NOT_FOUND);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return response;
+	}
+
+	/**
+	 * @author GOWRI SANKAR R
+	 * @param randomKey
+	 * @param applicationId
+	 * @return
+	 */
+	public String checkIvrRandom(String randomKey, int applicationId) {
+		String response = eKYCConstant.FAILED_MSG;
+		try {
+			JSONObject tempJson = EkycApplicationDAO.getInstance().getIVRMasterDetails(randomKey, applicationId);
+			if (tempJson != null) {
+				Calendar cal = Calendar.getInstance();
+				String expiry = (String) tempJson.get("expiry_date");
+				Date expiryDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expiry);
+				long expiryDateMillesconds = expiryDate.getTime();
+				long currentTime = cal.getTimeInMillis();
+				if (expiryDateMillesconds < currentTime) {
+					response = eKYCConstant.SUCCESS_MSG;
+					return response;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return response;
 	}

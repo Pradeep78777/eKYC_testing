@@ -48,12 +48,12 @@ public class Test {
 
 	    Date d1 = null;
 	    Date d2 = null;
-	    try {
-	        d1 = format.parse(date1);
-	        d2 = format.parse(date2);
-	    } catch (ParseException e) {
-	        e.printStackTrace();
-	    }
+//	    try {
+////	        d1 = format.parse(date1);
+////	        d2 = format.parse(date2);
+//	    } catch (ParseException e) {
+//	        e.printStackTrace();
+//	    }
 
 	    // Get msec from each, and subtract.
 	    long diff = d2.getTime() - d1.getTime();

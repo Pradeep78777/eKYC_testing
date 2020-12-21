@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.json.simple.JSONObject;
+
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.DBUtil;
 
@@ -177,6 +179,52 @@ public class EkycApplicationDAO {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Method to get
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param randomKey
+	 * @param applicationId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public JSONObject getIVRMasterDetails(String randomKey, int applicationId) {
+		JSONObject result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			String query = "";
+			query = "SELECT applicaiton_id, random_key, expiry_date, created_on, created_by, updated_on, updated_by, active_status "
+					+ "FROM tbl_application_master where application_id = ? and random_key = ?";
+			pStmt = conn.prepareStatement(query);
+			pStmt.setInt(paromPos++, applicationId);
+			pStmt.setString(paromPos++, randomKey);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new JSONObject();
+					result.put("application_id", rSet.getInt("application_id"));
+					result.put("random_key", rSet.getLong("random_key"));
+					result.put("expiry_date", rSet.getInt("expiry_date"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 }
