@@ -1,5 +1,9 @@
 package com.codespine.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -11,6 +15,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.simple.JSONObject;
+
+import com.codespine.data.EkycApplicationDAO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.service.EkycApplicationService;
@@ -104,14 +111,50 @@ public class EkycApplicationController {
 	@Path("/checkIvrRandom")
 	public Response checkIvrRandom(@QueryParam("randomKey") String randomKey,
 			@QueryParam("applicationId") int applicationId) {
-		String response = EkycApplicationService.getInstance().checkIvrRandom(randomKey, applicationId);
-		if (response.equals(eKYCConstant.SUCCESS_MSG)) {
-			try {
-				java.net.URI location = new java.net.URI(CSEnvVariables.getProperty(eKYCConstant.REDIRECT_PAGE));
+		/**
+		 * Check the random key is there are not
+		 */
+		JSONObject tempJson = EkycApplicationDAO.getInstance().getIVRMasterDetails(randomKey, applicationId);
+		try {
+			if (tempJson != null) {
+				/**
+				 * Get the current time and link expiry time
+				 */
+				Calendar cal = Calendar.getInstance();
+				String expiry = (String) tempJson.get("expiry_date");
+				Date expiryDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expiry);
+				long expiryDateMillesconds = expiryDate.getTime();
+				long currentTime = cal.getTimeInMillis();
+				/**
+				 * check the link is expired or not
+				 */
+				if (expiryDateMillesconds < currentTime) {
+					/**
+					 * if not redirect to ipv page
+					 */
+					java.net.URI location = new java.net.URI(
+							CSEnvVariables.getMethodNames(eKYCConstant.IPV_SUCCESS_URL));
+					System.out.println("EKYC Application Controller line no 137 URL " + location);
+					return Response.temporaryRedirect(location).build();
+				} else {
+					/**
+					 * if not redirect to timeout page
+					 */
+					java.net.URI location = new java.net.URI(
+							CSEnvVariables.getMethodNames(eKYCConstant.REQUEST_TIMEOUT));
+					System.out.println("EKYC Application Controller line no 144 URL " + location);
+					return Response.temporaryRedirect(location).build();
+				}
+			} else {
+				/**
+				 * if empty redirect to Login Page
+				 */
+				java.net.URI location = new java.net.URI(CSEnvVariables.getMethodNames(eKYCConstant.REGIDTRATION_URL));
+				System.out.println("EKYC Application Controller line no 152 URL " + location);
 				return Response.temporaryRedirect(location).build();
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}

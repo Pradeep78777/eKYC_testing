@@ -206,5 +206,10 @@ public class eKYCConstant {
 
 	public static final String BITLY_BASEURL = "bitly_baseUrl";
 	public static final String BITLY_ACCESS_TOKEN = "bitly_access_token";
+	
+	
+	public static final String IPV_SUCCESS_URL = "ipvSucessURL";
+	public static final String REQUEST_TIMEOUT = "requestTimeOut";
+	public static final String REGIDTRATION_URL = "registrationURL";
 
 }
