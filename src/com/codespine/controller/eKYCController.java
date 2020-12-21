@@ -846,21 +846,6 @@ public class eKYCController {
 		return response;
 	}
 
-	/**
-	 * Method to generate the ipv link and sent it through the mobile and email
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param dto
-	 * @return
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/getIPVlink")
-	public ResponseDTO getIPVlink(PersonalDetailsDTO dto) {
-		ResponseDTO response = eKYCService.getInstance().getIPVlink(dto);
-		return response;
-	}
 
 	/**
 	 * Method to check the given file is password protected or not

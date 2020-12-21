@@ -1549,50 +1549,6 @@ public class eKYCService {
 		return response;
 	}
 
-	/**
-	 * Method to generate the ipv link and sent it through the mobile and email
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param dto
-	 * @return
-	 */
-	public ResponseDTO getIPVlink(PersonalDetailsDTO dto) {
-		ResponseDTO response = new ResponseDTO();
-		if (dto != null && dto.getApplication_id() > 0) {
-			PersonalDetailsDTO userDetails = eKYCDAO.getInstance().getProfileDetails(dto);
-			if (userDetails != null) {
-				/*
-				 * get the email and mobile from the user details in data base
-				 */
-				String userEmail = userDetails.getEmail();
-				/*
-				 * create the random key and store in data base and send to both
-				 * mobile and email
-				 */
-				String randomKey = Utility.randomAlphaNumeric();
-				String url = CSEnvVariables.getMethodNames(eKYCConstant.IVP_BASE_URL) + dto.getApplication_id()
-						+ "&randomKey=" + randomKey;
-				/**
-				 * url will valid for the 30 minutes
-				 */
-				Calendar currentTime = Calendar.getInstance();
-				currentTime.add(Calendar.MINUTE, 30);
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Utility.ivpMailUpdate(url, userEmail);
-				eKYCDAO.getInstance().updateIvrUrlDetails(dto.getApplication_id(), randomKey,
-						formatter.format(currentTime.getTime()));
-			} else {
-				response.setStatus(eKYCConstant.FAILED_STATUS);
-				response.setMessage(eKYCConstant.FAILED_MSG);
-				response.setReason(eKYCConstant.USER_DETAILS_NOT_FOUND);
-			}
-		} else {
-			response.setStatus(eKYCConstant.FAILED_STATUS);
-			response.setMessage(eKYCConstant.FAILED_MSG);
-			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
-		}
-		return response;
-	}
 
 	/**
 	 * Method to check the given file is password protected or not

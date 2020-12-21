@@ -1,13 +1,16 @@
 package com.codespine.util;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -39,6 +42,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -51,6 +55,54 @@ import com.nsdl.esign.preverifiedNo.controller.EsignApplication;
 
 @SuppressWarnings("unchecked")
 public class Utility {
+
+	/**
+	 * Method to create the show url for the IPV
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param Long
+	 *            URL
+	 * @return
+	 */
+	public static String getBitlyLink(String longLink) {
+		JSONObject response = new JSONObject();
+		JSONObject result = new JSONObject();
+		Object object = new Object();
+		String bitly_Url = "";
+		try {
+			String encoded_url = URLEncoder.encode(longLink, "UTF-8");
+			URL url = new URL(CSEnvVariables.getMethodNames(eKYCConstant.BITLY_BASEURL) + "access_token="
+					+ CSEnvVariables.getMethodNames(eKYCConstant.BITLY_ACCESS_TOKEN) + "&longUrl=" + encoded_url);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setDoOutput(true);
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+			}
+			BufferedReader br1 = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			String output;
+
+			while ((output = br1.readLine()) != null) {
+				object = JSONValue.parse(output);
+				response = (JSONObject) object;
+				String Stat = (String) response.get("status_txt");
+				if (Stat.equalsIgnoreCase("ok")) {
+					result = (JSONObject) response.get("data");
+					bitly_Url = (String) result.get("url");
+				} else {
+					bitly_Url = null;
+				}
+				System.out.println(response);
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+		return bitly_Url;
+
+	}
 
 	/**
 	 * To random generated Text
@@ -293,6 +345,33 @@ public class Utility {
 					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_USERNAME) + "&password="
 					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_PASSWORD) + "&to=" + mobileNumber + "&text=" + otp
 					+ "%20" + message + "&from=" + CSEnvVariables.getProperty(eKYCConstant.MESSAGE_SENDER);
+			URL url = new URL(tempUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setDoOutput(true);
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+	}
+
+	/**
+	 * @author GOWRI SANKAR R
+	 * @param mobileNumber
+	 * @param otp
+	 */
+	public static void sendIPVLink(long mobileNumber, String bitlyUrl, String applicantName) {
+		try {
+			String message = "Dear " + applicantName + " Your eKYC Application IPV is pending. Kindly click here "
+					+ bitlyUrl + " to take this forward and complete your IPV.";
+			message = message.replace(" ", "%20");
+			String tempUrl = CSEnvVariables.getProperty(eKYCConstant.MESSAGE_URL)
+					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_USERNAME) + "&password="
+					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_PASSWORD) + "&to=" + mobileNumber + "&text="
+					+ message + "%20" + message + "&from=" + CSEnvVariables.getProperty(eKYCConstant.MESSAGE_SENDER);
 			URL url = new URL(tempUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
