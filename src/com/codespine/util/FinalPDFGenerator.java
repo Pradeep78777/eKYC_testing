@@ -299,15 +299,6 @@ public class FinalPDFGenerator {
 		int width = bimg.getWidth(); // 500
 		int scaledHeight = 100;
 		int scaledWidth = 100;
-		if (bimg.getWidth() > bimg.getHeight()) {
-			int ratio = bimg.getWidth() / 100;
-			scaledHeight = bimg.getHeight() / ratio;
-//			scaledWidth = 100;
-		} else {
-			int ratio = bimg.getHeight() / 100;
-//			scaledHeight = 100;
-			scaledWidth = bimg.getWidth() / ratio;
-		}
 		int changedXValue = 0;
 		int changedYValue = 0;
 		if (bimg.getWidth() <= 100) {
@@ -316,13 +307,23 @@ public class FinalPDFGenerator {
 		if (bimg.getHeight() <= 100) {
 			scaledHeight = bimg.getHeight();
 		}
+		if (bimg.getWidth() > bimg.getHeight()) {
+			if(bimg.getWidth() > 100) {
+				int ratio = bimg.getWidth() / 100;
+				scaledHeight = bimg.getHeight() / ratio;
+			}
+		} else {
+			if(bimg.getHeight() > 100) {
+				int ratio = bimg.getHeight() / 100;
+				scaledWidth = bimg.getWidth() / ratio;
+			}
+		}
 		if(height > width) {
 			changedXValue = ((scaledHeight - scaledWidth) / 2);
 		} else {
 			changedYValue = ((scaledWidth - scaledHeight) / 2);
 		}
 		BufferedImage scaledImg = Scalr.resize(bimg, scaledWidth, scaledHeight);
-//		BufferedImage scaledImg = Scalr.resize(bimg, 100, 100);
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		String imagePath = "";
 		String resizeImageName = image;
