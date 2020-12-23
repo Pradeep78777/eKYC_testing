@@ -8,15 +8,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.imageio.ImageIO;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -28,43 +29,48 @@ import org.imgscalr.Scalr;
 public class Test {
 	static String img1 = "http://rest.irongates.in/pic/0-1.jpg";
 	static String img2 = "http://rest.irongates.in/pic/1.png";
+	static String pdf = "https://oa1.zebull.in//e_sign/file//uploads//4//PANCARD//PAN Card.pdf";
+	static float pdfConstantHeight = 859.89f;
+	static float pdfConstantWidth = 613.28f;
 	static String img4 = "http://rest.irongates.in/pic/photo.jpeg";
 	static String img3 = "https://oa1.zebull.in//e_sign/file//uploads//2//PHOTO//WhatsApp%20Image%202019-09-19%20at%209.12.49%20AM(2).jpeg";
 
 	public static void main(String[] args) throws InvalidPasswordException, IOException {
-		String finalPDFName = "img.pdf";
-		File file = new File("C:\\Users\\prade\\Downloads\\ekyc_pdf\\2" + eKYCConstant.PDF_FILE_EXTENSION);
-		PDDocument document = PDDocument.load(file);
-		try {
-//			pdfTextInserter(document, ".", 474, 594);
-//			pdfTextInserter(document, ".", 574, 594);
-//			pdfTextInserter(document, ".", 474, 698);
-//			pdfTextInserter(document, ".", 574, 698);
-			pdfimageInserter(0, document, 474.5f, 594, img4, "1", "C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
-	    Date d1 = null;
-	    Date d2 = null;
-//	    try {
-////	        d1 = format.parse(date1);
-////	        d2 = format.parse(date2);
-//	    } catch (ParseException e) {
-//	        e.printStackTrace();
-//	    }
-
-	    // Get msec from each, and subtract.
-	    long diff = d2.getTime() - d1.getTime();
-	    long diffSeconds = diff / 1000 % 60;
-	    long diffMinutes = diff / (60 * 1000) % 60;
-	    long diffHours = diff / (60 * 60 * 1000);
-	    long diffDays = diff / (60 * 60 *24*1000);
-	    System.out.println("Time in seconds: " + diffSeconds + " seconds.");
-	    System.out.println("Time in minutes: " + diffMinutes + " minutes.");
-	    System.out.println("Time in hours: " + diffHours + " hours.");
-	    System.out.println("Time in Days: " + diffDays + " Days.");
+//		String finalPDFName = "img.pdf";
+		changePdfSizes(pdf,pdfConstantHeight,pdfConstantWidth,"C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
+			
+//		File file = new File("C:\\Users\\prade\\Downloads\\ekyc_pdf\\2" + eKYCConstant.PDF_FILE_EXTENSION);
+//		PDDocument document = PDDocument.load(file);
+//		try {
+////			pdfTextInserter(document, ".", 474, 594);
+////			pdfTextInserter(document, ".", 574, 594);
+////			pdfTextInserter(document, ".", 474, 698);
+////			pdfTextInserter(document, ".", 574, 698);
+//			pdfimageInserter(0, document, 474.5f, 594, img4, "1", "C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//
+//	    Date d1 = null;
+//	    Date d2 = null;
+////	    try {
+//////	        d1 = format.parse(date1);
+//////	        d2 = format.parse(date2);
+////	    } catch (ParseException e) {
+////	        e.printStackTrace();
+////	    }
+//
+//	    // Get msec from each, and subtract.
+//	    long diff = d2.getTime() - d1.getTime();
+//	    long diffSeconds = diff / 1000 % 60;
+//	    long diffMinutes = diff / (60 * 1000) % 60;
+//	    long diffHours = diff / (60 * 60 * 1000);
+//	    long diffDays = diff / (60 * 60 *24*1000);
+//	    System.out.println("Time in seconds: " + diffSeconds + " seconds.");
+//	    System.out.println("Time in minutes: " + diffMinutes + " minutes.");
+//	    System.out.println("Time in hours: " + diffHours + " hours.");
+//	    System.out.println("Time in Days: " + diffDays + " Days.");
 //		String finalPDFName = "img.pdf";
 //		File file = new File("C:\\Users\\prade\\Downloads\\ekyc_pdf\\2" + eKYCConstant.PDF_FILE_EXTENSION);
 //		PDDocument document = PDDocument.load(file);
@@ -82,6 +88,16 @@ public class Test {
 //				new File("C:\\Users\\prade\\Downloads\\ekyc_pdf" + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName));
 //		System.out.println("pdf Generated");
 //		document.close();
+	}
+
+	private static void changePdfSizes(String pdfURL, float pdfConstantHeight2, float pdfConstantWidth2, String string) throws MalformedURLException, IOException {
+		String replacedURL = StringUtil.replace(pdfURL, " ", "%20");
+		InputStream inputStream = new URL(replacedURL).openStream();
+		PDDocument pddDocument = PDDocument.load(inputStream);
+		PDPageTree mergePD = pddDocument.getPages();
+		float width = mergePD.get(0).getMediaBox().getWidth();
+		float height = mergePD.get(0).getMediaBox().getHeight();
+		System.out.println(width+","+height);
 	}
 
 	/**

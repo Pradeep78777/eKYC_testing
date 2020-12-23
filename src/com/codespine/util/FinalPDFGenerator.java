@@ -146,6 +146,8 @@ public class FinalPDFGenerator {
 			for (String url : urls) {
 				String replacedURL = StringUtil.replace(url, " ", "%20");
 				if (StringUtil.isStrContainsWithEqIgnoreCase(url, ".pdf")) {
+//					float pdfConstantHeight = 859.89f;
+//					float pdfConstantWidth = 613.28f;
 					InputStream inputStream = new URL(replacedURL).openStream();
 					PDPageTree mergePD = document.getPages();
 					PDDocument pddDocument2 = PDDocument.load(inputStream);
@@ -156,9 +158,13 @@ public class FinalPDFGenerator {
 							mergePD.insertAfter(page, document.getPage(x));
 							x++;
 						}
+					}else {
+						PDPage page = mergePD1.get(0);
+						mergePD.insertAfter(page, document.getPage(x));
+						x++;
 					}
 //					pddDocument2.close();
-					inputStream.close();
+//					inputStream.close();
 				} else {
 					InputStream in = new URL(replacedURL).openStream();
 					BufferedImage bimg = ImageIO.read(in);
@@ -309,15 +315,27 @@ public class FinalPDFGenerator {
 		}
 		if (bimg.getWidth() > bimg.getHeight()) {
 			if(bimg.getWidth() > 100) {
-				int ratio = bimg.getWidth() / 100;
+			int ratio = bimg.getWidth() / 100;
 				scaledHeight = bimg.getHeight() / ratio;
+				if(scaledHeight >= 100) {
+					scaledHeight = 100;
+				}
 			}
 		} else {
 			if(bimg.getHeight() > 100) {
 				int ratio = bimg.getHeight() / 100;
 				scaledWidth = bimg.getWidth() / ratio;
+				if(scaledWidth >= 100) {
+					scaledHeight = 100;
+				}
 			}
 		}
+//		if (bimg.getWidth() <= 100) {
+//			scaledWidth = bimg.getWidth();
+//		}
+//		if (bimg.getHeight() <= 100) {
+//			scaledHeight = bimg.getHeight();
+//		}
 		if(height > width) {
 			changedXValue = ((scaledHeight - scaledWidth) / 2);
 		} else {
