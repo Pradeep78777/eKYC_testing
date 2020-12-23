@@ -41,6 +41,7 @@ public class PersonalDetailsDTO {
 	private String exactStatus;
 	private String exactTime;
 	private String reffCode;
+	private String key;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -336,6 +337,14 @@ public class PersonalDetailsDTO {
 
 	public void setReffCode(String reffCode) {
 		this.reffCode = reffCode;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 }

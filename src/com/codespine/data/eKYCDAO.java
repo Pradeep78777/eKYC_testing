@@ -239,6 +239,46 @@ public class eKYCDAO {
 	}
 
 	/**
+	 * Get the application id for the given email and the key
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param email
+	 * @param link
+	 * @return
+	 */
+	public int getApplicationId(String email, String link) {
+		int applicationId = 0;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT application_id  FROM tbl_application_master where email_id = ? and email_activation_code = ? ");
+			pStmt.setString(paromPos++, email);
+			pStmt.setString(paromPos++, link);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					applicationId = rSet.getInt("application_id");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return applicationId;
+	}
+
+	/**
 	 * To update the otp is verified for the given Mobile number
 	 * 
 	 * @author GOWRI SANKAR R
@@ -2366,15 +2406,18 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT bank_id, micr_code, ifc_code, bank_name, bank_address_1, bank_address_2, bank_address_3, "
-							+ "bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, bank_phone_2, unique_id, "
-							+ "bank_email, bank_contact_name, bank_contact_designation FROM tbl_ifsccode_details "
-							+ "where bank_name = ? and bank_city = ? and active_status = ?");
-			int paramPos = 1;
-			pStmt.setString(paramPos++, dto.getBank_name());
-			pStmt.setString(paramPos++, dto.getBank_city());
-			pStmt.setInt(paramPos++, 1);
+			StringBuffer query = new StringBuffer();
+			query.append("SELECT bank_id, micr_code, ifc_code, bank_name, bank_address_1, bank_address_2, "
+					+ "bank_address_3,bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, "
+					+ "bank_phone_2, unique_id, bank_email, bank_contact_name, bank_contact_designation "
+					+ "FROM tbl_ifsccode_details where ");
+			query.append("bank_name like '" + dto.getBank_name() + "%' and bank_city like '" + dto.getBank_city()
+					+ "%' and active_status =" + 1);
+			pStmt = conn.prepareStatement(query.toString());
+			// int paramPos = 1;
+			// pStmt.setString(paramPos++, dto.getBank_name());
+			// pStmt.setString(paramPos++, dto.getBank_city());
+			// pStmt.setInt(paramPos++, 1);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				response = new ArrayList<IfscCodeDTO>();

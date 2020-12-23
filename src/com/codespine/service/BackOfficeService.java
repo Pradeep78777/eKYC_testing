@@ -101,7 +101,7 @@ public class BackOfficeService {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			String currentDate = simpleDateFormat.format(new Date());
 
-//			String exchangelist = "NSE_CASH";
+			// String exchangelist = "NSE_CASH";
 
 			String g = "Submit";
 			/**
@@ -205,17 +205,45 @@ public class BackOfficeService {
 			String person_verify_name = verifiedBy;
 			String person_verify_designation = verifiedByDesigination;
 
-			String annual_income = userApplicationDetails.getPersonalDetailsDTO().getAnnual_income().toUpperCase();
-			annual_income = annual_income.replace(" ", "+");
-			annual_income = "";
-			String grossannualincomedate = currentDate;
-
-			String aadharNumber = String.valueOf(userApplicationDetails.getPanCardDetailsDTO().getAadharNo());
-
+			/**
+			 * set annual income according to the back office value and set risk
+			 * value according to the annual
+			 */
 			/**
 			 * TODO : according to selection of annual income it should be send
 			 */
 			String risk_catg = "Low";
+			String annual_income = userApplicationDetails.getPersonalDetailsDTO().getAnnual_income().toUpperCase();
+			if (annual_income.equalsIgnoreCase("Below 1 Lakh")) {
+				annual_income = "Less Than One Lakhs";
+				annual_income = annual_income.replace(" ", "+");
+				risk_catg = "Low";
+			}
+			if (annual_income.equalsIgnoreCase("1L-5L")) {
+				annual_income = "One To Five Lakhs";
+				annual_income = annual_income.replace(" ", "+");
+				risk_catg = "Low";
+			}
+			if (annual_income.equalsIgnoreCase("5L-10L")) {
+				annual_income = "Five To Ten Lakhs";
+				annual_income = annual_income.replace(" ", "+");
+				risk_catg = "Medium";
+			}
+			if (annual_income.equalsIgnoreCase("10L-25L")) {
+				annual_income = "Ten To TwentyFive Lakhs";
+				annual_income = annual_income.replace(" ", "+");
+				risk_catg = "High";
+			}
+			if (annual_income.equalsIgnoreCase("Above 25L")) {
+				annual_income = "TwentyFive Lakhs To Fifty Lakhs";
+				annual_income = annual_income.replace(" ", "+");
+				risk_catg = "High";
+			}
+			// annual_income = annual_income.replace(" ", "+");
+			// annual_income = "";
+			String grossannualincomedate = currentDate;
+
+			String aadharNumber = String.valueOf(userApplicationDetails.getPanCardDetailsDTO().getAadharNo());
 
 			/**
 			 * Defalut values
