@@ -206,10 +206,12 @@ public class eKYCConstant {
 
 	public static final String BITLY_BASEURL = "bitly_baseUrl";
 	public static final String BITLY_ACCESS_TOKEN = "bitly_access_token";
-	
-	
+
 	public static final String IPV_SUCCESS_URL = "ipvSucessURL";
 	public static final String REQUEST_TIMEOUT = "requestTimeOut";
 	public static final String REGIDTRATION_URL = "registrationURL";
+
+	public static final String IPV_TIMEOUT_URL = "URL is Timeout please create the url and try again";
+	public static final String INVALID_RANDOM_KEY = "Invalid random key ";
 
 }

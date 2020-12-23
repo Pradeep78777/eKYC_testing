@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.codespine.data.EkycApplicationDAO;
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
@@ -1549,7 +1551,6 @@ public class eKYCService {
 		return response;
 	}
 
-
 	/**
 	 * Method to check the given file is password protected or not
 	 * 
@@ -1588,6 +1589,70 @@ public class eKYCService {
 				response.setMessage(eKYCConstant.FAILED_MSG);
 				response.setReason(eKYCConstant.NOT_IN_PDF_FORMAT);
 			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to do the ivr using mobile or any device with using link
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param ivrImage
+	 * @param ivrLat
+	 * @param ivrLong
+	 * @param applicationId
+	 * @param header
+	 * @param header2
+	 * @param randomKey
+	 * @return
+	 */
+	public ResponseDTO uploadIvrMobile(String ivrImage, String ivrLat, String ivrLong, int applicationId, String header,
+			String header2, String randomKey) {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			if (applicationId > 0) {
+				/**
+				 * Check the random key is there are not
+				 */
+				JSONObject tempJson = EkycApplicationDAO.getInstance().getIVRMasterDetails(applicationId);
+				if (tempJson != null) {
+					String userRandomKey = (String) tempJson.get("random_key");
+					if (userRandomKey.equalsIgnoreCase(randomKey)) {
+						/**
+						 * Get the current time and link expiry time
+						 */
+						Calendar cal = Calendar.getInstance();
+						String expiry = (String) tempJson.get("expiry_date");
+						Date expiryDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expiry);
+						long expiryDateMillesconds = expiryDate.getTime();
+						long currentTime = cal.getTimeInMillis();
+						/**
+						 * check the link is expired or not
+						 */
+						if (expiryDateMillesconds > currentTime) {
+							response = uploadIvrCapture(ivrImage, ivrLat, ivrLong, applicationId, header, header2);
+							return response;
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.IPV_TIMEOUT_URL);
+						}
+					} else {
+						response.setStatus(eKYCConstant.FAILED_STATUS);
+						response.setMessage(eKYCConstant.FAILED_MSG);
+					}
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+					response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return response;
 	}

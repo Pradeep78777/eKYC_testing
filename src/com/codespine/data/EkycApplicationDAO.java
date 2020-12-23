@@ -190,7 +190,7 @@ public class EkycApplicationDAO {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject getIVRMasterDetails(String randomKey, int applicationId) {
+	public JSONObject getIVRMasterDetails(int applicationId) {
 		JSONObject result = null;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
@@ -199,18 +199,17 @@ public class EkycApplicationDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			String query = "";
-			query = "SELECT applicaiton_id, random_key, expiry_date, created_on, created_by, updated_on, updated_by, active_status "
-					+ "FROM tbl_application_master where application_id = ? and random_key = ?";
+			query = "SELECT application_id, random_key, expiry_date, created_on, created_by, updated_on, updated_by, active_status "
+					+ "FROM tbl_ivr_link_master where application_id = ? ";
 			pStmt = conn.prepareStatement(query);
 			pStmt.setInt(paromPos++, applicationId);
-			pStmt.setString(paromPos++, randomKey);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new JSONObject();
 					result.put("application_id", rSet.getInt("application_id"));
-					result.put("random_key", rSet.getLong("random_key"));
-					result.put("expiry_date", rSet.getInt("expiry_date"));
+					result.put("random_key", rSet.getString("random_key"));
+					result.put("expiry_date", rSet.getString("expiry_date"));
 				}
 			}
 		} catch (Exception e) {

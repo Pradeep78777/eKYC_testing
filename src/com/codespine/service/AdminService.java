@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.simple.JSONObject;
 
 import com.codespine.data.AdminDAO;
+import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.AdminDTO;
 import com.codespine.dto.ApplicationAttachementsDTO;
@@ -453,9 +454,24 @@ public class AdminService {
 		if (pDto.getApplicationId() > 0) {
 			List<FileUploadDTO> result = AdminDAO.getUploadedFile(pDto.getApplicationId());
 			if (result != null && result.size() > 0) {
-				response.setStatus(eKYCConstant.SUCCESS_STATUS);
-				response.setMessage(eKYCConstant.SUCCESS_MSG);
-				response.setResult(result);
+
+				/*
+				 * get the uploaded ivr details from the data base
+				 */
+				JSONObject ivrResult = eKYCDAO.getInstance().getIvrDetails(pDto.getApplicationId());
+				if (ivrResult != null) {
+					FileUploadDTO tempDto = new FileUploadDTO();
+					tempDto.setProofType("IVR");
+					tempDto.setProof((String) ivrResult.get("ivr_image"));
+					result.add(tempDto);
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setMessage(eKYCConstant.SUCCESS_MSG);
+					response.setResult(result);
+				} else {
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setMessage(eKYCConstant.SUCCESS_MSG);
+					response.setResult(result);
+				}
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);
