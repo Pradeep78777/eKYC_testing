@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.json.simple.JSONObject;
 
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AccesslogDTO;
@@ -102,14 +103,20 @@ public class eKYCController {
 	@Path("/verifyEmail")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO verifyEmail(@QueryParam("email") String email, @QueryParam("key") String link) {
+	public ResponseDTO verifyEmail(PersonalDetailsDTO pdto) {
 		ResponseDTO response = new ResponseDTO();
 		try {
-			if (!email.isEmpty() && !link.isEmpty() && email.equalsIgnoreCase("") && link.equalsIgnoreCase("")) {
-				String dummyResponse = eKYCService.getInstance().verifyActivationLink(email, link);
+			if (!pdto.getEmail().isEmpty() && !pdto.getKey().isEmpty() && pdto.getEmail().equalsIgnoreCase("")
+					&& pdto.getKey().equalsIgnoreCase("")) {
+				String dummyResponse = eKYCService.getInstance().verifyActivationLink(pdto.getEmail(), pdto.getKey());
 				if (dummyResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
+					int applicationId = eKYCDAO.getInstance().getApplicationId(pdto.getEmail(), pdto.getKey());
+					JSONObject result = new JSONObject();
+					result.put("application_id", applicationId);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
+					response.setResult(result);
+					return response;
 				} else {
 					response.setStatus(eKYCConstant.FAILED_STATUS);
 					response.setMessage(eKYCConstant.FAILED_MSG);
