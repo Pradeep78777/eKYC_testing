@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
+import com.codespine.data.AdminDAO;
 import com.codespine.data.EkycApplicationDAO;
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.PanCardDetailsDTO;
@@ -185,11 +186,13 @@ public class EkycApplicationService {
 	 * @param dto
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public ResponseDTO getIPVlink(PersonalDetailsDTO dto) {
 		ResponseDTO response = new ResponseDTO();
 		if (dto != null && dto.getApplication_id() > 0) {
 			PersonalDetailsDTO userDetails = eKYCDAO.getInstance().getProfileDetails(dto);
 			if (userDetails != null) {
+				JSONObject result = new JSONObject();
 				/*
 				 * get the email and mobile from the user details in data base
 				 */
@@ -212,13 +215,29 @@ public class EkycApplicationService {
 				/**
 				 * update into the database
 				 */
-				eKYCDAO.getInstance().updateIvrUrlDetails(dto.getApplication_id(), randomKey,
-						formatter.format(currentTime.getTime()));
+				JSONObject tempJson = EkycApplicationDAO.getInstance()
+						.getIVRMasterDetails(userDetails.getApplication_id());
+				if (tempJson != null && (Integer) tempJson.get("application_id") > 0) {
+					eKYCDAO.getInstance().updateIvrUrlDetails(dto.getApplication_id(), randomKey,
+							formatter.format(currentTime.getTime()));
+				} else {
+					eKYCDAO.getInstance().insertIvrUrlDetails(dto.getApplication_id(), randomKey,
+							formatter.format(currentTime.getTime()));
+				}
+				/*
+				 * Get the applicant name by using the application id
+				 */
+				PersonalDetailsDTO applicantName = AdminDAO.getInstance().getUserDetails(dto.getApplication_id());
 				/**
 				 * send the link to both mail and message
 				 */
 				Utility.ivpMailUpdate(bityURl, userEmail);
-				Utility.sendIPVLink(mobileNumber, bityURl, "");
+				Utility.sendIPVLink(mobileNumber, bityURl, applicantName.getApplicant_name());
+				result.put("ivrURL", bityURl);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);
@@ -241,7 +260,7 @@ public class EkycApplicationService {
 	public String checkIvrRandom(String randomKey, int applicationId) {
 		String response = eKYCConstant.FAILED_MSG;
 		try {
-			JSONObject tempJson = EkycApplicationDAO.getInstance().getIVRMasterDetails(randomKey, applicationId);
+			JSONObject tempJson = EkycApplicationDAO.getInstance().getIVRMasterDetails(applicationId);
 			if (tempJson != null) {
 				Calendar cal = Calendar.getInstance();
 				String expiry = (String) tempJson.get("expiry_date");

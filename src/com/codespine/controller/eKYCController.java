@@ -92,6 +92,39 @@ public class eKYCController {
 	}
 
 	/**
+	 * To verify the email using activation Link
+	 * 
+	 * @param username
+	 * @param key
+	 * @return
+	 */
+	@POST
+	@Path("/verifyEmail")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO verifyEmail(@QueryParam("email") String email, @QueryParam("key") String link) {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			if (!email.isEmpty() && !link.isEmpty() && email.equalsIgnoreCase("") && link.equalsIgnoreCase("")) {
+				String dummyResponse = eKYCService.getInstance().verifyActivationLink(email, link);
+				if (dummyResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setMessage(eKYCConstant.SUCCESS_MSG);
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	/**
 	 * To verify the otp for user
 	 * 
 	 * @author GOWRI SANKAR R
@@ -718,6 +751,42 @@ public class eKYCController {
 
 		response = eKYCService.getInstance().uploadIvrCapture(ivrImage, ivrLat, ivrLong, applicationId,
 				request.getHeader("X-Forwarded-For"), request.getHeader("user-agent"));
+		return response;
+	}
+
+	/**
+	 * @author GOWRI SANKAR R
+	 * @param requestContext
+	 * @param ivrImage
+	 * @param ivrLat
+	 * @param ivrLong
+	 * @param applicationId
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/uploadIvrMobile")
+	public ResponseDTO uploadIvrMobile(@Context ContainerRequestContext requestContext,
+			@FormDataParam("ivrImage") String ivrImage, @FormDataParam("ivrLat") String ivrLat,
+			@FormDataParam("ivrLong") String ivrLong, @FormDataParam("applicationId") int applicationId,
+			@FormDataParam("randomKey") String randomKey) {
+		ResponseDTO response = new ResponseDTO();
+		/*
+		 * TO insert Access log into data base
+		 */
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		if (!randomKey.isEmpty() && randomKey.equalsIgnoreCase("")) {
+			response = eKYCService.getInstance().uploadIvrMobile(ivrImage, ivrLat, ivrLong, applicationId,
+					request.getHeader("X-Forwarded-For"), request.getHeader("user-agent"), randomKey);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INVALID_RANDOM_KEY);
+		}
 		return response;
 	}
 

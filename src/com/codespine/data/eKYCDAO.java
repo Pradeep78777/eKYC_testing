@@ -2506,15 +2506,44 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_ivr_link_master(applicaiton_id, random_key, expiry_date, created_on, created_by)"
-							+ "VALUES(?,?,?,?,?)"
-							+ " ON DUPLICATE KEY UPDATE applicaiton_id = ? , random_key = ? , expiry_date = ? , updated_on = ? , updated_by = ?");
+					"UPDATE  tbl_ivr_link_master SET random_key = ? , expiry_date = ? , updated_on = ? , updated_by = ? where application_id = ? ");
 			int paramPos = 1;
-			pStmt.setInt(paramPos++, applicationId);
 			pStmt.setString(paramPos++, randomKey);
 			pStmt.setString(paramPos++, expiryDate);
 			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.setInt(paramPos++, applicationId);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Method to insert the random key for userF
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @param randomKey
+	 * @param expiryDate
+	 */
+	public void insertIvrUrlDetails(int applicationId, String randomKey, String expiryDate) {
+		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"INSERT INTO tbl_ivr_link_master(application_id, random_key, expiry_date, created_on, created_by)"
+							+ "VALUES(?,?,?,?,?)");
+			int paramPos = 1;
 			pStmt.setInt(paramPos++, applicationId);
 			pStmt.setString(paramPos++, randomKey);
 			pStmt.setString(paramPos++, expiryDate);
@@ -2532,5 +2561,4 @@ public class eKYCDAO {
 			}
 		}
 	}
-
 }

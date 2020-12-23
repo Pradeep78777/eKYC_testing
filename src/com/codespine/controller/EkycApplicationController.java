@@ -110,40 +110,45 @@ public class EkycApplicationController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/checkIvrRandom")
 	public Response checkIvrRandom(@QueryParam("randomKey") String randomKey,
-			@QueryParam("applicationId") int applicationId) {
+			@QueryParam("appId") int applicationId) {
 		/**
 		 * Check the random key is there are not
 		 */
-		JSONObject tempJson = EkycApplicationDAO.getInstance().getIVRMasterDetails(randomKey, applicationId);
+		JSONObject tempJson = EkycApplicationDAO.getInstance().getIVRMasterDetails(applicationId);
 		try {
 			if (tempJson != null) {
-				/**
-				 * Get the current time and link expiry time
-				 */
-				Calendar cal = Calendar.getInstance();
-				String expiry = (String) tempJson.get("expiry_date");
-				Date expiryDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expiry);
-				long expiryDateMillesconds = expiryDate.getTime();
-				long currentTime = cal.getTimeInMillis();
-				/**
-				 * check the link is expired or not
-				 */
-				if (expiryDateMillesconds < currentTime) {
+				String userRandomKey = (String) tempJson.get("random_key");
+				if (userRandomKey.equalsIgnoreCase(randomKey)) {
 					/**
-					 * if not redirect to ipv page
+					 * Get the current time and link expiry time
 					 */
-					java.net.URI location = new java.net.URI(
-							CSEnvVariables.getMethodNames(eKYCConstant.IPV_SUCCESS_URL));
-					System.out.println("EKYC Application Controller line no 137 URL " + location);
-					return Response.temporaryRedirect(location).build();
+					Calendar cal = Calendar.getInstance();
+					String expiry = (String) tempJson.get("expiry_date");
+					Date expiryDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(expiry);
+					long expiryDateMillesconds = expiryDate.getTime();
+					long currentTime = cal.getTimeInMillis();
+					/**
+					 * check the link is expired or not
+					 */
+					if (expiryDateMillesconds > currentTime) {
+						/**
+						 * if not redirect to ipv page
+						 */
+						java.net.URI location = new java.net.URI(
+								CSEnvVariables.getMethodNames(eKYCConstant.IPV_SUCCESS_URL) + applicationId);
+						System.out.println("EKYC Application Controller line no 137 URL " + location);
+						return Response.temporaryRedirect(location).build();
+					} else {
+						/**
+						 * if not redirect to timeout page
+						 */
+						java.net.URI location = new java.net.URI(
+								CSEnvVariables.getMethodNames(eKYCConstant.REQUEST_TIMEOUT));
+						System.out.println("EKYC Application Controller line no 144 URL " + location);
+						return Response.temporaryRedirect(location).build();
+					}
 				} else {
-					/**
-					 * if not redirect to timeout page
-					 */
-					java.net.URI location = new java.net.URI(
-							CSEnvVariables.getMethodNames(eKYCConstant.REQUEST_TIMEOUT));
-					System.out.println("EKYC Application Controller line no 144 URL " + location);
-					return Response.temporaryRedirect(location).build();
+
 				}
 			} else {
 				/**

@@ -365,13 +365,14 @@ public class Utility {
 	 */
 	public static void sendIPVLink(long mobileNumber, String bitlyUrl, String applicantName) {
 		try {
-			String message = "Dear " + applicantName + " Your eKYC Application IPV is pending. Kindly click here "
+			String newline = System.getProperty("line.separator");
+			String message = "Dear " + applicantName + ", Your eKYC Application IPV is pending. Kindly click here "
 					+ bitlyUrl + " to take this forward and complete your IPV.";
 			message = message.replace(" ", "%20");
 			String tempUrl = CSEnvVariables.getProperty(eKYCConstant.MESSAGE_URL)
 					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_USERNAME) + "&password="
 					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_PASSWORD) + "&to=" + mobileNumber + "&text="
-					+ message + "%20" + message + "&from=" + CSEnvVariables.getProperty(eKYCConstant.MESSAGE_SENDER);
+					+ message + "&from=" + CSEnvVariables.getProperty(eKYCConstant.MESSAGE_SENDER);
 			URL url = new URL(tempUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");

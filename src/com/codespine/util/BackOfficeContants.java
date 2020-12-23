@@ -29,7 +29,7 @@ public class BackOfficeContants {
 	public static final String NOT_MICRNO = "NOT_MICRNO";
 	public static final String NOT_BANK_NAME = "NOT_BANK_NAME";
 	public static final String NOT_IFSC = "NOT_IFSC";
-	public static final String NOT_EFT = "NOT_EFT ";
+	public static final String NOT_EFT = "NOT_EFT+";
 	public static final String NRI_PSI_NO = "NRI_PSI_NO";
 	public static final String NOT_POA = "NOT_POA";
 	public static final String NOT_DPID = "NOT_DPID";
