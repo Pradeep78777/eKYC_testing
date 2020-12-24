@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +23,15 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.imgscalr.Scalr;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -140,83 +145,20 @@ public class FinalPDFGenerator {
 			}
 		}
 		// attaching external required documents
-		List<String> urls = getAttachedDocumentURLs(Integer.parseInt(application_id));
-		if (urls != null) {
-			int i = 1;
-			for (String url : urls) {
-				String replacedURL = StringUtil.replace(url, " ", "%20");
-				if (StringUtil.isStrContainsWithEqIgnoreCase(url, ".pdf")) {
-//					float pdfConstantHeight = 859.89f;
-//					float pdfConstantWidth = 613.28f;
-					InputStream inputStream = new URL(replacedURL).openStream();
+		String pdfUrl = getAttachedDocumentURLs(Integer.parseInt(application_id),finalSestinationFilePath);
+		if (StringUtil.isNotNullOrEmpty(pdfUrl)) {
 					PDPageTree mergePD = document.getPages();
+					String replacedURL = StringUtil.replace(pdfUrl, " ", "%20");
+					InputStream inputStream = new URL(replacedURL).openStream();
+//					PDDocument pddDocument2 = PDDocument.load(new File(urls));
 					PDDocument pddDocument2 = PDDocument.load(inputStream);
 					PDPageTree mergePD1 = pddDocument2.getPages();
 					int x = 16;
 					if (mergePD1.getCount() > 1) {
 						for (PDPage page : mergePD1) {
 							mergePD.insertAfter(page, document.getPage(x));
-							x++;
 						}
-					}else {
-						PDPage page = mergePD1.get(0);
-						mergePD.insertAfter(page, document.getPage(x));
-						x++;
 					}
-//					pddDocument2.close();
-//					inputStream.close();
-				} else {
-					InputStream in = new URL(replacedURL).openStream();
-					BufferedImage bimg = ImageIO.read(in);
-					PDPage page = new PDPage(new PDRectangle(612, 858));
-					document.addPage(page);
-					float ratio = 0f;
-					if (bimg.getWidth() < bimg.getHeight()) {
-						ratio = 562f / (float) (bimg.getHeight());
-					} else {
-						ratio = 562f / (float) (bimg.getWidth());
-					}
-					int width = (int) (bimg.getWidth() * ratio);
-					int height = (int) (bimg.getHeight() * ratio);
-					BufferedImage scaledImg = Scalr.resize(bimg, width, height);
-					ByteArrayOutputStream os = new ByteArrayOutputStream();
-					String imagePath = "";
-					if (StringUtil.isStrContainsWithEqIgnoreCase(url, "png")) {
-						ImageIO.write(scaledImg, "png", os);
-						imagePath = finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id + i
-								+ "-1.png";
-					} else {
-						ImageIO.write(scaledImg, "jpeg", os);
-						imagePath = finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id + i
-								+ "-1.jpg";
-					}
-					InputStream is = new ByteArrayInputStream(os.toByteArray());
-					int read = 0;
-					System.out.println(imagePath);
-					OutputStream out = new FileOutputStream(imagePath);
-					byte[] bytes = new byte[1024];
-					while ((read = is.read(bytes)) != -1) {
-						out.write(bytes, 0, read);
-					}
-					out.flush();
-					out.close();
-					is.close();
-					os.close();
-					PDImageXObject pdImage = null;
-					if (StringUtil.isStrContainsWithEqIgnoreCase(url, "png")) {
-						File f = new File(imagePath);
-						BufferedImage bimg1 = ImageIO.read(f);
-						pdImage = LosslessFactory.createFromImage(document, bimg1);
-					} else {
-						pdImage = PDImageXObject.createFromFile(imagePath, document);
-					}
-					PDPageContentStream contentStream = new PDPageContentStream(document, page);
-					contentStream.drawImage(pdImage, 25, (833 - height));
-					contentStream.close();
-					in.close();
-				}
-				i++;
-			}
 		}
 		document.save(new File(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName));
 		System.out.println("pdf Generated");
@@ -556,11 +498,15 @@ public class FinalPDFGenerator {
 	 * Method to get url of attached documents
 	 * 
 	 * @param application_id
+	 * @param finalSestinationFilePath 
 	 * @return
+	 * @throws IOException 
+	 * @throws MalformedURLException 
 	 * @throws Exception
 	 */
-	private static List<String> getAttachedDocumentURLs(int application_id) {
+	private static String getAttachedDocumentURLs(int application_id, String finalSestinationFilePath) throws MalformedURLException, IOException {
 		List<String> urls = null;
+		String attachmentURL = finalSestinationFilePath+ eKYCConstant.WINDOWS_FORMAT_SLASH +"attachementFile.pdf";
 		List<FileUploadDTO> fileUploadDTOs = eKYCDAO.getInstance().getUploadedFile(application_id);
 		for (FileUploadDTO fileUploadDTO : fileUploadDTOs) {
 			if (StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.EKYC_DOCUMENT)
@@ -574,6 +520,120 @@ public class FinalPDFGenerator {
 				}
 			}
 		}
-		return urls;
+		if(urls != null) {
+			PDDocument pdDocument = new PDDocument();
+			for(String url:urls) {
+				System.out.println(url);
+				if(StringUtil.isNotNullOrEmpty(url)) {
+				int i = 1;
+					String replacedURL = StringUtil.replace(url, " ", "%20");
+					if (StringUtil.isStrContainsWithEqIgnoreCase(url, ".pdf")) {
+						InputStream inputStream = new URL(replacedURL).openStream();
+						PDPageTree mergePD = pdDocument.getPages();
+						PDDocument pddDocument2 = PDDocument.load(inputStream);
+						PDPageTree mergePD1 = pddDocument2.getPages();
+						if (mergePD1.getCount() > 1) {
+							for (PDPage page : mergePD1) {
+								mergePD.add(page);
+							}
+						}else {
+							mergePD.add(mergePD1.get(0));
+						}
+//						inputStream.close();
+//						pddDocument2.close();
+					} else {
+						InputStream in = new URL(replacedURL).openStream();
+						BufferedImage bimg = ImageIO.read(in);
+						PDPage page = new PDPage(new PDRectangle(612, 858));
+						pdDocument.addPage(page);
+						float ratio = 0f;
+						if (bimg.getWidth() < bimg.getHeight()) {
+							ratio = 562f / (float) (bimg.getHeight());
+						} else {
+							ratio = 562f / (float) (bimg.getWidth());
+						}
+						int width = (int) (bimg.getWidth() * ratio);
+						int height = (int) (bimg.getHeight() * ratio);
+						BufferedImage scaledImg = Scalr.resize(bimg, width, height);
+						ByteArrayOutputStream os = new ByteArrayOutputStream();
+						String imagePath = "";
+						if (StringUtil.isStrContainsWithEqIgnoreCase(url, "png")) {
+							ImageIO.write(scaledImg, "png", os);
+							imagePath = finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id + i
+									+ "-1.png";
+						} else {
+							ImageIO.write(scaledImg, "jpeg", os);
+							imagePath = finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id + i
+									+ "-1.jpg";
+						}
+						InputStream is = new ByteArrayInputStream(os.toByteArray());
+						int read = 0;
+						System.out.println(imagePath);
+						OutputStream out = new FileOutputStream(imagePath);
+						byte[] bytes = new byte[1024];
+						while ((read = is.read(bytes)) != -1) {
+							out.write(bytes, 0, read);
+						}
+						out.flush();
+						out.close();
+						is.close();
+						os.close();
+						PDImageXObject pdImage = null;
+						if (StringUtil.isStrContainsWithEqIgnoreCase(url, "png")) {
+							File f = new File(imagePath);
+							BufferedImage bimg1 = ImageIO.read(f);
+							pdImage = LosslessFactory.createFromImage(pdDocument, bimg1);
+						} else {
+							pdImage = PDImageXObject.createFromFile(imagePath, pdDocument);
+						}
+						@SuppressWarnings("resource")
+						PDPageContentStream contentStreams = new PDPageContentStream(pdDocument, page);
+						contentStreams.drawImage(pdImage, 25, (833 - height));
+						in.close();
+					}
+					i++;
+				}
+			}
+			pdDocument.save(attachmentURL);
+			pdDocument.close();
+			shrinkPdf(attachmentURL);
+		}
+		return attachmentURL;
+	}
+
+	private static void shrinkPdf(String fileURL) throws InvalidPasswordException, IOException {
+		PDDocument pdDocument = new PDDocument();
+		PDDocument oDocument = PDDocument.load(new File(fileURL));
+		PDFRenderer pdfRenderer = new PDFRenderer(oDocument);
+		int numberOfPages = oDocument.getNumberOfPages();
+		PDPage page = null;
+		for (int i = 0; i < numberOfPages; i++) {
+			page = new PDPage(PDRectangle.A4);
+			BufferedImage bim = pdfRenderer.renderImageWithDPI(i, 300, ImageType.RGB);
+			PDImageXObject pdImage = JPEGFactory.createFromImage(pdDocument, bim);
+//			int oriHeight = pdImage.getHeight();
+//			int oriWidth = pdImage.getWidth();
+//			int scaledHeight = 0;
+//			int scaledWidth = 0;
+//			int ratio = 0;
+//			if(oriHeight > oriWidth) {
+//				ratio = oriHeight / 831;
+//				scaledWidth = oriWidth / ratio;
+//				scaledHeight = oriHeight;
+//				
+//			}else {
+//				ratio = oriWidth / 585;
+//				scaledHeight = oriHeight / ratio;
+//				scaledWidth = oriWidth;
+//			}
+			PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page);
+			float newHeight = PDRectangle.A4.getHeight()-10;
+			float newWidth = PDRectangle.A4.getWidth()-10;
+			contentStream.drawImage(pdImage, 0, 0, newWidth, newHeight);
+			contentStream.close();
+			pdDocument.addPage(page);
+		}
+		pdDocument.save(fileURL);
+		pdDocument.close();
 	}
 }

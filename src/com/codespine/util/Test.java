@@ -16,14 +16,16 @@ import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.PDPageTree;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.imgscalr.Scalr;
 
 public class Test {
@@ -32,72 +34,95 @@ public class Test {
 	static String pdf = "https://oa1.zebull.in//e_sign/file//uploads//4//PANCARD//PAN Card.pdf";
 	static float pdfConstantHeight = 859.89f;
 	static float pdfConstantWidth = 613.28f;
+
 	static String img4 = "http://rest.irongates.in/pic/photo.jpeg";
 	static String img3 = "https://oa1.zebull.in//e_sign/file//uploads//2//PHOTO//WhatsApp%20Image%202019-09-19%20at%209.12.49%20AM(2).jpeg";
 
 	public static void main(String[] args) throws InvalidPasswordException, IOException {
 //		String finalPDFName = "img.pdf";
-		changePdfSizes(pdf,pdfConstantHeight,pdfConstantWidth,"C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
-			
+//		changePdfSizes(pdf, pdfConstantHeight, pdfConstantWidth, "E:\\ekyc\\2");
 //		File file = new File("C:\\Users\\prade\\Downloads\\ekyc_pdf\\2" + eKYCConstant.PDF_FILE_EXTENSION);
 //		PDDocument document = PDDocument.load(file);
-//		try {
-////			pdfTextInserter(document, ".", 474, 594);
-////			pdfTextInserter(document, ".", 574, 594);
-////			pdfTextInserter(document, ".", 474, 698);
-////			pdfTextInserter(document, ".", 574, 698);
-//			pdfimageInserter(0, document, 474.5f, 594, img4, "1", "C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//
-//	    Date d1 = null;
-//	    Date d2 = null;
-////	    try {
-//////	        d1 = format.parse(date1);
-//////	        d2 = format.parse(date2);
-////	    } catch (ParseException e) {
-////	        e.printStackTrace();
-////	    }
-//
-//	    // Get msec from each, and subtract.
-//	    long diff = d2.getTime() - d1.getTime();
-//	    long diffSeconds = diff / 1000 % 60;
-//	    long diffMinutes = diff / (60 * 1000) % 60;
-//	    long diffHours = diff / (60 * 60 * 1000);
-//	    long diffDays = diff / (60 * 60 *24*1000);
-//	    System.out.println("Time in seconds: " + diffSeconds + " seconds.");
-//	    System.out.println("Time in minutes: " + diffMinutes + " minutes.");
-//	    System.out.println("Time in hours: " + diffHours + " hours.");
-//	    System.out.println("Time in Days: " + diffDays + " Days.");
-//		String finalPDFName = "img.pdf";
-//		File file = new File("C:\\Users\\prade\\Downloads\\ekyc_pdf\\2" + eKYCConstant.PDF_FILE_EXTENSION);
-//		PDDocument document = PDDocument.load(file);
-//		try {
-////			pdfTextInserter(document, ".", 474, 594);
-////			pdfTextInserter(document, ".", 574, 594);
-////			pdfTextInserter(document, ".", 474, 698);
-////			pdfTextInserter(document, ".", 574, 698);
-//			pdfimageInserter(0, document, 474.5f, 594, img2, "1", "C:\\Users\\prade\\Downloads\\ekyc_pdf\\");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		document.save(
-//				new File("C:\\Users\\prade\\Downloads\\ekyc_pdf" + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName));
-//		System.out.println("pdf Generated");
-//		document.close();
+//		pdfimageInserter(0, document, 474.5f, 594, pdf, "1", "E:\\ekyc\\2");
+		
+		shrinkgOnePage();
+		
 	}
 
-	private static void changePdfSizes(String pdfURL, float pdfConstantHeight2, float pdfConstantWidth2, String string) throws MalformedURLException, IOException {
+	@SuppressWarnings("unused")
+	private static void changePdfSizes(String pdfURL, float pdfConstantHeight2, float pdfConstantWidth2, String string)
+			throws MalformedURLException, IOException {
+		PDDocument pddDocument1 = new PDDocument();
+		PDPage page = new PDPage();
+		pddDocument1.addPage(page);
+//		PDPageTree mergePD1 = pddDocument1.getPages();
 		String replacedURL = StringUtil.replace(pdfURL, " ", "%20");
 		InputStream inputStream = new URL(replacedURL).openStream();
 		PDDocument pddDocument = PDDocument.load(inputStream);
-		PDPageTree mergePD = pddDocument.getPages();
-		float width = mergePD.get(0).getMediaBox().getWidth();
-		float height = mergePD.get(0).getMediaBox().getHeight();
-		System.out.println(width+","+height);
+//		PDPageTree mergePD = pddDocument.getPages();
+		PDFRenderer pdfRenderer = new PDFRenderer(pddDocument);
+		BufferedImage bim = pdfRenderer.renderImageWithDPI(0, 300, ImageType.RGB);
+		ByteArrayOutputStream os1 = new ByteArrayOutputStream();
+		ImageIO.write(bim, "png", os1);
+		String imagePath = string + eKYCConstant.WINDOWS_FORMAT_SLASH + "1.png";
+		InputStream is1 = new ByteArrayInputStream(os1.toByteArray());
+		int read = 0;
+		System.out.println(imagePath);
+		OutputStream out1 = new FileOutputStream(imagePath);
+		byte[] bytes = new byte[1024];
+		while ((read = is1.read(bytes)) != -1) {
+			out1.write(bytes, 0, read);
+		}
+		out1.flush();
+		out1.close();
+		is1.close();
+		os1.close();
+		PDImageXObject pdImage = null;
+		pdImage = LosslessFactory.createFromImage(pddDocument1, bim);
+		PDPageContentStream contentStream = new PDPageContentStream(pddDocument1, pddDocument1.getPages().get(0));
+		contentStream.drawImage(pdImage, 25, (0));
+//		x++;
+		inputStream.close();
+		contentStream.close();
+		pddDocument1.save(string + eKYCConstant.WINDOWS_FORMAT_SLASH + "1.pdf");
+//		PDPageContentStream contentStream1 = new PDPageContentStream(pddDocument1, page);
+//		contentStream1.drawImage(pdImage, 0, (0));
+//		contentStream1.close();
+	}
+
+	private static void shrinkgOnePage() {
+		try {
+			PDDocument pdDocument = new PDDocument();
+			PDDocument oDocument = PDDocument.load(new File("E:\\ekyc\\1\\1608794266147\\BZAPG5040A.pdf"));
+			PDFRenderer pdfRenderer = new PDFRenderer(oDocument);
+			int numberOfPages = oDocument.getNumberOfPages();
+			PDPage page = null;
+
+			for (int i = 17; i < numberOfPages; i++) {
+				page = new PDPage(PDRectangle.A4);
+				BufferedImage bim = pdfRenderer.renderImageWithDPI(i, 300, ImageType.RGB);
+				PDImageXObject pdImage = JPEGFactory.createFromImage(pdDocument, bim);
+				int oriHeight = pdImage.getHeight();
+				int oriWidth = pdImage.getWidth();
+				float newHeight = PDRectangle.A4.getHeight()-10;
+				float newWidth = PDRectangle.A4.getWidth()-10;
+				System.out.println("oH"+oriHeight);
+				System.out.println("oW"+oriWidth);
+				System.out.println("H"+newHeight);
+				System.out.println("W"+newWidth);
+				PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page);
+				contentStream.drawImage(pdImage, 0, 0, newWidth, newHeight);
+				contentStream.close();
+
+				pdDocument.addPage(page);
+			}
+
+			pdDocument.save("E:/ekyc/1/1608794266147/out.pdf");
+			pdDocument.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -111,6 +136,7 @@ public class Test {
 	 * @param finalSestinationFilePath
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unused")
 	private static void pdfimageInserter(int pageNumber, PDDocument document, float xValue, int yValue, String image,
 			String application_id, String finalSestinationFilePath) throws IOException {
 		InputStream in = new URL(image).openStream();
@@ -136,15 +162,15 @@ public class Test {
 		if (bimg.getHeight() <= 100) {
 			scaledHeight = bimg.getHeight();
 		}
-		
+
 		int xAxis = 0;
 		int yAxis = 0;
-		if(height > width) {
-			//then you move X axis
+		if (height > width) {
+			// then you move X axis
 //			xAxis = ((width - scaledWidth) / 2);
 			xAxis = ((scaledHeight - scaledWidth) / 2);
 		} else {
-			//Then you move Y axis
+			// Then you move Y axis
 //			yAxis = ((height - scaledHeight) / 2);
 			yAxis = ((scaledWidth - scaledHeight) / 2);
 		}
