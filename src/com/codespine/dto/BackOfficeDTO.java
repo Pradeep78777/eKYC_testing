@@ -5,6 +5,7 @@ public class BackOfficeDTO {
 	private String clientCode;
 	private String verifiedBy;
 	private String verifiedByDesigination;
+	private int applicationId;
 
 	public String getBranchCode() {
 		return branchCode;
@@ -36,6 +37,14 @@ public class BackOfficeDTO {
 
 	public void setVerifiedByDesigination(String verifiedByDesigination) {
 		this.verifiedByDesigination = verifiedByDesigination;
+	}
+
+	public int getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(int applicationId) {
+		this.applicationId = applicationId;
 	}
 
 }

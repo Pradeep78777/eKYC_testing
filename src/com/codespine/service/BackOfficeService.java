@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.codespine.dto.ExchDetailsDTO;
+import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
 import com.codespine.restservice.BackOfficeRestService;
 import com.codespine.util.BackOfficeContants;
@@ -24,17 +25,21 @@ public class BackOfficeService {
 
 	String category = "I";
 
-	public static void main(String[] args) {
-		sendBackOffice(1);
-	}
+	// public static void main(String[] args) {
+	// sendBackOffice(1);
+	// }
 
-	public static void sendBackOffice(int applicationId) {
+	public ResponseDTO pushDataToBackOffice(int applicationId, String branchName, String clientCode, String verifiedBy,
+			String verifiedByDesigination) {
+		ResponseDTO response = new ResponseDTO();
 		eKYCDTO userApplicationDetails = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (userApplicationDetails != null) {
-			String parameter = declareVariable(userApplicationDetails, "TN3", "THEDEMO", "GOWRISANKAR", "DON");
-			BackOfficeRestService.getInstance().postDataToBackEnd(parameter);
+			String parameter = declareVariable(userApplicationDetails, branchName, clientCode, verifiedBy,
+					verifiedByDesigination);
+			Object result = BackOfficeRestService.getInstance().postDataToBackEnd(parameter);
 			System.out.println(parameter);
 		}
+		return response;
 	}
 
 	public static String declareVariable(eKYCDTO userApplicationDetails, String branchCode, String clientCode,
