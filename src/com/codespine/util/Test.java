@@ -92,6 +92,8 @@ public class Test {
 
 	private static void shrinkgOnePage() {
 		try {
+			float newHeight = PDRectangle.A4.getHeight()-10;
+			float newWidth = PDRectangle.A4.getWidth()-10;
 			PDDocument pdDocument = new PDDocument();
 			PDDocument oDocument = PDDocument.load(new File("E:\\ekyc\\1\\1608794266147\\BZAPG5040A.pdf"));
 			PDFRenderer pdfRenderer = new PDFRenderer(oDocument);
@@ -104,8 +106,6 @@ public class Test {
 				PDImageXObject pdImage = JPEGFactory.createFromImage(pdDocument, bim);
 				int oriHeight = pdImage.getHeight();
 				int oriWidth = pdImage.getWidth();
-				float newHeight = PDRectangle.A4.getHeight()-10;
-				float newWidth = PDRectangle.A4.getWidth()-10;
 				System.out.println("oH"+oriHeight);
 				System.out.println("oW"+oriWidth);
 				System.out.println("H"+newHeight);
