@@ -149,9 +149,9 @@ public class FinalPDFGenerator {
 		if (StringUtil.isNotNullOrEmpty(pdfUrl)) {
 					PDPageTree mergePD = document.getPages();
 					String replacedURL = StringUtil.replace(pdfUrl, " ", "%20");
-					InputStream inputStream = new URL(replacedURL).openStream();
-//					PDDocument pddDocument2 = PDDocument.load(new File(urls));
-					PDDocument pddDocument2 = PDDocument.load(inputStream);
+//					InputStream inputStream = new URL(replacedURL).openStream();
+					PDDocument pddDocument2 = PDDocument.load(new File(replacedURL));
+//					PDDocument pddDocument2 = PDDocument.load(inputStream);
 					PDPageTree mergePD1 = pddDocument2.getPages();
 					int x = 16;
 					if (mergePD1.getCount() > 1) {
@@ -522,6 +522,7 @@ public class FinalPDFGenerator {
 		}
 		if(urls != null) {
 			PDDocument pdDocument = new PDDocument();
+			PDPageTree mergePD = pdDocument.getPages();
 			for(String url:urls) {
 				System.out.println(url);
 				if(StringUtil.isNotNullOrEmpty(url)) {
@@ -529,7 +530,6 @@ public class FinalPDFGenerator {
 					String replacedURL = StringUtil.replace(url, " ", "%20");
 					if (StringUtil.isStrContainsWithEqIgnoreCase(url, ".pdf")) {
 						InputStream inputStream = new URL(replacedURL).openStream();
-						PDPageTree mergePD = pdDocument.getPages();
 						PDDocument pddDocument2 = PDDocument.load(inputStream);
 						PDPageTree mergePD1 = pddDocument2.getPages();
 						if (mergePD1.getCount() > 1) {
@@ -589,7 +589,7 @@ public class FinalPDFGenerator {
 						@SuppressWarnings("resource")
 						PDPageContentStream contentStreams = new PDPageContentStream(pdDocument, page);
 						contentStreams.drawImage(pdImage, 25, (833 - height));
-						in.close();
+//						in.close();
 					}
 					i++;
 				}
@@ -617,12 +617,12 @@ public class FinalPDFGenerator {
 //			int scaledWidth = 0;
 //			int ratio = 0;
 //			if(oriHeight > oriWidth) {
-//				ratio = oriHeight / 831;
+//				ratio = oriHeight / 842;
 //				scaledWidth = oriWidth / ratio;
 //				scaledHeight = oriHeight;
 //				
 //			}else {
-//				ratio = oriWidth / 585;
+//				ratio = oriWidth / 595;
 //				scaledHeight = oriHeight / ratio;
 //				scaledWidth = oriWidth;
 //			}
@@ -630,6 +630,7 @@ public class FinalPDFGenerator {
 			float newHeight = PDRectangle.A4.getHeight()-10;
 			float newWidth = PDRectangle.A4.getWidth()-10;
 			contentStream.drawImage(pdImage, 0, 0, newWidth, newHeight);
+//			contentStream.drawImage(pdImage, 0, 0, scaledWidth, scaledHeight);
 			contentStream.close();
 			pdDocument.addPage(page);
 		}
