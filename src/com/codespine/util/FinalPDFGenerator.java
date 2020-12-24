@@ -145,13 +145,14 @@ public class FinalPDFGenerator {
 			}
 		}
 		// attaching external required documents
-		String pdfUrl = getAttachedDocumentURLs(Integer.parseInt(application_id),finalSestinationFilePath);
-		if (StringUtil.isNotNullOrEmpty(pdfUrl)) {
+		String pdfName = getAttachedDocumentURLs(Integer.parseInt(application_id),finalSestinationFilePath);
+		if (StringUtil.isNotNullOrEmpty(pdfName)) {
+			String fileURL = "https://oa1.zebull.in//e_sign/file//uploads//"+application_id+eKYCConstant.WINDOWS_FORMAT_SLASH+folderName+eKYCConstant.WINDOWS_FORMAT_SLASH+pdfName;
 					PDPageTree mergePD = document.getPages();
-					String replacedURL = StringUtil.replace(pdfUrl, " ", "%20");
-//					InputStream inputStream = new URL(replacedURL).openStream();
-					PDDocument pddDocument2 = PDDocument.load(new File(replacedURL));
-//					PDDocument pddDocument2 = PDDocument.load(inputStream);
+					String replacedURL = StringUtil.replace(fileURL, " ", "%20");
+					InputStream inputStream = new URL(replacedURL).openStream();
+//					PDDocument pddDocument2 = PDDocument.load(new File(replacedURL));
+					PDDocument pddDocument2 = PDDocument.load(inputStream);
 					PDPageTree mergePD1 = pddDocument2.getPages();
 					int x = 16;
 					if (mergePD1.getCount() > 1) {
@@ -506,7 +507,8 @@ public class FinalPDFGenerator {
 	 */
 	private static String getAttachedDocumentURLs(int application_id, String finalSestinationFilePath) throws MalformedURLException, IOException {
 		List<String> urls = null;
-		String attachmentURL = finalSestinationFilePath+ eKYCConstant.WINDOWS_FORMAT_SLASH +"attachementFile.pdf";
+		String attachmentFileName = "attachementFile.pdf";
+		String attachmentURL = finalSestinationFilePath+ eKYCConstant.WINDOWS_FORMAT_SLASH +attachmentFileName;
 		List<FileUploadDTO> fileUploadDTOs = eKYCDAO.getInstance().getUploadedFile(application_id);
 		for (FileUploadDTO fileUploadDTO : fileUploadDTOs) {
 			if (StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.EKYC_DOCUMENT)
@@ -539,8 +541,8 @@ public class FinalPDFGenerator {
 						}else {
 							mergePD.add(mergePD1.get(0));
 						}
-//						inputStream.close();
-//						pddDocument2.close();
+						inputStream.close();
+						pddDocument2.close();
 					} else {
 						InputStream in = new URL(replacedURL).openStream();
 						BufferedImage bimg = ImageIO.read(in);
@@ -586,10 +588,10 @@ public class FinalPDFGenerator {
 						} else {
 							pdImage = PDImageXObject.createFromFile(imagePath, pdDocument);
 						}
-						@SuppressWarnings("resource")
 						PDPageContentStream contentStreams = new PDPageContentStream(pdDocument, page);
 						contentStreams.drawImage(pdImage, 25, (833 - height));
-//						in.close();
+						contentStreams.close();
+						in.close();
 					}
 					i++;
 				}
@@ -598,7 +600,7 @@ public class FinalPDFGenerator {
 			pdDocument.close();
 			shrinkPdf(attachmentURL);
 		}
-		return attachmentURL;
+		return attachmentFileName;
 	}
 
 	private static void shrinkPdf(String fileURL) throws InvalidPasswordException, IOException {
