@@ -31,7 +31,7 @@ public class BackOfficeService {
 	public static void sendBackOffice(int applicationId) {
 		eKYCDTO userApplicationDetails = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (userApplicationDetails != null) {
-			String parameter = declareVariable(userApplicationDetails, "TN3", "GOWRISANKAR", "GOWRISANKAR", "DON");
+			String parameter = declareVariable(userApplicationDetails, "TN3", "THEDEMO", "GOWRISANKAR", "DON");
 			BackOfficeRestService.getInstance().postDataToBackEnd(parameter);
 			System.out.println(parameter);
 		}
@@ -140,20 +140,20 @@ public class BackOfficeService {
 			/*
 			 * name and family details
 			 */
-			String first_name = userApplicationDetails.getPanCardDetailsDTO().getFirst_name();
-			String middle_name = userApplicationDetails.getPanCardDetailsDTO().getMiddle_name();
-			String last_name = userApplicationDetails.getPanCardDetailsDTO().getLast_name();
-			String client_name = userApplicationDetails.getPanCardDetailsDTO().getApplicant_name();
-			String pan_name = userApplicationDetails.getPanCardDetailsDTO().getApplicant_name();
-			String father_husband_name = userApplicationDetails.getPersonalDetailsDTO().getFathersName();
-			String mother_name = userApplicationDetails.getPersonalDetailsDTO().getMothersName();
+			String first_name = userApplicationDetails.getPanCardDetailsDTO().getFirst_name().toUpperCase();
+			String middle_name = userApplicationDetails.getPanCardDetailsDTO().getMiddle_name().toUpperCase();
+			String last_name = userApplicationDetails.getPanCardDetailsDTO().getLast_name().toUpperCase();
+			String client_name = userApplicationDetails.getPanCardDetailsDTO().getApplicant_name().toUpperCase();
+			String pan_name = userApplicationDetails.getPanCardDetailsDTO().getApplicant_name().toUpperCase();
+			String father_husband_name = userApplicationDetails.getPersonalDetailsDTO().getFathersName().toUpperCase();
+			String mother_name = userApplicationDetails.getPersonalDetailsDTO().getMothersName().toUpperCase();
 
 			/**
 			 * Bank Details
 			 */
 			// String tempBankAccountType =
 			// userApplicationDetails.getBankDetailsDTO().getAccount_type();
-			String not_bankactype = userApplicationDetails.getBankDetailsDTO().getAccount_type();
+			String not_bankactype = userApplicationDetails.getBankDetailsDTO().getAccount_type().toUpperCase();
 			// if (tempBankAccountType.equalsIgnoreCase("SAVING")) {
 			// not_bankactype = "S";
 			// } else {
