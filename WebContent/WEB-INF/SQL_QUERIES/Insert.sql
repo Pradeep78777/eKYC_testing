@@ -69,4 +69,24 @@ update ekyc.tbl_pdf_orgins set coordinates = '78,320'  where id = 79 and page_nu
 update ekyc.tbl_pdf_orgins set coordinates = '217,320'  where id = 80 and page_number = 3;
 update ekyc.tbl_pdf_orgins set coordinates = '291,290'  where id = 61 and page_number = 7;
 update ekyc.tbl_pdf_orgins set coordinates = '458,333'  where id = 119 and page_number = 2;
-
+--24/12/2020
+CREATE TABLE `ekyc`.`tbl_payment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `amount` int(11) DEFAULT NULL,
+  `currency` varchar(45) DEFAULT NULL,
+  `receipt` varchar(45) DEFAULT NULL,
+  `razorpay_signature` varchar(500) DEFAULT NULL,
+  `razorpay_order_id` varchar(45) DEFAULT NULL,
+  `razorpay_payment_id` varchar(45) DEFAULT NULL,
+  `amount_paid` int(11) DEFAULT NULL,
+  `created_at` varchar(45) DEFAULT NULL,
+  `amount_due` int(11) DEFAULT NULL,
+  `payment_id` varchar(45) DEFAULT NULL,
+  `entity` varchar(45) DEFAULT NULL,
+  `offer_id` varchar(45) DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `attempts` int(11) DEFAULT NULL,
+  `notes` varchar(45) DEFAULT NULL,
+  `refer_id` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;

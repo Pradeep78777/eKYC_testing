@@ -27,7 +27,8 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.imgscalr.Scalr;
-
+import org.json.JSONObject;
+@SuppressWarnings({"unused","deprecation"})
 public class Test {
 	static String img1 = "http://rest.irongates.in/pic/0-1.jpg";
 	static String img2 = "http://rest.irongates.in/pic/1.png";
@@ -44,12 +45,25 @@ public class Test {
 //		File file = new File("C:\\Users\\prade\\Downloads\\ekyc_pdf\\2" + eKYCConstant.PDF_FILE_EXTENSION);
 //		PDDocument document = PDDocument.load(file);
 //		pdfimageInserter(0, document, 474.5f, 594, pdf, "1", "E:\\ekyc\\2");
-		
-		shrinkgOnePage();
+		checkPayment();
+//		shrinkgOnePage();
 		
 	}
 
-	@SuppressWarnings("unused")
+	private static void checkPayment() {
+		JSONObject bankJSON = new JSONObject();
+			bankJSON.put(eKYCConstant.CONST_BANK_ACCOUNT_NUMBER,"1123");
+			bankJSON.put(eKYCConstant.CONST_BANK_NAME, "NAME");
+			bankJSON.put(eKYCConstant.CONST_BANK_IFSC, "IFSC");
+		JSONObject orderRequest = new JSONObject();
+		orderRequest.put(eKYCConstant.AMOUNT, 1*100); 
+		orderRequest.put(eKYCConstant.METHOD, eKYCConstant.BANKING_VIA);
+		orderRequest.put(eKYCConstant.CURRENCY, eKYCConstant.RAZORPAY_CURRENCY_INR);
+		orderRequest.put(eKYCConstant.RECEIPT, 1);
+		orderRequest.put(eKYCConstant.CONST_BANK_ACCOUNT,bankJSON);
+		System.out.println(orderRequest);
+	}
+
 	private static void changePdfSizes(String pdfURL, float pdfConstantHeight2, float pdfConstantWidth2, String string)
 			throws MalformedURLException, IOException {
 		PDDocument pddDocument1 = new PDDocument();
@@ -136,7 +150,6 @@ public class Test {
 	 * @param finalSestinationFilePath
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unused")
 	private static void pdfimageInserter(int pageNumber, PDDocument document, float xValue, int yValue, String image,
 			String application_id, String finalSestinationFilePath) throws IOException {
 		InputStream in = new URL(image).openStream();
@@ -227,7 +240,6 @@ public class Test {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void pdfTextInserter(PDDocument document, String insertValue, int xValue, int yValue)
 			throws Exception {
 		PDPage page = document.getPage(0);
