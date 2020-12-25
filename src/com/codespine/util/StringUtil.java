@@ -111,4 +111,15 @@ public class StringUtil {
 		}
 		return isContains;
 	}
+	public static String convertConditionsListToString(List<String> conditions){
+		String stringConditions = "";
+		int size = conditions.size();
+		for(int i=0; i< size; i++){
+			stringConditions = stringConditions + " "+ conditions.get(i) + " ";
+			if((i +1)< size){
+				stringConditions = stringConditions + " and ";
+			}
+		}
+		return stringConditions;
+	}
 }
