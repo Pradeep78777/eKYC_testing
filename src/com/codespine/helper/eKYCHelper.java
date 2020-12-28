@@ -8,6 +8,7 @@ import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
+import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.eKYCDTO;
@@ -85,6 +86,13 @@ public class eKYCHelper {
 			if(exchDetailsDTO != null) {
 				eKYCDTO.setExchDetailsDTO(exchDetailsDTO);
 				eKYCDTO.getForPDFKeyValue().putAll(exchDetailsDTO.getForPDFKeyValue());
+			}
+		}
+		if(applicationMasterDTO.isAttachementRequired()) {
+			FileUploadDTO fileUploadDTO = eKYCDAO.getInstance().getAttachmentDetails(applicationId);
+			if(fileUploadDTO != null) {
+				eKYCDTO.setFileUploadDTO(fileUploadDTO);
+				eKYCDTO.getForPDFKeyValue().putAll(fileUploadDTO.getForPDFKeyValue());
 			}
 		}
 		return eKYCDTO;

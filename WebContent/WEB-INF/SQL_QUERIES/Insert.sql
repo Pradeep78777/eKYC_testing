@@ -90,3 +90,6 @@ CREATE TABLE `ekyc`.`tbl_payment` (
   `refer_id` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+--28/12/2020
+insert into ekyc.tbl_pdf_orgins (column_name,coordinates,is_default,page_number,is_value_reduced) values
+('proofType','138,468',0,2,0);

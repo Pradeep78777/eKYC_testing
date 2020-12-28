@@ -2604,4 +2604,42 @@ public class eKYCDAO {
 			}
 		}
 	}
+
+	public FileUploadDTO getAttachmentDetails(int applicationId) {
+		FileUploadDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		HashMap<String, String> json = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT attachement_type , attachement_url , type_of_proof FROM tbl_application_attachements where application_id = ? and attachement_type = 'ADDRESS' ");
+			pStmt.setInt(paromPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					json = new HashMap<String, String>();
+					result = new FileUploadDTO();
+					result.setProofType(rSet.getString("attachement_type"));
+					result.setProof(rSet.getString("attachement_url"));
+					result.setTypeOfProof(rSet.getString("type_of_proof"));
+					json.put("proofType", rSet.getString("type_of_proof"));
+					result.setForPDFKeyValue(json);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 }
