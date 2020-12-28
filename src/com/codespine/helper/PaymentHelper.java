@@ -89,7 +89,7 @@ public class PaymentHelper {
 		boolean isEqual = false;
 		JSONObject orderRequest = new JSONObject();
 		orderRequest.put(eKYCConstant.AMOUNT, dto.getAmount()); 
-		orderRequest.put(eKYCConstant.CURRENCY, dto.getCurrency());
+		orderRequest.put(eKYCConstant.CURRENCY, eKYCConstant.RAZORPAY_CURRENCY_INR);
 		orderRequest.put(eKYCConstant.RECEIPT, dto.getReceipt());
 		orderRequest.put(eKYCConstant.RAZORPAY_ORDERID, dto.getRazorpay_order_id());
 		orderRequest.put(eKYCConstant.RAZORPAY_PAYMENTID, dto.getRazorpay_payment_id());
