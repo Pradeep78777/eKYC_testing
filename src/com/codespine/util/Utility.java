@@ -1,11 +1,14 @@
 package com.codespine.util;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -24,6 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -53,6 +57,8 @@ import com.codespine.service.AccessLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsdl.esign.preverifiedNo.controller.EsignApplication;
 
+import sun.misc.BASE64Encoder;
+
 @SuppressWarnings("unchecked")
 public class Utility {
 
@@ -60,8 +66,7 @@ public class Utility {
 	 * Method to create the show url for the IPV
 	 * 
 	 * @author GOWRI SANKAR R
-	 * @param Long
-	 *            URL
+	 * @param Long URL
 	 * @return
 	 */
 	public static String getBitlyLink(String longLink) {
@@ -134,8 +139,8 @@ public class Utility {
 	}
 
 	/**
-	 * To create the random Alpha numeric String for sending the email
-	 * Verification Link
+	 * To create the random Alpha numeric String for sending the email Verification
+	 * Link
 	 * 
 	 * @author GOWRI SANKAR R
 	 */
@@ -985,5 +990,30 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return success;
+	}
+
+	/**
+	 * Method to convert the image to base64
+	 * 
+	 * @author GOWRI SANKAR
+	 * @param imageUrl
+	 * @return
+	 */
+	public static String imageToBase64(String imageUrl) {
+		String base64Image = "";
+		try {
+			String replacedURL = StringUtil.replace(imageUrl, " ", "%20");
+			InputStream in = new URL(replacedURL).openStream();
+			BufferedImage bimg = ImageIO.read(in);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ImageIO.write(bimg, "png", bos);
+			BASE64Encoder encoder = new BASE64Encoder();
+			base64Image = encoder.encode(bos.toByteArray());
+//			System.out.print(base64Image);
+			bos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return base64Image;
 	}
 }

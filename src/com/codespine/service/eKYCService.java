@@ -182,8 +182,8 @@ public class eKYCService {
 		} else {
 			result = new PersonalDetailsDTO();
 			/**
-			 * if there is no result create the new application with given
-			 * mobile number and email
+			 * if there is no result create the new application with given mobile number and
+			 * email
 			 */
 			String otp = Utility.generateOTP();
 			pDto.setOtp(Integer.parseInt(otp));
@@ -222,8 +222,8 @@ public class eKYCService {
 				}
 
 				/**
-				 * Create the Seesion id for the and keep the session valid for
-				 * the another 30 mins
+				 * Create the Seesion id for the and keep the session valid for the another 30
+				 * mins
 				 */
 				String sessionId = Utility.createAndStoreSeesionInCache(pDto.getMobile_number() + "");
 				JSONObject result = new JSONObject();
@@ -278,8 +278,7 @@ public class eKYCService {
 				 */
 
 				/**
-				 * To create the create the jks file for the given application
-				 * id
+				 * To create the create the jks file for the given application id
 				 */
 				NsdlPanVerificationRestService.pfx2JksFile(pDto.getApplication_id());
 				/**
@@ -737,8 +736,7 @@ public class eKYCService {
 					}
 				}
 				/**
-				 * Copy the example document to the given Application id
-				 * location
+				 * Copy the example document to the given Application id location
 				 */
 				// Utility.exampleDocumentToNewUser(CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_EXAMPLE_DOCUMENT),
 				// filePath);
@@ -1077,6 +1075,11 @@ public class eKYCService {
 		if (pDto.getApplication_id() > 0) {
 			JSONObject result = eKYCDAO.getInstance().getIvrDetails(pDto.getApplication_id());
 			if (result != null) {
+				/**
+				 * Convert the image to base 64 and append in the result
+				 */
+				String base64Image = Utility.imageToBase64((String) result.get("ivr_image"));
+				result.put("base64Image", base64Image);
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
 				response.setResult(result);
@@ -1304,8 +1307,7 @@ public class eKYCService {
 							 */
 							eKYCDAO.getInstance().updateTxnStatus(1, txnName);
 							/**
-							 * check and update the url details in attchements
-							 * details
+							 * check and update the url details in attchements details
 							 */
 							int checkId = eKYCDAO.getInstance().checkFileUploaded(applicationNumber.getApplication_id(),
 									eKYCConstant.SIGNED_EKYC_DOCUMENT);
