@@ -160,12 +160,6 @@ public class FinalPDFGenerator {
 						for(int ii= mergePD1.getCount() - 1 ;ii >=0 ;ii--) {
 							mergePD.insertAfter(mergePD1.get(ii), document.getPage(x));
 						}
-//						for(int iii = 0;iii <= mergePD1.getCount(); iii++ ) {
-//							
-//						}
-//						for (PDPage page : mergePD1) {
-//							mergePD.insertAfter(page, document.getPage(x));
-//						}
 					}else {
 						PDPage page = mergePD1.get(0);
 						mergePD.insertAfter(page, document.getPage(x));
@@ -334,7 +328,7 @@ public class FinalPDFGenerator {
 				int ratio = bimg.getHeight() / 100;
 				scaledWidth = bimg.getWidth() / ratio;
 				if(scaledWidth >= 100) {
-					scaledHeight = 100;
+					scaledWidth = 100;
 				}
 			}
 		}
@@ -572,7 +566,6 @@ public class FinalPDFGenerator {
 	 */
 	private static List<String> getAttachedDocumentURLs(int application_id, String finalSestinationFilePath) throws MalformedURLException, IOException {
 		List<String> urls = null;
-//		String attachmentURL = finalSestinationFilePath+ eKYCConstant.WINDOWS_FORMAT_SLASH +"attachementFile.pdf";
 		List<FileUploadDTO> fileUploadDTOs = eKYCDAO.getInstance().getUploadedFile(application_id);
 		for (FileUploadDTO fileUploadDTO : fileUploadDTOs) {
 			if (StringUtil.isNotEqual(fileUploadDTO.getProofType(), eKYCConstant.EKYC_DOCUMENT)
@@ -586,85 +579,6 @@ public class FinalPDFGenerator {
 				}
 			}
 		}
-//		if(urls != null) {
-//			PDDocument pdDocument = new PDDocument();
-//			for(String url:urls) {
-//				System.out.println(url);
-//				if(StringUtil.isNotNullOrEmpty(url)) {
-//				int i = 1;
-//					String replacedURL = StringUtil.replace(url, " ", "%20");
-//					if (StringUtil.isStrContainsWithEqIgnoreCase(url, ".pdf")) {
-//						InputStream inputStream = new URL(replacedURL).openStream();
-//						PDPageTree mergePD = pdDocument.getPages();
-//						PDDocument pddDocument2 = PDDocument.load(inputStream);
-//						PDPageTree mergePD1 = pddDocument2.getPages();
-//						int x = 1;
-//						if (mergePD1.getCount() > 1) {
-//							for (PDPage page : mergePD1) {
-//								mergePD.add(page);
-//							}
-//						}else {
-//							mergePD.add(mergePD1.get(0));
-//							x++;
-//						}
-//						inputStream.close();
-//					} else {
-//						InputStream in = new URL(replacedURL).openStream();
-//						BufferedImage bimg = ImageIO.read(in);
-//						PDPage page = new PDPage(new PDRectangle(612, 858));
-//						pdDocument.addPage(page);
-//						float ratio = 0f;
-//						if (bimg.getWidth() < bimg.getHeight()) {
-//							ratio = 562f / (float) (bimg.getHeight());
-//						} else {
-//							ratio = 562f / (float) (bimg.getWidth());
-//						}
-//						int width = (int) (bimg.getWidth() * ratio);
-//						int height = (int) (bimg.getHeight() * ratio);
-//						BufferedImage scaledImg = Scalr.resize(bimg, width, height);
-//						ByteArrayOutputStream os = new ByteArrayOutputStream();
-//						String imagePath = "";
-//						if (StringUtil.isStrContainsWithEqIgnoreCase(url, "png")) {
-//							ImageIO.write(scaledImg, "png", os);
-//							imagePath = finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id + i
-//									+ "-1.png";
-//						} else {
-//							ImageIO.write(scaledImg, "jpeg", os);
-//							imagePath = finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + application_id + i
-//									+ "-1.jpg";
-//						}
-//						InputStream is = new ByteArrayInputStream(os.toByteArray());
-//						int read = 0;
-//						System.out.println(imagePath);
-//						OutputStream out = new FileOutputStream(imagePath);
-//						byte[] bytes = new byte[1024];
-//						while ((read = is.read(bytes)) != -1) {
-//							out.write(bytes, 0, read);
-//						}
-//						out.flush();
-//						out.close();
-//						is.close();
-//						os.close();
-//						PDImageXObject pdImage = null;
-//						if (StringUtil.isStrContainsWithEqIgnoreCase(url, "png")) {
-//							File f = new File(imagePath);
-//							BufferedImage bimg1 = ImageIO.read(f);
-//							pdImage = LosslessFactory.createFromImage(pdDocument, bimg1);
-//						} else {
-//							pdImage = PDImageXObject.createFromFile(imagePath, pdDocument);
-//						}
-//						PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page);
-//						contentStream.drawImage(pdImage, 25, (833 - height));
-//						contentStream.close();
-//						in.close();
-//					}
-//					i++;
-//				}
-//			}
-//			pdDocument.save(attachmentURL);
-//			pdDocument.close();
-//			shrinkPdf(attachmentURL);
-//		}
 		return urls;
 	}
 
