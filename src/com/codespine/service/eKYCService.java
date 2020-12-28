@@ -813,6 +813,7 @@ public class eKYCService {
 			applicationMasterDTO.setPanCardDetailRequired(true);
 			applicationMasterDTO.setPermanentAddressRequired(true);
 			applicationMasterDTO.setExchDetailsRequired(true);
+			applicationMasterDTO.setAttachementRequired(true);
 			eKYCDTO = eKYCHelper.getInstance().populateRerquiredFields(applicationMasterDTO, eKYCDTO);
 		}
 		return eKYCDTO;

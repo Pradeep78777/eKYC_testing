@@ -148,6 +148,7 @@ public class FinalPDFGenerator {
 		List<String> urls = getAttachedDocumentURLs(Integer.parseInt(application_id),finalSestinationFilePath);
 		if (urls != null) {
 			int i = 1;
+			int x = 16;
 			for (String url : urls) {
 				String replacedURL = StringUtil.replace(url, " ", "%20");
 				if (StringUtil.isStrContainsWithEqIgnoreCase(url, ".pdf")) {
@@ -155,11 +156,16 @@ public class FinalPDFGenerator {
 					PDPageTree mergePD = document.getPages();
 					PDDocument pddDocument2 = PDDocument.load(inputStream);
 					PDPageTree mergePD1 = pddDocument2.getPages();
-					int x = 16;
 					if (mergePD1.getCount() > 1) {
-						for (PDPage page : mergePD1) {
-							mergePD.insertAfter(page, document.getPage(x));
+						for(int ii= mergePD1.getCount() - 1 ;ii >=0 ;ii--) {
+							mergePD.insertAfter(mergePD1.get(ii), document.getPage(x));
 						}
+//						for(int iii = 0;iii <= mergePD1.getCount(); iii++ ) {
+//							
+//						}
+//						for (PDPage page : mergePD1) {
+//							mergePD.insertAfter(page, document.getPage(x));
+//						}
 					}else {
 						PDPage page = mergePD1.get(0);
 						mergePD.insertAfter(page, document.getPage(x));
@@ -683,7 +689,9 @@ public class FinalPDFGenerator {
 
 			pdDocument.addPage(page);
 		}
-
+		PDPage page1 = new PDPage(PDRectangle.A4);
+		PDPageTree mergePD = pdDocument.getPages();
+		mergePD.insertAfter(page1, pdDocument.getPage(pdDocument.getNumberOfPages()-1));
 		pdDocument.save(fileURL);
 		pdDocument.close();
 	}

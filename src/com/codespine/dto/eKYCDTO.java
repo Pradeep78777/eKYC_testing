@@ -6,6 +6,7 @@ import java.util.Map;
 public class eKYCDTO {
 		private ApplicationMasterDTO applicationMasterDTO;
 		private AddressDTO addressDTO;
+		private FileUploadDTO fileUploadDTO;
 		private AddressDTO PermanentAddressDTO;
 		private BankDetailsDTO bankDetailsDTO;
 		private PanCardDetailsDTO panCardDetailsDTO;
@@ -21,6 +22,7 @@ public class eKYCDTO {
 		private List<ResponseDTO> responseDTOs;
 		private AccountHolderDetailsDTO accountHolderDetailsDTO;
 		private List<AccountHolderDetailsDTO> accountHolderDetailsDTOs;
+		private List<FileUploadDTO> fileUploadDTOs;
 		private List<ExchDetailsDTO> exchDetailsDTOs;
 		private Map<String,String>  forPDFKeyValue; 
 		public ApplicationMasterDTO getApplicationMasterDTO() {
@@ -136,6 +138,18 @@ public class eKYCDTO {
 		}
 		public void setExchDetailsDTOs(List<ExchDetailsDTO> exchDetailsDTOs) {
 			this.exchDetailsDTOs = exchDetailsDTOs;
+		}
+		public FileUploadDTO getFileUploadDTO() {
+			return fileUploadDTO;
+		}
+		public void setFileUploadDTO(FileUploadDTO fileUploadDTO) {
+			this.fileUploadDTO = fileUploadDTO;
+		}
+		public List<FileUploadDTO> getFileUploadDTOs() {
+			return fileUploadDTOs;
+		}
+		public void setFileUploadDTOs(List<FileUploadDTO> fileUploadDTOs) {
+			this.fileUploadDTOs = fileUploadDTOs;
 		}
 		
 }

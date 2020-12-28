@@ -28,6 +28,7 @@ public class ApplicationMasterDTO {
 	private boolean isPermanentAddressRequired;
 	private boolean isTPAccessLogRequired;
 	private boolean isExchDetailsRequired;
+	private boolean isAttachementRequired;
 	private Map<String,String>  forPDFKeyValue;
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -61,6 +62,12 @@ public class ApplicationMasterDTO {
 	}
 	public int getMobile_no_verified() {
 		return mobile_no_verified;
+	}
+	public boolean isAttachementRequired() {
+		return isAttachementRequired;
+	}
+	public void setAttachementRequired(boolean isAttachementRequired) {
+		this.isAttachementRequired = isAttachementRequired;
 	}
 	public void setMobile_no_verified(int mobile_no_verified) {
 		this.mobile_no_verified = mobile_no_verified;
