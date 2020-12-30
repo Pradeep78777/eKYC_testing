@@ -66,7 +66,8 @@ public class Utility {
 	 * Method to create the show url for the IPV
 	 * 
 	 * @author GOWRI SANKAR R
-	 * @param Long URL
+	 * @param Long
+	 *            URL
 	 * @return
 	 */
 	public static String getBitlyLink(String longLink) {
@@ -139,8 +140,8 @@ public class Utility {
 	}
 
 	/**
-	 * To create the random Alpha numeric String for sending the email Verification
-	 * Link
+	 * To create the random Alpha numeric String for sending the email
+	 * Verification Link
 	 * 
 	 * @author GOWRI SANKAR R
 	 */
@@ -409,14 +410,30 @@ public class Utility {
 		System.out.println(resp.length);
 		if (resp.length > 3) {
 			response.put("responseCode", resp[0]);
-			response.put("panCard", resp[1]);
-			response.put("panCardStatus", resp[2]);
-			response.put("lastName", resp[3]);
-			response.put("firstName", resp[4]);
-			response.put("middleName", resp[5]);
-			response.put("panTittle", resp[6]);
-			response.put("lastUpdatedDate", resp[7]);
-			response.put("nameOnCard", resp[8]);
+			if (resp.length > 1) {
+				response.put("panCard", resp[1]);
+			}
+			if (resp.length > 2) {
+				response.put("panCardStatus", resp[2]);
+			}
+			if (resp.length > 3) {
+				response.put("lastName", resp[3]);
+			}
+			if (resp.length > 4) {
+				response.put("firstName", resp[4]);
+			}
+			if (resp.length > 5) {
+				response.put("middleName", resp[5]);
+			}
+			if (resp.length > 6) {
+				response.put("panTittle", resp[6]);
+			}
+			if (resp.length > 7) {
+				response.put("lastUpdatedDate", resp[7]);
+			}
+			if (resp.length > 8) {
+				response.put("nameOnCard", resp[8]);
+			}
 			if (resp.length > 9) {
 				response.put("aadhaar seeding status", resp[9]);
 			}
@@ -1009,7 +1026,7 @@ public class Utility {
 			ImageIO.write(bimg, "png", bos);
 			BASE64Encoder encoder = new BASE64Encoder();
 			base64Image = encoder.encode(bos.toByteArray());
-//			System.out.print(base64Image);
+			// System.out.print(base64Image);
 			bos.close();
 		} catch (Exception e) {
 			e.printStackTrace();

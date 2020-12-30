@@ -1,5 +1,11 @@
 package com.codespine.controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.Writer;
 import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
@@ -786,7 +792,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		if (!randomKey.isEmpty() && randomKey.equalsIgnoreCase("")) {
+		if (randomKey != null && !randomKey.isEmpty() && !randomKey.equalsIgnoreCase("")) {
 			response = eKYCService.getInstance().uploadIvrMobile(ivrImage, ivrLat, ivrLong, applicationId,
 					request.getHeader("X-Forwarded-For"), request.getHeader("user-agent"), randomKey);
 		} else {
@@ -794,14 +800,6 @@ public class eKYCController {
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.INVALID_RANDOM_KEY);
 		}
-		return response;
-	}
-
-	@POST
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Path("/getNsdlXML")
-	public Response getNsdlXML(@FormDataParam("msg") String msg) {
-		Response response = eKYCService.getInstance().getNsdlXML(msg);
 		return response;
 	}
 
@@ -940,6 +938,76 @@ public class eKYCController {
 		ResponseDTO response = new ResponseDTO();
 		response = eKYCService.getInstance().checkPasswordProtected(proof);
 		return response;
+	}
+
+	// @POST
+	// @Consumes(MediaType.MULTIPART_FORM_DATA)
+	// @Produces(MediaType.TEXT_HTML)
+	// @Path("/getNsdlXML")
+	// public InputStream getNsdlXML(@FormDataParam("msg") String msg) {
+	// try {
+	// String response = eKYCService.getInstance().getNsdlXML(msg);
+	// if (response != null && !response.isEmpty() &&
+	// !response.equalsIgnoreCase("")) {
+	// String signedPdfUrl = "function openWin() { window.open('" + response +
+	// "' ,'_self' );}";
+	// String htmlUrl =
+	// CSEnvVariables.getMethodNames(eKYCConstant.HTML_STARTING) + signedPdfUrl
+	// + CSEnvVariables.getMethodNames(eKYCConstant.HTML_ENDING);
+	// File testFile = new File("signed_pdf.html");
+	// Writer writer = new BufferedWriter(new FileWriter(testFile));
+	// writer.write(htmlUrl);
+	// writer.close();
+	// return new FileInputStream(testFile);
+	// } else {
+	// String responseUrl = "<!DOCTYPE html><html><head><title>Zebull
+	// E-KYC</title><style>.myDiv { text-align: center; position: absolute;
+	// left: 40%; top: 50%;}</style></head><body><div class='myDiv'> <h1> Sorry
+	// something went wrong</h1></div></body></html>";
+	// File testFile = new File("signed_pdf.html");
+	// Writer writer = new BufferedWriter(new FileWriter(testFile));
+	// writer.write(responseUrl);
+	// writer.close();
+	// return new FileInputStream(testFile);
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
+
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.TEXT_HTML)
+	@Path("/getNsdlXML")
+	public Response getNsdlXML(@FormDataParam("msg") String msg) {
+		try {
+			Response response = eKYCService.getInstance().getNsdlXML(msg);
+			return response;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	@Path("/htmlCheck")
+	public InputStream htmlCheck() {
+		try {
+			String tempStarting = "<!DOCTYPE html><html><head><title>Zebull E-KYC</title><style>.myDiv {text-align: center;position: absolute;left: 45%; top: 50%;}.colorClass{background: #007aff;border: 2px solid #007aff; border-radius: 3px;  color: #fff; font-size: 16px;width: 100%; font-weight: 600;height: 40px;}</style><script>";
+			String mainString = "function openWin() {  window.open('https://oa1.zebull.in//e_sign/file//uploads//1//PANCARD//motivational-10.jpg' ,'_self' );}";
+			String endStrign = "</script></head><body><div class='myDiv'> <input type='button' class='colorClass' value='Download E-sign Document' onclick='openWin()'></div></body></html>";
+			String mainText = tempStarting + mainString + endStrign;
+			File testFile = new File("signed_pdf.html");
+			Writer writer = new BufferedWriter(new FileWriter(testFile));
+			writer.write(mainText);
+			writer.close();
+			return new FileInputStream(testFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

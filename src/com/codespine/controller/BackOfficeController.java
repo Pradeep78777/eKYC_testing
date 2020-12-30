@@ -12,6 +12,13 @@ import com.codespine.service.BackOfficeService;
 
 @Path("/backOffice")
 public class BackOfficeController {
+	/**
+	 * Method to push the datan to the back office
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
 	@POST
 	@Path("/pushDataToBackOffice")
 	@Consumes(MediaType.APPLICATION_JSON)

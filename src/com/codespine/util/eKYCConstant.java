@@ -62,7 +62,7 @@ public class eKYCConstant {
 	public static final String INVALID_PANCARD = "Your pan Card is invalid";
 	public static final String EXCH_DETAILS_UPDATED_SUCESSFULLY = "Exch deatils are updated sucessfully";
 
-	public static final String PROOF_UPLOADED_SUCESSFULLY = "Proof uploaded Sucessfully";
+	public static final String PROOF_UPLOADED_SUCESSFULLY = "Proof uploaded sucessfully";
 	public static final String FILE_CANNOT_BE_EMPTY = "File cannot be empty";
 
 	public static final String IVR_DETAILS_UPDATED_SUCESSFULLY = "Ivr Details updated sucessfully";
@@ -213,20 +213,23 @@ public class eKYCConstant {
 
 	public static final String IPV_TIMEOUT_URL = "URL is Timeout please create the url and try again";
 	public static final String INVALID_RANDOM_KEY = "Invalid random key ";
-	public static final String AMOUNT									= "amount";
-	public static final String CURRENCY									= "currency";
-	public static final String METHOD									= "method";
-	public static final String RECEIPT									= "receipt";
-	public static final String BANKING_VIA								= "netbanking";
-	public static final String RAZORPAY_ORDERID							= "razorpay_order_id";
-	public static final String RAZORPAY_PAYMENTID						= "razorpay_payment_id";
-	public static final String RAZORPAY_SIGNATURE						= "razorpay_signature";
-	public static final String RAZORPAY_CURRENCY_INR					= "INR";
-	public static final String CONST_BANK_ACCOUNT 						= "bank_account";
-	public static final String CONST_BANK_ACCOUNT_NUMBER				= "account_number";
-	public static final String CONST_BANK_NAME							= "name";
-	public static final String CONST_BANK_IFSC							= "ifsc";
-	public static final String CONST_PAYMENT_KEY 						= "paymentKey";
-	public static final String CONST_PAYMENT_SECRET 					= "paymentsecret"; 
+	public static final String AMOUNT = "amount";
+	public static final String CURRENCY = "currency";
+	public static final String METHOD = "method";
+	public static final String RECEIPT = "receipt";
+	public static final String BANKING_VIA = "netbanking";
+	public static final String RAZORPAY_ORDERID = "razorpay_order_id";
+	public static final String RAZORPAY_PAYMENTID = "razorpay_payment_id";
+	public static final String RAZORPAY_SIGNATURE = "razorpay_signature";
+	public static final String RAZORPAY_CURRENCY_INR = "INR";
+	public static final String CONST_BANK_ACCOUNT = "bank_account";
+	public static final String CONST_BANK_ACCOUNT_NUMBER = "account_number";
+	public static final String CONST_BANK_NAME = "name";
+	public static final String CONST_BANK_IFSC = "ifsc";
+	public static final String CONST_PAYMENT_KEY = "paymentKey";
+	public static final String CONST_PAYMENT_SECRET = "paymentsecret";
+
+	public static final String HTML_STARTING = "htmlStarting";
+	public static final String HTML_ENDING = "htmlEnding";
 
 }

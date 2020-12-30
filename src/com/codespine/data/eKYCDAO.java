@@ -2625,7 +2625,7 @@ public class eKYCDAO {
 					result.setProofType(rSet.getString("attachement_type"));
 					result.setProof(rSet.getString("attachement_url"));
 					result.setTypeOfProof(rSet.getString("type_of_proof"));
-					json.put("proofType", rSet.getString("type_of_proof"));
+					json.put("proofType", rSet.getString("type_of_proof").toUpperCase());
 					result.setForPDFKeyValue(json);
 				}
 			}
