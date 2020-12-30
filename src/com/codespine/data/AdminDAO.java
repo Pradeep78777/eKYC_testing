@@ -614,14 +614,16 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT admin_email, admin_password FROM tbl_admin_details where admin_email = ? ");
+					"SELECT name, admin_email, admin_password, designation FROM tbl_admin_details where admin_email = ? ");
 			pStmt.setString(paromPos++, pDto.getEmail());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
 					result = new AdminDTO();
+					result.setName(rSet.getString("name"));
 					result.setEmail(rSet.getString("admin_email"));
 					result.setPassword(rSet.getString("admin_password"));
+					result.setDesignation(rSet.getString("designation"));
 				}
 			}
 		} catch (Exception e) {

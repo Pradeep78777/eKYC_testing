@@ -182,8 +182,8 @@ public class eKYCService {
 		} else {
 			result = new PersonalDetailsDTO();
 			/**
-			 * if there is no result create the new application with given mobile number and
-			 * email
+			 * if there is no result create the new application with given
+			 * mobile number and email
 			 */
 			String otp = Utility.generateOTP();
 			pDto.setOtp(Integer.parseInt(otp));
@@ -222,8 +222,8 @@ public class eKYCService {
 				}
 
 				/**
-				 * Create the Seesion id for the and keep the session valid for the another 30
-				 * mins
+				 * Create the Seesion id for the and keep the session valid for
+				 * the another 30 mins
 				 */
 				String sessionId = Utility.createAndStoreSeesionInCache(pDto.getMobile_number() + "");
 				JSONObject result = new JSONObject();
@@ -278,7 +278,8 @@ public class eKYCService {
 				 */
 
 				/**
-				 * To create the create the jks file for the given application id
+				 * To create the create the jks file for the given application
+				 * id
 				 */
 				NsdlPanVerificationRestService.pfx2JksFile(pDto.getApplication_id());
 				/**
@@ -736,7 +737,8 @@ public class eKYCService {
 					}
 				}
 				/**
-				 * Copy the example document to the given Application id location
+				 * Copy the example document to the given Application id
+				 * location
 				 */
 				// Utility.exampleDocumentToNewUser(CSEnvVariables.getProperty(eKYCConstant.FILE_PATH_EXAMPLE_DOCUMENT),
 				// filePath);
@@ -1148,7 +1150,7 @@ public class eKYCService {
 						if (isSucessFull) {
 							response.setStatus(eKYCConstant.SUCCESS_STATUS);
 							response.setMessage(eKYCConstant.SUCCESS_MSG);
-							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
+							response.setReason(eKYCConstant.PROOF_UPLOADED_SUCESSFULLY);
 						} else {
 							response.setStatus(eKYCConstant.FAILED_STATUS);
 							response.setMessage(eKYCConstant.FAILED_MSG);
@@ -1161,7 +1163,7 @@ public class eKYCService {
 							peKYCDao.updateApplicationStatus(applicationId, eKYCConstant.ATTACHEMENT_UPLOADED);
 							response.setStatus(eKYCConstant.SUCCESS_STATUS);
 							response.setMessage(eKYCConstant.SUCCESS_MSG);
-							response.setReason(eKYCConstant.EXCH_DETAILS_UPDATED_SUCESSFULLY);
+							response.setReason(eKYCConstant.PROOF_UPLOADED_SUCESSFULLY);
 						} else {
 							response.setStatus(eKYCConstant.FAILED_STATUS);
 							response.setMessage(eKYCConstant.FAILED_MSG);
@@ -1292,14 +1294,10 @@ public class eKYCService {
 											+ eKYCConstant.PDF_FILE_EXTENSION,
 									filePath, msg, applicationNumber.getApplicant_name(), applicationNumber.getCity());
 						} else {
-							resposne = Utility
-									.getSignFromNsdl(
-											filePath + eKYCConstant.WINDOWS_FORMAT_SLASH
-													+ eKYCDAO.getInstance()
-															.getFileLocation(eKYCConstant.CONSTANT_PDF_NAME)
-													+ eKYCConstant.PDF_FILE_EXTENSION,
-											filePath, msg, applicationNumber.getApplicant_name(),
-											applicationNumber.getCity());
+							resposne = Utility.getSignFromNsdl(
+									filePath + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card()
+											+ eKYCConstant.PDF_FILE_EXTENSION,
+									filePath, msg, applicationNumber.getApplicant_name(), applicationNumber.getCity());
 						}
 						if (resposne != null && !resposne.isEmpty() && resposne.equalsIgnoreCase(
 								CSEnvVariables.getProperty(eKYCConstant.SIGNED_FINAL_RESPONSE_TEXT))) {
@@ -1308,7 +1306,8 @@ public class eKYCService {
 							 */
 							eKYCDAO.getInstance().updateTxnStatus(1, txnName);
 							/**
-							 * check and update the url details in attchements details
+							 * check and update the url details in attchements
+							 * details
 							 */
 							int checkId = eKYCDAO.getInstance().checkFileUploaded(applicationNumber.getApplication_id(),
 									eKYCConstant.SIGNED_EKYC_DOCUMENT);
@@ -1316,24 +1315,30 @@ public class eKYCService {
 								eKYCDAO.getInstance().updateAttachementDetails(eKYCConstant.SITE_URL_FILE
 										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
 										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
-										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME,
-										eKYCConstant.SIGNED_EKYC_DOCUMENT, applicationNumber.getApplication_id(), "");
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card() + "_signedFinal"
+										+ eKYCConstant.PDF_FILE_EXTENSION, eKYCConstant.SIGNED_EKYC_DOCUMENT,
+										applicationNumber.getApplication_id(), "");
 
 								java.net.URI location = new java.net.URI(eKYCConstant.SITE_URL_FILE
 										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
 										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
-										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME);
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card() + "_signedFinal"
+										+ eKYCConstant.PDF_FILE_EXTENSION);
+								System.out.println(location + " Line number 1327");
 								return Response.temporaryRedirect(location).build();
 							} else {
 								eKYCDAO.getInstance().insertAttachementDetails(eKYCConstant.SITE_URL_FILE
 										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
 										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
-										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME,
-										eKYCConstant.SIGNED_EKYC_DOCUMENT, applicationNumber.getApplication_id(), "");
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card() + "_signedFinal"
+										+ eKYCConstant.PDF_FILE_EXTENSION, eKYCConstant.SIGNED_EKYC_DOCUMENT,
+										applicationNumber.getApplication_id(), "");
 								java.net.URI location = new java.net.URI(eKYCConstant.SITE_URL_FILE
 										+ eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
 										+ eKYCConstant.WINDOWS_FORMAT_SLASH + applicationNumber.getFolderLocation()
-										+ eKYCConstant.WINDOWS_FORMAT_SLASH + eKYCConstant.SIGNED_FINAL_DOCUMENT_NAME);
+										+ eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card() + "_signedFinal"
+										+ eKYCConstant.PDF_FILE_EXTENSION);
+								System.out.println(location + " Line number	 1340");
 								return Response.temporaryRedirect(location).build();
 							}
 						} else {
@@ -1358,6 +1363,168 @@ public class eKYCService {
 		}
 		return null;
 	}
+
+	// /**
+	// * To get the Esign application as signed
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param msg
+	// * @return
+	// */
+	// public String getNsdlXML(String msg) {
+	// try {
+	// if (msg != null && !msg.isEmpty()) {
+	// /**
+	// * Write into the temp file and get the txn from the xml
+	// */
+	// String random = Utility.generateOTP();
+	// String fileName = "lastXml" + random + ".xml";
+	// // File fXmlFile = new
+	// // File(CSEnvVariables.getProperty(eKYCConstant.TEMP_FILE_XML_DOCUMENTS)
+	// // + fileName);
+	// File fXmlFile = new
+	// File(eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH) +
+	// "TempXMLFiles"
+	// + eKYCConstant.WINDOWS_FORMAT_SLASH + fileName);
+	// if (fXmlFile.createNewFile()) {
+	// FileWriter myWriter = new FileWriter(fXmlFile);
+	// myWriter.write(msg);
+	// myWriter.close();
+	//
+	// DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	// DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+	// Document doc = dBuilder.parse(fXmlFile);
+	// doc.getDocumentElement().normalize();
+	// Element eElement = doc.getDocumentElement();
+	// String txnName = eElement.getAttribute("txn");
+	//
+	// /**
+	// * Get Application for thr TxnName
+	// */
+	//
+	// esignDTO applicationNumber =
+	// eKYCDAO.getInstance().getTxnDetails(txnName);
+	// if (applicationNumber != null && applicationNumber.getApplication_id() >
+	// 0) {
+	// String filePath =
+	// eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)
+	// + applicationNumber.getApplication_id() +
+	// eKYCConstant.WINDOWS_FORMAT_SLASH
+	// + applicationNumber.getFolderLocation() +
+	// eKYCConstant.WINDOWS_FORMAT_SLASH;
+	// /**
+	// * update the application is signed and downloaded
+	// */
+	// eKYCDAO.getInstance().updateDocumentSignedOrDownloaded(true,
+	// applicationNumber.getApplication_id());
+	// PanCardDetailsDTO pancardName = eKYCDAO.getInstance()
+	// .checkPanCardUpdated(applicationNumber.getApplication_id());
+	// // System.out.println("BBBBBBBBBB"+filePath);
+	// String resposne = "";
+	// if (pancardName != null && pancardName.getPan_card() != "") {
+	// resposne = Utility.getSignFromNsdl(
+	// filePath + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card()
+	// + eKYCConstant.PDF_FILE_EXTENSION,
+	// filePath, msg, applicationNumber.getApplicant_name(),
+	// applicationNumber.getCity());
+	// } else {
+	// resposne = Utility.getSignFromNsdl(
+	// filePath + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card()
+	// + eKYCConstant.PDF_FILE_EXTENSION,
+	// filePath, msg, applicationNumber.getApplicant_name(),
+	// applicationNumber.getCity());
+	// }
+	// if (resposne != null && !resposne.isEmpty() && resposne.equalsIgnoreCase(
+	// CSEnvVariables.getProperty(eKYCConstant.SIGNED_FINAL_RESPONSE_TEXT))) {
+	// /**
+	// * update the txn status
+	// */
+	// eKYCDAO.getInstance().updateTxnStatus(1, txnName);
+	// /**
+	// * check and update the url details in attchements
+	// * details
+	// */
+	// int checkId =
+	// eKYCDAO.getInstance().checkFileUploaded(applicationNumber.getApplication_id(),
+	// eKYCConstant.SIGNED_EKYC_DOCUMENT);
+	// if (checkId > 0) {
+	// eKYCDAO.getInstance().updateAttachementDetails(eKYCConstant.SITE_URL_FILE
+	// + eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
+	// + eKYCConstant.WINDOWS_FORMAT_SLASH +
+	// applicationNumber.getFolderLocation()
+	// + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card() +
+	// "_signedFinal"
+	// + eKYCConstant.PDF_FILE_EXTENSION, eKYCConstant.SIGNED_EKYC_DOCUMENT,
+	// applicationNumber.getApplication_id(), "");
+	//
+	// // java.net.URI location = new
+	// // java.net.URI(eKYCConstant.SITE_URL_FILE
+	// // + eKYCConstant.UPLOADS_DIR +
+	// // applicationNumber.getApplication_id()
+	// // + eKYCConstant.WINDOWS_FORMAT_SLASH +
+	// // applicationNumber.getFolderLocation()
+	// // + eKYCConstant.WINDOWS_FORMAT_SLASH +
+	// // pancardName.getPan_card() + "_signedFinal"
+	// // + eKYCConstant.PDF_FILE_EXTENSION);
+	// // System.out.println(location + " Line number
+	// // 1327");
+	// return eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR
+	// + applicationNumber.getApplication_id() +
+	// eKYCConstant.WINDOWS_FORMAT_SLASH
+	// + applicationNumber.getFolderLocation() +
+	// eKYCConstant.WINDOWS_FORMAT_SLASH
+	// + pancardName.getPan_card() + "_signedFinal" +
+	// eKYCConstant.PDF_FILE_EXTENSION;
+	// } else {
+	// eKYCDAO.getInstance().insertAttachementDetails(eKYCConstant.SITE_URL_FILE
+	// + eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
+	// + eKYCConstant.WINDOWS_FORMAT_SLASH +
+	// applicationNumber.getFolderLocation()
+	// + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card() +
+	// "_signedFinal"
+	// + eKYCConstant.PDF_FILE_EXTENSION, eKYCConstant.SIGNED_EKYC_DOCUMENT,
+	// applicationNumber.getApplication_id(), "");
+	// // java.net.URI location = new
+	// // java.net.URI(eKYCConstant.SITE_URL_FILE
+	// // + eKYCConstant.UPLOADS_DIR +
+	// // applicationNumber.getApplication_id()
+	// // + eKYCConstant.WINDOWS_FORMAT_SLASH +
+	// // applicationNumber.getFolderLocation()
+	// // + eKYCConstant.WINDOWS_FORMAT_SLASH +
+	// // pancardName.getPan_card() + "_signedFinal"
+	// // + eKYCConstant.PDF_FILE_EXTENSION);
+	// // System.out.println(location + " Line number
+	// // 1340");
+	// return eKYCConstant.SITE_URL_FILE
+	// + eKYCConstant.UPLOADS_DIR + applicationNumber.getApplication_id()
+	// + eKYCConstant.WINDOWS_FORMAT_SLASH +
+	// applicationNumber.getFolderLocation()
+	// + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card() +
+	// "_signedFinal"
+	// + eKYCConstant.PDF_FILE_EXTENSION;
+	// }
+	// } else {
+	//
+	// }
+	// } else {
+	// /**
+	// * application id cannot be zero at this time
+	// */
+	// }
+	//
+	// } else {
+	// /**
+	// * message cannot be null
+	// */
+	// }
+	// } else {
+	//
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
 
 	public ResponseDTO getEsignedDocument(PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();

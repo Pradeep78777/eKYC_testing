@@ -627,15 +627,20 @@ public class AdminService {
 	 * @param pDto
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public ResponseDTO adminLogin(AdminDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		AdminDTO adminDetails = AdminDAO.getInstance().adminLogin(pDto);
 		if (adminDetails != null) {
+			JSONObject result = new JSONObject();
 			String actualPassword = adminDetails.getPassword();
 			String givenEncryptedPassword = Utility.PasswordEncryption(pDto.getPassword());
 			if (actualPassword.equals(givenEncryptedPassword)) {
+				result.put("adminName", adminDetails.getName());
+				result.put("adminDesignation", adminDetails.getDesignation());
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
 				response.setMessage(eKYCConstant.FAILED_MSG);

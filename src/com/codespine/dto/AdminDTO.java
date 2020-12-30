@@ -11,6 +11,8 @@ public class AdminDTO {
 	private String endTime;
 	private String email;
 	private String password;
+	private String name;
+	private String designation;
 
 	public int getApplicationId() {
 		return applicationId;
@@ -82,6 +84,22 @@ public class AdminDTO {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDesignation() {
+		return designation;
+	}
+
+	public void setDesignation(String designation) {
+		this.designation = designation;
 	}
 
 }

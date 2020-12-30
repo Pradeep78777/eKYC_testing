@@ -8,6 +8,7 @@ import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
 import com.codespine.restservice.BackOfficeRestService;
 import com.codespine.util.BackOfficeContants;
+import com.codespine.util.eKYCConstant;
 
 public class BackOfficeService {
 
@@ -32,12 +33,25 @@ public class BackOfficeService {
 	public ResponseDTO pushDataToBackOffice(int applicationId, String branchName, String clientCode, String verifiedBy,
 			String verifiedByDesigination) {
 		ResponseDTO response = new ResponseDTO();
+		/**
+		 * Get the all data for the given application id
+		 */
 		eKYCDTO userApplicationDetails = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (userApplicationDetails != null) {
+			/**
+			 * Declare the url parameter to hit back office
+			 */
 			String parameter = declareVariable(userApplicationDetails, branchName, clientCode, verifiedBy,
 					verifiedByDesigination);
+			/**
+			 * Send this to the back office
+			 */
 			Object result = BackOfficeRestService.getInstance().postDataToBackEnd(parameter);
 			System.out.println(parameter);
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setReason(eKYCConstant.SUCCESS_MSG);
+			response.setResult(result);
 		}
 		return response;
 	}
@@ -112,8 +126,8 @@ public class BackOfficeService {
 			/**
 			 * get from front end
 			 */
-			String branch_code = branchCode;
-			String client_id = clientCode;
+			String branch_code = branchCode.toUpperCase();
+			String client_id = clientCode.toUpperCase();
 
 			/**
 			 * values from input e-kyc
@@ -167,6 +181,7 @@ public class BackOfficeService {
 			String not_bankccountnno = userApplicationDetails.getBankDetailsDTO().getBank_account_no();
 			String not_micrno = userApplicationDetails.getBankDetailsDTO().getMicrCode();
 			String not_bank_name = userApplicationDetails.getBankDetailsDTO().getBankName().toUpperCase();
+			String not_ifsc = userApplicationDetails.getBankDetailsDTO().getIfsc_code().toUpperCase();
 
 			// String tempDob =
 			// userApplicationDetails.getPersonalDetailsDTO().getDob();
@@ -330,12 +345,12 @@ public class BackOfficeService {
 					+ BackOfficeContants.NOT_BANKCCOUNTNNO + equalSymbol + not_bankccountnno + symbol
 					+ BackOfficeContants.NOT_CIFNO + equalSymbol + "" + symbol + BackOfficeContants.NOT_MICRNO
 					+ equalSymbol + not_micrno + symbol + BackOfficeContants.NOT_BANK_NAME + equalSymbol + not_bank_name
-					+ symbol + BackOfficeContants.NOT_IFSC + equalSymbol + "" + symbol + BackOfficeContants.NOT_EFT
-					+ equalSymbol + not_eft + symbol + BackOfficeContants.NRI_PSI_NO + equalSymbol + nri_psi_no + symbol
-					+ BackOfficeContants.NOT_POA + equalSymbol + not_poa + symbol + BackOfficeContants.NOT_DPID
-					+ equalSymbol + not_dpid + symbol + BackOfficeContants.NOT_BOID + equalSymbol + not_boid + symbol
-					+ BackOfficeContants.ADDRESS_PROOF1 + equalSymbol + address_proof1 + symbol
-					+ BackOfficeContants.RESI_ADDRESS1 + equalSymbol + resi_address1 + symbol
+					+ symbol + BackOfficeContants.NOT_IFSC + equalSymbol + not_ifsc + symbol
+					+ BackOfficeContants.NOT_EFT + equalSymbol + not_eft + symbol + BackOfficeContants.NRI_PSI_NO
+					+ equalSymbol + nri_psi_no + symbol + BackOfficeContants.NOT_POA + equalSymbol + not_poa + symbol
+					+ BackOfficeContants.NOT_DPID + equalSymbol + not_dpid + symbol + BackOfficeContants.NOT_BOID
+					+ equalSymbol + not_boid + symbol + BackOfficeContants.ADDRESS_PROOF1 + equalSymbol + address_proof1
+					+ symbol + BackOfficeContants.RESI_ADDRESS1 + equalSymbol + resi_address1 + symbol
 					+ BackOfficeContants.RESI_ADDRESS2 + equalSymbol + "" + symbol + BackOfficeContants.RESI_ADDRESS3
 					+ equalSymbol + "" + symbol + BackOfficeContants.PIN_CODE + equalSymbol + pin_code + symbol
 					+ BackOfficeContants.CITY + equalSymbol + city + symbol + BackOfficeContants.STATE + equalSymbol
@@ -343,7 +358,7 @@ public class BackOfficeService {
 					+ BackOfficeContants.ISD_CODE + equalSymbol + isd_code + symbol + BackOfficeContants.STD_CODE
 					+ equalSymbol + std_code + symbol + BackOfficeContants.RESI_TEL_NO + equalSymbol + resi_tel_no
 					+ symbol + BackOfficeContants.RESI_FAX_NO + equalSymbol + "" + symbol + BackOfficeContants.MOBILE_NO
-					+ equalSymbol + "" + symbol + BackOfficeContants.EMAIL_ID + equalSymbol + emailId + symbol
+					+ equalSymbol + resi_tel_no + symbol + BackOfficeContants.EMAIL_ID + equalSymbol + emailId + symbol
 					+ BackOfficeContants.EMAIL_ID_BCC + equalSymbol + "" + symbol + BackOfficeContants.UPDATIONFLAG
 					+ equalSymbol + updationflag + symbol + BackOfficeContants.TYPEOFFACILITY + equalSymbol
 					+ typeoffacility + symbol + BackOfficeContants.MASTERPAN + equalSymbol + "" + symbol
