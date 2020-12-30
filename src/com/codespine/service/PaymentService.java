@@ -56,32 +56,32 @@ public class PaymentService {
 							responseDTO.setStatus(eKYCConstant.SUCCESS_STATUS);
 						}else {
 							responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-							responseDTO.setMessage("Payment Creation Failed Check Server!");
+							responseDTO.setMessage(eKYCConstant.PAYMENT_CREATION_FAILED);
 						}
 					}else {
 						responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-						responseDTO.setMessage("order id is invalid");
+						responseDTO.setMessage(eKYCConstant.ORDERID_INVALID);
 					}
 				}else {
 					responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-					responseDTO.setMessage("Amount is Zero");
+					responseDTO.setMessage(eKYCConstant.AMOUNT_ZERO);
 				}
 			}else {
-				if(StringUtil.isEqual("completed", oldPaymentDTO.getStatus())) {
+				if(StringUtil.isEqual(eKYCConstant.CONST_COMPLETED, oldPaymentDTO.getStatus())) {
 					responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-					responseDTO.setMessage("Payment already Completed");
-				}else if(StringUtil.isEqual("created", oldPaymentDTO.getStatus())) {
+					responseDTO.setMessage(eKYCConstant.PAYMENT_ALREADY_COMPLETED);
+				}else if(StringUtil.isEqual(eKYCConstant.CONST_CREATED, oldPaymentDTO.getStatus())) {
 					responseDTO.setStatus(eKYCConstant.SUCCESS_STATUS);
-					responseDTO.setMessage("Payment already Created");
+					responseDTO.setMessage(eKYCConstant.PAYMENT_ALREADY_CREATED);
 					responseDTO.setResult(oldPaymentDTO);
 				}else {
 					responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-					responseDTO.setMessage("Payment Creation Failed Check Server!");
+					responseDTO.setMessage(eKYCConstant.PAYMENT_CREATION_FAILED);
 				}
 			}
 		}else {
 			responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-			responseDTO.setMessage("Payment Creation Failed referId is null!");
+			responseDTO.setMessage(eKYCConstant.PAYMENT_FAILED_ID_NULL);
 		}
 		return responseDTO;
 	}
@@ -93,20 +93,27 @@ public class PaymentService {
 	 */
 	public static ResponseDTO verifyPayment(PaymentDto dto) {
 		ResponseDTO  responseDTO = new ResponseDTO();
-		boolean isEqual = PaymentHelper.getInstance().verifyPayment(dto);
-		if(isEqual) {
-			PaymentDto newPaymentDTO = PaymentHelper.populateRequiredForUpdate(dto);
-			int status = PaymentDAO.getInstance().UpdatePaymentDetails(newPaymentDTO);
-			if(status > 0 ) {
-				responseDTO.setStatus(eKYCConstant.SUCCESS_STATUS);
-				responseDTO.setMessage("Table Updated");
+		if(StringUtil.isNotNullOrEmpty(dto.getRazorpay_order_id())
+				&& StringUtil.isNotNullOrEmpty(dto.getRazorpay_payment_id()) 
+				&& StringUtil.isNotNullOrEmpty(dto.getRazorpay_signature())) {
+			boolean isEqual = PaymentHelper.getInstance().verifyPayment(dto);
+			if(isEqual) {
+				PaymentDto newPaymentDTO = PaymentHelper.populateRequiredForUpdate(dto);
+				int status = PaymentDAO.getInstance().UpdatePaymentDetails(newPaymentDTO);
+				if(status > 0 ) {
+					responseDTO.setStatus(eKYCConstant.SUCCESS_STATUS);
+					responseDTO.setMessage(eKYCConstant.TABLE_UPDATED);
+				}else {
+					responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
+					responseDTO.setMessage(eKYCConstant.TABLE_NOT_UPDATED);
+				}
 			}else {
 				responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-				responseDTO.setMessage("Table Not Updated");
+				responseDTO.setMessage(eKYCConstant.VERIFY_NOT_SUCCEED);
 			}
 		}else {
 			responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-			responseDTO.setMessage("Verify Not Succeed");
+			responseDTO.setMessage(eKYCConstant.RAZORPAY_VALUES_ARE_NULL);
 		}
 		return responseDTO;
 	}
@@ -122,18 +129,18 @@ public class PaymentService {
 		if(receiptId != 0 && receiptId > 0) {
 			PaymentDto paymentDTO = PaymentDAO.getInstance().checkPaymentStatus(receiptId);
 			if(paymentDTO != null) {
-				if(StringUtil.isEqual("completed", paymentDTO.getStatus())) {
+				if(StringUtil.isEqual(eKYCConstant.CONST_COMPLETED, paymentDTO.getStatus())) {
 					responseDTO.setStatus(eKYCConstant.SUCCESS_STATUS);
 					responseDTO.setResult(paymentDTO);
-					responseDTO.setMessage("Payment already Completed");
+					responseDTO.setMessage(eKYCConstant.PAYMENT_ALREADY_COMPLETED);
 				}
 			}else {
 				responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-				responseDTO.setMessage("Payment is not created");
+				responseDTO.setMessage(eKYCConstant.PAYMENT_NOT_CREATED);
 			}
 		}else {
 			responseDTO.setStatus(eKYCConstant.FAILED_STATUS);
-			responseDTO.setMessage("receiptId is null");
+			responseDTO.setMessage(eKYCConstant.APPLICATION_ID_NULL);
 		}
 		return responseDTO;
 	}
