@@ -239,6 +239,7 @@ public class eKYCConstant {
 	public static final String HTML_STARTING = "htmlStarting";
 	public static final String HTML_ENDING = "htmlEnding";
 
+
 	/**
 	 * Values for tech excel in address proof and its name
 	 */
@@ -263,4 +264,20 @@ public class eKYCConstant {
 	public static final String REJECTED = "Rejected";
 	public static final String APPROVED = "Approved";
 	public static final String IN_PROCESS = "Inprocess";
+
+	public static final String TABLE_UPDATED = "Table Updated";
+	public static final String TABLE_NOT_UPDATED = "Table Not Updated";
+	public static final String VERIFY_NOT_SUCCEED = "Verify Not Succeed";
+	public static final String PAYMENT_ALREADY_COMPLETED = "Payment already Completed";
+	public static final String PAYMENT_NOT_CREATED = "Payment is not created";
+	public static final String APPLICATION_ID_NULL = "applicationId is null";
+	public static final String CONST_COMPLETED = "completed";
+	public static final String CONST_CREATED = "created";
+	public static final String PAYMENT_CREATION_FAILED = "Payment Creation Failed Check Server!";
+	public static final String ORDERID_INVALID = "order id is invalid";
+	public static final String AMOUNT_ZERO = "Amount is Zero";
+	public static final String PAYMENT_ALREADY_CREATED = "Payment already Created";
+	public static final String PAYMENT_FAILED_ID_NULL = "Payment Creation Failed ApplicationId is null!";
+	public static final String RAZORPAY_VALUES_ARE_NULL = "razorPay Values are Not fully arrived";
+
 }
