@@ -274,64 +274,74 @@ public class eKYCService {
 					pDto.getPan_card());
 			if (panResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
 				/**
-				 * Check pan assigned with any other application id
+				 * Check any other applicant given this pan card
 				 */
-
-				/**
-				 * To create the create the jks file for the given application
-				 * id
-				 */
-				NsdlPanVerificationRestService.pfx2JksFile(pDto.getApplication_id());
-				/**
-				 * To create the sig file from the jks file
-				 */
-				NsdlPanVerificationRestService.pkcs7Generate(pDto.getApplication_id(), pDto.getPan_card());
-				/**
-				 * TO get the result from the NSDL
-				 */
-				String result = NsdlPanVerificationRestService.apiCallForPanVerififcation(pDto.getApplication_id(),
-						pDto.getPan_card());
-				if (result != null && !result.equalsIgnoreCase("")) {
+				int checkApplcationID = eKYCDAO.getInstance().checkPanCardForApplicant(pDto.getPan_card());
+				if (checkApplcationID == 0 || checkApplcationID == pDto.getApplication_id()) {
 					/**
-					 * Change the String response to json Response
+					 * Check pan assigned with any other application id
 					 */
-					JSONObject tempResult = Utility.stringToJson(result);
-					String panStatus = (String) tempResult.get("panCardStatus");
-					if (panStatus != null && !panStatus.equalsIgnoreCase(" ") && panStatus.equalsIgnoreCase("E")) {
-						String firstName = (String) tempResult.get("firstName");
-						String middleName = (String) tempResult.get("middleName");
-						String lastName = (String) tempResult.get("lastName");
-						String panCardname = firstName + " " + middleName + " " + lastName;
-						// String fatherName = (String)
-						// tempResult.get("lastName");
-						dummResult.setApplicant_name(panCardname);
-						// dummResult.setFathersName(fatherName);
-						pDto.setFirst_name(firstName);
-						pDto.setMiddle_name(middleName);
-						pDto.setLast_name(lastName);
-						pDto.setApplicant_name(panCardname);
-						// pDto.setFathersName(fatherName);
-						ResponseDTO topResult = new ResponseDTO();
-						topResult = updatePanCard(pDto);
-						if (topResult.getStatus() == eKYCConstant.SUCCESS_STATUS) {
-							response.setStatus(eKYCConstant.SUCCESS_STATUS);
-							response.setMessage(eKYCConstant.SUCCESS_MSG);
-							response.setReason(eKYCConstant.PAN_CARD_DETAILS_SAVED);
-							response.setResult(dummResult);
+
+					/**
+					 * To create the create the jks file for the given
+					 * application id
+					 */
+					NsdlPanVerificationRestService.pfx2JksFile(pDto.getApplication_id());
+					/**
+					 * To create the sig file from the jks file
+					 */
+					NsdlPanVerificationRestService.pkcs7Generate(pDto.getApplication_id(), pDto.getPan_card());
+					/**
+					 * TO get the result from the NSDL
+					 */
+					String result = NsdlPanVerificationRestService.apiCallForPanVerififcation(pDto.getApplication_id(),
+							pDto.getPan_card());
+					if (result != null && !result.equalsIgnoreCase("")) {
+						/**
+						 * Change the String response to json Response
+						 */
+						JSONObject tempResult = Utility.stringToJson(result);
+						String panStatus = (String) tempResult.get("panCardStatus");
+						if (panStatus != null && !panStatus.equalsIgnoreCase(" ") && panStatus.equalsIgnoreCase("E")) {
+							String firstName = (String) tempResult.get("firstName");
+							String middleName = (String) tempResult.get("middleName");
+							String lastName = (String) tempResult.get("lastName");
+							String panCardname = firstName + " " + middleName + " " + lastName;
+							// String fatherName = (String)
+							// tempResult.get("lastName");
+							dummResult.setApplicant_name(panCardname);
+							// dummResult.setFathersName(fatherName);
+							pDto.setFirst_name(firstName);
+							pDto.setMiddle_name(middleName);
+							pDto.setLast_name(lastName);
+							pDto.setApplicant_name(panCardname);
+							// pDto.setFathersName(fatherName);
+							ResponseDTO topResult = new ResponseDTO();
+							topResult = updatePanCard(pDto);
+							if (topResult.getStatus() == eKYCConstant.SUCCESS_STATUS) {
+								response.setStatus(eKYCConstant.SUCCESS_STATUS);
+								response.setMessage(eKYCConstant.SUCCESS_MSG);
+								response.setReason(eKYCConstant.PAN_CARD_DETAILS_SAVED);
+								response.setResult(dummResult);
+							} else {
+								response.setStatus(eKYCConstant.FAILED_STATUS);
+								response.setMessage(eKYCConstant.FAILED_MSG);
+								response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+							}
 						} else {
 							response.setStatus(eKYCConstant.FAILED_STATUS);
 							response.setMessage(eKYCConstant.FAILED_MSG);
-							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+							response.setReason(eKYCConstant.INVALID_PANCARD);
 						}
 					} else {
 						response.setStatus(eKYCConstant.FAILED_STATUS);
 						response.setMessage(eKYCConstant.FAILED_MSG);
-						response.setReason(eKYCConstant.INVALID_PANCARD);
+						response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
 					}
 				} else {
 					response.setStatus(eKYCConstant.FAILED_STATUS);
 					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+					response.setReason(eKYCConstant.PAN_EXISTS_WITH_OUR_END);
 				}
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -493,6 +503,8 @@ public class eKYCService {
 			} else {
 				int insertCommunicationCount = eKYCDAO.insertCommunicationAddress(pDto);
 				if (insertCommunicationCount > 0) {
+					peKYCDao.updateApplicationStatus(pDto.getApplication_id(),
+							eKYCConstant.COMMUNICATION_ADDRESS_UPDATED);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
@@ -535,6 +547,7 @@ public class eKYCService {
 			} else {
 				int insertCommunicationCount = eKYCDAO.insertPermanentAddress(pDto);
 				if (insertCommunicationCount > 0) {
+					peKYCDao.updateApplicationStatus(pDto.getApplication_id(), eKYCConstant.PERMANENT_ADDRESS_UPDATED);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setReason(eKYCConstant.ADDRESS_SAVED_SUCESSFULLY);
@@ -851,6 +864,10 @@ public class eKYCService {
 						eKYCDAO.getInstance().updateDocumentSignedOrDownloaded(false, pDto.getApplication_id());
 						String documentLink = eKYCDAO.getInstance().getDocumentLink(pDto.getApplication_id(),
 								eKYCConstant.EKYC_DOCUMENT);
+						if (profileDetails.getApplicationStatus() < eKYCConstant.DOCUMENT_DOWNLOADED) {
+							peKYCDao.updateApplicationStatus(pDto.getApplication_id(),
+									eKYCConstant.DOCUMENT_DOWNLOADED);
+						}
 						result.setEsign_document(documentLink);
 						response.setStatus(eKYCConstant.SUCCESS_STATUS);
 						response.setMessage(eKYCConstant.SUCCESS_MSG);
@@ -1206,16 +1223,32 @@ public class eKYCService {
 							eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + applicationId + "//" + "IVR_IMAGE",
 							applicationId);
 					if (siteUrl != null && !siteUrl.isEmpty()) {
-						int count = eKYCDAO.getInstance().insertIvrDetails(applicationId, siteUrl, ivrLat, ivrLong,
-								deviceIP, userAgent);
-						if (count > 0) {
-							response.setStatus(eKYCConstant.SUCCESS_STATUS);
-							response.setMessage(eKYCConstant.SUCCESS_MSG);
-							response.setReason(eKYCConstant.IVR_DETAILS_UPDATED_SUCESSFULLY);
+						JSONObject result = eKYCDAO.getInstance().getIvrDetails(applicationId);
+						if (result != null) {
+							boolean isUpdated = eKYCDAO.getInstance().updateIvrDetails(applicationId, siteUrl, ivrLat,
+									ivrLong, deviceIP, userAgent);
+							if (isUpdated) {
+								peKYCDao.updateApplicationStatus(applicationId, eKYCConstant.IPV_UPLOADED);
+								response.setStatus(eKYCConstant.SUCCESS_STATUS);
+								response.setMessage(eKYCConstant.SUCCESS_MSG);
+								response.setReason(eKYCConstant.IVR_DETAILS_UPDATED_SUCESSFULLY);
+							} else {
+								response.setStatus(eKYCConstant.FAILED_STATUS);
+								response.setMessage(eKYCConstant.FAILED_MSG);
+								response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+							}
 						} else {
-							response.setStatus(eKYCConstant.FAILED_STATUS);
-							response.setMessage(eKYCConstant.FAILED_MSG);
-							response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+							int count = eKYCDAO.getInstance().insertIvrDetails(applicationId, siteUrl, ivrLat, ivrLong,
+									deviceIP, userAgent);
+							if (count > 0) {
+								response.setStatus(eKYCConstant.SUCCESS_STATUS);
+								response.setMessage(eKYCConstant.SUCCESS_MSG);
+								response.setReason(eKYCConstant.IVR_DETAILS_UPDATED_SUCESSFULLY);
+							} else {
+								response.setStatus(eKYCConstant.FAILED_STATUS);
+								response.setMessage(eKYCConstant.FAILED_MSG);
+								response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+							}
 						}
 					} else {
 						response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -1276,6 +1309,15 @@ public class eKYCService {
 
 					esignDTO applicationNumber = eKYCDAO.getInstance().getTxnDetails(txnName);
 					if (applicationNumber != null && applicationNumber.getApplication_id() > 0) {
+
+						PersonalDetailsDTO dummyDto = new PersonalDetailsDTO();
+						dummyDto.setApplication_id(applicationNumber.getApplication_id());
+						PersonalDetailsDTO profileDetails = eKYCDAO.getInstance().getProfileDetails(dummyDto);
+						if (profileDetails.getApplicationStatus() < eKYCConstant.DOCUMENT_SIGNED) {
+							peKYCDao.updateApplicationStatus(applicationNumber.getApplication_id(),
+									eKYCConstant.DOCUMENT_SIGNED);
+						}
+
 						String filePath = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)
 								+ applicationNumber.getApplication_id() + eKYCConstant.WINDOWS_FORMAT_SLASH
 								+ applicationNumber.getFolderLocation() + eKYCConstant.WINDOWS_FORMAT_SLASH;

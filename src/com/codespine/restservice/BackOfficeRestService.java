@@ -8,6 +8,7 @@ import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONValue;
 
+import com.codespine.data.BackOfficeDAO;
 import com.codespine.util.CSEnvVariables;
 import com.codespine.util.eKYCConstant;
 
@@ -72,14 +73,15 @@ public class BackOfficeRestService {
 	 * @param parameterValue
 	 * @return
 	 */
-	public Object postDataToBackEnd(String parameter) {
+	public Object postDataToBackEnd(String parameter, int applicationId, String verifiedBy,
+			String verifiedByDesigination, String branchName) {
 		Object object = null;
 		try {
 			// String tempURl =
 			// CSEnvVariables.getMethodNames(eKYCConstant.POST_DATA_URL) + "?" +
 			// java.net.URLEncoder.encode(parameter, "UTF-8");
 			String tempURl = parameter.replace(" ", "%20");
-			System.out.println(tempURl);
+			// System.out.println(tempURl);
 			URL url = new URL(CSEnvVariables.getMethodNames(eKYCConstant.POST_DATA_URL) + "?" + tempURl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
@@ -89,10 +91,15 @@ public class BackOfficeRestService {
 			}
 			BufferedReader br1 = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 			String output;
+			StringBuffer realOutput = new StringBuffer();
 			while ((output = br1.readLine()) != null) {
 				object = output;
+				realOutput.append(output);
 				System.out.println(object);
 			}
+			BackOfficeDAO.getInstance().insertBackOfficeResponse(applicationId,
+					CSEnvVariables.getMethodNames(eKYCConstant.POST_DATA_URL), parameter, realOutput.toString(),
+					verifiedBy, verifiedByDesigination, branchName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

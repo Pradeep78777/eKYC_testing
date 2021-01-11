@@ -7,12 +7,14 @@ public class AdminDTO {
 	private int isRejected;
 	private String comments;
 	private String attachementType;
-	private String startTime;;
-	private String endTime;
 	private String email;
 	private String password;
 	private String name;
 	private String designation;
+	private String adminName;
+	private String status;
+	private String startDate;
+	private String endDate;
 
 	public int getApplicationId() {
 		return applicationId;
@@ -54,22 +56,6 @@ public class AdminDTO {
 		this.attachementType = attachementType;
 	}
 
-	public String getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
-
-	public String getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -100,6 +86,38 @@ public class AdminDTO {
 
 	public void setDesignation(String designation) {
 		this.designation = designation;
+	}
+
+	public String getAdminName() {
+		return adminName;
+	}
+
+	public void setAdminName(String adminName) {
+		this.adminName = adminName;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 
 }

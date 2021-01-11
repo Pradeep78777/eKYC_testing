@@ -66,6 +66,7 @@ public class eKYCConstant {
 	public static final String FILE_CANNOT_BE_EMPTY = "File cannot be empty";
 
 	public static final String IVR_DETAILS_UPDATED_SUCESSFULLY = "Ivr Details updated sucessfully";
+	public static final String INVALID_REQUEST = "Your request is invalid";
 
 	/**
 	 * Application Status
@@ -79,15 +80,20 @@ public class eKYCConstant {
 	public static final int BANK_DETAILS_UPDATED = 7;
 	public static final int EXCH_UPDATED = 8;
 	public static final int ATTACHEMENT_UPLOADED = 9;
+	public static final int IPV_UPLOADED = 10;
+	public static final int DOCUMENT_DOWNLOADED = 11;
+	public static final int DOCUMENT_SIGNED = 12;
 
-	public static final int APPLICATION_STARTED_BY_ADMIN = 10;
-	public static final int PAN_CARD_VERIFIED = 11;
-	public static final int BASIC_DETAILS_VERIFIED = 12;
-	public static final int COMMUNICATION_ADDRESS_VERIFIED = 13;
-	public static final int PERMANENT_ADDRESS_VERIFIED = 14;
-	public static final int BANK_DETAILS_VERIFIED = 15;
-	public static final int EXCH_VERIFIED = 16;
-	public static final int ATTACHEMENT_VERIFIED = 17;
+	public static final int APPLICATION_STARTED_BY_ADMIN = 13;
+	public static final int PAN_CARD_VERIFIED = 14;
+	public static final int BASIC_DETAILS_VERIFIED = 15;
+	public static final int COMMUNICATION_ADDRESS_VERIFIED = 16;
+	public static final int PERMANENT_ADDRESS_VERIFIED = 17;
+	public static final int BANK_DETAILS_VERIFIED = 18;
+	public static final int EXCH_VERIFIED = 19;
+	public static final int ATTACHEMENT_VERIFIED = 20;
+	public static final int IPV_VERIFIED = 21;
+	public static final int APPLICATION_ENDED_BY_ADMIN = 22;
 
 	public static final String MESSAGE_URL = "messageURl";
 	public static final String MESSAGE_USERNAME = "messageUserName";
@@ -205,6 +211,7 @@ public class eKYCConstant {
 	public static final String WRONG_INPUT = "Wrong Input";
 
 	public static final String BITLY_BASEURL = "bitly_baseUrl";
+	public static final String BITLY_BASEURL2 = "bitly_baseUrl2";
 	public static final String BITLY_ACCESS_TOKEN = "bitly_access_token";
 
 	public static final String IPV_SUCCESS_URL = "ipvSucessURL";
@@ -232,4 +239,28 @@ public class eKYCConstant {
 	public static final String HTML_STARTING = "htmlStarting";
 	public static final String HTML_ENDING = "htmlEnding";
 
+	/**
+	 * Values for tech excel in address proof and its name
+	 */
+	public static final int AADHAAR = 31;
+	public static final int PASSPORT = 1;
+	public static final int VOTERS_ID_CARD = 6;
+	public static final int BANK_PROOF = 3;
+	public static final int DRIVING_LICENSE = 2;
+	public static final int ORTHERS_PROOF = 32;
+
+	public static final String AADHAAR_PROOF = "Aadhaar";
+	public static final String PASSPORT_PROOF = "Passport";
+	public static final String VOTERS_ID_CARD_PROOF = "Voters Identiy Card";
+	public static final String BANK_PROOF_PROOF = "Bank Proof";
+	public static final String DRIVING_LICENSE_PROOF = "Driving License";
+	public static final String PAN_EXISTS_WITH_OUR_END = "Invalid Pan. You have already registerd this PAN with another Mobile Number";
+
+	/**
+	 * get the report file between status
+	 */
+	public static final String COMPLETED = "Completed";
+	public static final String REJECTED = "Rejected";
+	public static final String APPROVED = "Approved";
+	public static final String IN_PROCESS = "Inprocess";
 }

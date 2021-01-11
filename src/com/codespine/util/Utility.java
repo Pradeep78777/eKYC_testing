@@ -111,6 +111,45 @@ public class Utility {
 	}
 
 	/**
+	 * Method to expand the bitly url to the normal url
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param bitLink
+	 * @return
+	 */
+	public static String getExpandedUrl(String bitLink) {
+		String encrptkey = "";
+		JSONObject jObj1 = new JSONObject();
+		Object object = new Object();
+		jObj1.put("bitlink_id", bitLink);
+		try {
+			URL url = new URL(CSEnvVariables.getMethodNames(eKYCConstant.BITLY_BASEURL2));
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setRequestProperty("Authorization",
+					"Bearer " + CSEnvVariables.getMethodNames(eKYCConstant.BITLY_ACCESS_TOKEN));
+			System.out.println("Bearer " + CSEnvVariables.getMethodNames(eKYCConstant.BITLY_ACCESS_TOKEN));
+			conn.setDoOutput(true);
+			try (OutputStream os = conn.getOutputStream()) {
+				byte[] input = jObj1.toJSONString().getBytes("utf-8");
+				os.write(input, 0, input.length);
+			}
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+			}
+			BufferedReader br1 = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			String output;
+			while ((output = br1.readLine()) != null) {
+				object = output;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return encrptkey;
+	}
+
+	/**
 	 * To random generated Text
 	 * 
 	 * @author GOWRI SANKAR R
@@ -794,11 +833,11 @@ public class Utility {
 						+ " separate;}td, th {border: 1px solid #1e3465;text-align: left;padding: 8px;}"
 						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
 						+ "<div  style='font-size:14px'><p><b>Hi " + applicantName
-						+ ",</b> <p>Your application information and documents "
-						+ "are verified and the team has found some discrepancies or issues. Please find below the "
-						+ "notes from accounts team. </p> <b> " + documentsBuilder + "</b><br> "
-						+ "<p>We request you to take the remedial action using the the below link. Please reach out to our support team on 9XXXXXXXX for any further information</p></div>"
-						+ "<div><p align='left'>" + "<b>Regards,"
+						+ ",</b> <p>Your application has been verified and found some discrepancies. Please find the details mentioned below, </p>"
+						+ " <p>Information & Documents related comments :</p><b> " + documentsBuilder + "</b><br> "
+						+ "<p> We request you to take the remedial action using the below link: https://oa1.zebull.in/  </p>"
+						+ "<p>Please reach out to our support team on 93 8010 8010 for any further information. </p></div>"
+						+ "<div><p align='left'> " + "<b>Regards,"
 						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
 				builder.append(hs);
 				MimeMessage message = new MimeMessage(session);

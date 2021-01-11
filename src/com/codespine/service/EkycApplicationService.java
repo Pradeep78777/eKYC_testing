@@ -278,4 +278,9 @@ public class EkycApplicationService {
 		return response;
 	}
 
+	public ResponseDTO getExcelExport() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

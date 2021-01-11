@@ -41,6 +41,7 @@ import com.codespine.util.FinalPDFGenerator;
 import com.codespine.util.StringUtil;
 import com.codespine.util.eKYCConstant;
 
+@SuppressWarnings("unchecked")
 @Path("/eKYC")
 public class eKYCController {
 	AccesslogDTO accessLog = new AccesslogDTO();
@@ -112,8 +113,8 @@ public class eKYCController {
 	public ResponseDTO verifyEmail(PersonalDetailsDTO pdto) {
 		ResponseDTO response = new ResponseDTO();
 		try {
-			if (!pdto.getEmail().isEmpty() && !pdto.getKey().isEmpty() && !pdto.getEmail().equalsIgnoreCase("")
-					&& !pdto.getKey().equalsIgnoreCase("")) {
+			if (pdto.getEmail() != null && !pdto.getEmail().isEmpty() && !pdto.getKey().isEmpty()
+					&& !pdto.getEmail().equalsIgnoreCase("") && !pdto.getKey().equalsIgnoreCase("")) {
 				String dummyResponse = eKYCService.getInstance().verifyActivationLink(pdto.getEmail(), pdto.getKey());
 				if (dummyResponse.equalsIgnoreCase(eKYCConstant.SUCCESS_MSG)) {
 					int applicationId = eKYCDAO.getInstance().getApplicationId(pdto.getEmail(), pdto.getKey());

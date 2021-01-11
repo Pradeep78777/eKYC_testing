@@ -1,8 +1,12 @@
 package com.codespine.service;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.json.simple.JSONObject;
 
 import com.codespine.data.AdminDAO;
@@ -17,6 +21,7 @@ import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
+import com.codespine.dto.eKYCDTO;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
@@ -63,6 +68,7 @@ public class AdminService {
 		ResponseDTO response = new ResponseDTO();
 		boolean result = false;
 		if (pDto != null && pDto.getApplicationId() > 0) {
+			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(), eKYCConstant.PAN_CARD_VERIFIED);
 			/**
 			 * Aprrove the Pan card for the given application id
 			 */
@@ -127,6 +133,7 @@ public class AdminService {
 		ResponseDTO response = new ResponseDTO();
 		boolean result = false;
 		if (pDto != null && pDto.getApplicationId() > 0) {
+			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(), eKYCConstant.BASIC_DETAILS_VERIFIED);
 			/**
 			 * Aprrove the Pan card for the given Personal Details
 			 */
@@ -191,6 +198,7 @@ public class AdminService {
 		ResponseDTO response = new ResponseDTO();
 		boolean result = false;
 		if (pDto != null && pDto.getApplicationId() > 0) {
+			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(), eKYCConstant.BANK_DETAILS_VERIFIED);
 			/**
 			 * Aprrove the Bank Account Details for the given application id
 			 */
@@ -256,6 +264,8 @@ public class AdminService {
 		ResponseDTO response = new ResponseDTO();
 		boolean result = false;
 		if (pDto != null && pDto.getApplicationId() > 0) {
+			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
+					eKYCConstant.COMMUNICATION_ADDRESS_VERIFIED);
 			/**
 			 * Aprrove the Communication address Details for the given
 			 * application id
@@ -322,6 +332,8 @@ public class AdminService {
 		ResponseDTO response = new ResponseDTO();
 		boolean result = false;
 		if (pDto != null && pDto.getApplicationId() > 0) {
+			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
+					eKYCConstant.PERMANENT_ADDRESS_VERIFIED);
 			/**
 			 * Aprrove the permanent address Details for the given application
 			 * id
@@ -387,6 +399,7 @@ public class AdminService {
 		ResponseDTO response = new ResponseDTO();
 		boolean result = false;
 		if (pDto != null && pDto.getApplicationId() > 0) {
+			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(), eKYCConstant.ATTACHEMENT_VERIFIED);
 			/**
 			 * Aprrove the permanent address Details for the given application
 			 * id
@@ -461,7 +474,7 @@ public class AdminService {
 				JSONObject ivrResult = eKYCDAO.getInstance().getIvrDetails(pDto.getApplicationId());
 				if (ivrResult != null) {
 					FileUploadDTO tempDto = new FileUploadDTO();
-					tempDto.setProofType("IVR");
+					tempDto.setProofType("IVP");
 					tempDto.setProof((String) ivrResult.get("ivr_image"));
 					result.add(tempDto);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
@@ -496,12 +509,16 @@ public class AdminService {
 		if (pDto != null && pDto.getApplicationId() > 0) {
 			List<ApplicationLogDTO> result = AdminDAO.getInstance().checkApplicationStatus(pDto.getApplicationId());
 			if (result != null && result.size() > 0) {
+				eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
+						eKYCConstant.APPLICATION_STARTED_BY_ADMIN);
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
 				response.setResult(result);
 			} else {
 				boolean isSuccessfull = AdminDAO.getInstance().startApplication(pDto);
 				if (isSuccessfull) {
+					eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
+							eKYCConstant.APPLICATION_STARTED_BY_ADMIN);
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setResult(null);
@@ -530,9 +547,12 @@ public class AdminService {
 		ResponseDTO response = new ResponseDTO();
 		if (pDto != null && pDto.getApplicationId() > 0) {
 			boolean isSuccessfull = AdminDAO.getInstance().endApplication(pDto);
+			// updateAdminStatus
 			if (isSuccessfull) {
 				AdminDAO.getInstance().updateInApplicationMaster(pDto);
 				PersonalDetailsDTO userDetails = AdminDAO.getInstance().getUserDetails(pDto.getApplicationId());
+				eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
+						eKYCConstant.APPLICATION_ENDED_BY_ADMIN);
 				if (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 0) {
 					Utility.applicationApprovedMessage(userDetails.getEmail(), userDetails.getApplicant_name());
 				} else if (pDto.getIsApprove() == 0 && pDto.getIsRejected() == 1) {
@@ -545,6 +565,7 @@ public class AdminService {
 				 */
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.SUCCESS_MSG);
 				response.setResult(null);
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -784,6 +805,32 @@ public class AdminService {
 						List<ApplicationAttachementsDTO> applicationAttachements = AdminDAO.getInstance()
 								.getApplicationAttachementsDetails(applicationId);
 						result.put("applicationAttachements", applicationAttachements);
+					} else if (applicationStatus > 9) {
+						PanCardDetailsDTO pancardDetails = AdminDAO.getInstance().getPanCardDetails(applicationId);
+						result.put("panCardDetails", pancardDetails);
+
+						PersonalDetailsDTO personalDetailsDTO = AdminDAO.getInstance()
+								.getPersonalDetails(applicationId);
+						result.put("basicInformationDetails", personalDetailsDTO);
+
+						AddressDTO communicationAddress = AdminDAO.getInstance().getCommunicationAddress(applicationId);
+						result.put("communicationAddress", communicationAddress);
+
+						AddressDTO permanentAddress = AdminDAO.getInstance().getPermanentAddress(applicationId);
+						result.put("permanentAddress", permanentAddress);
+
+						BankDetailsDTO bankDetails = AdminDAO.getInstance().getBankDetails(applicationId);
+						result.put("bankDetails", bankDetails);
+
+						ExchDetailsDTO exchDetails = AdminDAO.getInstance().getExchDetails(applicationId);
+						result.put("exchDetails", exchDetails);
+
+						List<ApplicationAttachementsDTO> applicationAttachements = AdminDAO.getInstance()
+								.getApplicationAttachementsDetails(applicationId);
+						result.put("applicationAttachements", applicationAttachements);
+
+						JSONObject ipvResult = eKYCDAO.getInstance().getIvrDetails(applicationId);
+						result.put("ipv", ipvResult);
 					}
 				}
 				finalRespone.add(result);
@@ -801,6 +848,190 @@ public class AdminService {
 
 	public ResponseDTO postDataToBackOffice() {
 		ResponseDTO response = new ResponseDTO();
+		return response;
+	}
+
+	/**
+	 * Method to get the rejected documnets and its commets
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getRejectedDocuments(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null && pDto.getApplicationId() > 0) {
+			List<ApplicationLogDTO> result = AdminDAO.getInstance().rejectedDocuments(pDto.getApplicationId());
+			if (result != null && result.size() > 0) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return null;
+	}
+
+	public ResponseDTO getExcelResult() {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			// if (pDto != null && pDto.getApplicationId() > 0) {
+
+			List<Integer> applicationIdList = new ArrayList<Integer>();
+			applicationIdList.add(1);
+			// applicationIdList.add(2);
+			// List<ek>
+			String filename = "C://Users//GOWRI SANKAR R//Desktop//Muthu pc//Check.xlsx";
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			// invoking creatSheet() method and passing the name of the
+			// sheet to
+			// be created
+			HSSFSheet sheet = workbook.createSheet("Reports");
+			// creating the 0th row using the createRow() method
+			HSSFRow rowhead = sheet.createRow((short) 0);
+			// creating cell by using the createCell() method and setting
+			// the
+			// values to the cell by using the setCellValue() method
+			rowhead.createCell(0).setCellValue("Id");
+			rowhead.createCell(1).setCellValue("Application id");
+			rowhead.createCell(2).setCellValue("Name");
+			rowhead.createCell(3).setCellValue("Mobile number");
+			rowhead.createCell(4).setCellValue("Pan");
+			rowhead.createCell(5).setCellValue("Status");
+			rowhead.createCell(6).setCellValue("Dob");
+			rowhead.createCell(7).setCellValue("Fathers name");
+			rowhead.createCell(8).setCellValue("Mothers name");
+			rowhead.createCell(9).setCellValue("Gender");
+			rowhead.createCell(10).setCellValue("Marital status");
+			rowhead.createCell(11).setCellValue("Occupation");
+			rowhead.createCell(12).setCellValue("Politically exposed Person");
+			rowhead.createCell(13).setCellValue("Trading Experience");
+
+			int size = applicationIdList.size();
+			for (int itr = 0; itr < size; itr++) {
+				int applicationId = applicationIdList.get(itr);
+				eKYCDTO userApplicationDetails = eKYCService.getInstance().finalPDFGenerator(applicationId);
+				HSSFRow row = sheet.createRow((short) itr + 1);
+				row.createCell(0).setCellValue(itr + 1);
+				row.createCell(1).setCellValue(applicationId);
+				row.createCell(2).setCellValue(userApplicationDetails.getPanCardDetailsDTO().getApplicant_name());
+				row.createCell(3).setCellValue(userApplicationDetails.getApplicationMasterDTO().getMobile_number());
+				row.createCell(4)
+						.setCellValue(userApplicationDetails.getPanCardDetailsDTO().getPan_card().toUpperCase());
+				// int applicationSatus =
+				// userApplicationDetails.getApplicationMasterDTO().getApplication_status();
+				// String status = "";
+				// if(applicationSatus == eKYCConstant.re){
+				//
+				// }
+				row.createCell(5).setCellValue("Status");
+				row.createCell(6).setCellValue(userApplicationDetails.getPanCardDetailsDTO().getDob());
+				row.createCell(7).setCellValue(userApplicationDetails.getPersonalDetailsDTO().getFathersName());
+				row.createCell(8).setCellValue(userApplicationDetails.getPersonalDetailsDTO().getMothersName());
+				row.createCell(9).setCellValue(userApplicationDetails.getPersonalDetailsDTO().getGender());
+				row.createCell(10).setCellValue(userApplicationDetails.getPersonalDetailsDTO().getMarital_status());
+				row.createCell(11).setCellValue(userApplicationDetails.getPersonalDetailsDTO().getOccupation());
+				row.createCell(12)
+						.setCellValue(userApplicationDetails.getPersonalDetailsDTO().getPolitically_exposed());
+				row.createCell(13).setCellValue(userApplicationDetails.getPersonalDetailsDTO().getTrading_experience());
+
+			}
+			FileOutputStream fileOut = new FileOutputStream(filename);
+			workbook.write(fileOut);
+			// closing the Stream
+			fileOut.close();
+			// closing the workbook
+			workbook.close();
+			// } else {
+			// response.setStatus(eKYCConstant.FAILED_STATUS);
+			// response.setMessage(eKYCConstant.FAILED_MSG);
+			// response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+			// }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the completed records from data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	public ResponseDTO getCompletedRecords() {
+		ResponseDTO response = new ResponseDTO();
+		List<PersonalDetailsDTO> result = AdminDAO.getInstance().getCompletedRecords();
+		if (result != null && result.size() > 0) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setReason(eKYCConstant.SUCCESS_MSG);
+			response.setResult(result);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.FAILED_MSG);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the report list for the given status
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param status
+	 * @return
+	 * 
+	 */
+	public ResponseDTO getRecordsDetails(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null) {
+			String startDate = pDto.getStartDate();
+			String endDate = pDto.getEndDate();
+			String applicationStatus = pDto.getStatus();
+			if (startDate != null && endDate != null && applicationStatus != null && !startDate.equalsIgnoreCase("")
+					&& !endDate.equalsIgnoreCase("") && !applicationStatus.equalsIgnoreCase("") && !startDate.isEmpty()
+					&& !endDate.isEmpty() && !applicationStatus.isEmpty()) {
+				List<PersonalDetailsDTO> result = new ArrayList<PersonalDetailsDTO>();
+				if (applicationStatus.equalsIgnoreCase("In Process") || applicationStatus.equalsIgnoreCase("Review")) {
+					result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto);
+				}
+				if (applicationStatus.equalsIgnoreCase("Completed")) {
+					result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto);
+				}
+				if (applicationStatus.equalsIgnoreCase("Rejected")) {
+					result = AdminDAO.getInstance().getRejectedListByTime(pDto);
+				}
+
+				/*
+				 * Check the list and send the response
+				 */
+				if (result != null && result.size() > 0) {
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setMessage(eKYCConstant.SUCCESS_MSG);
+					response.setResult(result);
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+					response.setReason(eKYCConstant.NO_RECORD_FOUND);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INVALID_REQUEST);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INVALID_REQUEST);
+		}
 		return response;
 	}
 

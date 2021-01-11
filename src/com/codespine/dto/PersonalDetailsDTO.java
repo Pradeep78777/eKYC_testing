@@ -42,6 +42,10 @@ public class PersonalDetailsDTO {
 	private String exactTime;
 	private String reffCode;
 	private String key;
+	private String status;
+	private String branchName;
+	private String verifiedBy;
+	private String verifiedByDesigination;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -345,6 +349,38 @@ public class PersonalDetailsDTO {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
+	public String getVerifiedBy() {
+		return verifiedBy;
+	}
+
+	public void setVerifiedBy(String verifiedBy) {
+		this.verifiedBy = verifiedBy;
+	}
+
+	public String getVerifiedByDesigination() {
+		return verifiedByDesigination;
+	}
+
+	public void setVerifiedByDesigination(String verifiedByDesigination) {
+		this.verifiedByDesigination = verifiedByDesigination;
 	}
 
 }
