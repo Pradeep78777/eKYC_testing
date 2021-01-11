@@ -198,6 +198,22 @@ public class AdminController {
 	}
 
 	/**
+	 * Method to get rejected documents for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/getRejectedDocuments")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getRejectedDocuments(AdminDTO pDto) {
+		ResponseDTO response = AdminService.getInstance().getRejectedDocuments(pDto);
+		return response;
+	}
+
+	/**
 	 * Method
 	 * 
 	 * @author GOWRI SANKAR R
@@ -228,4 +244,45 @@ public class AdminController {
 		ResponseDTO response = AdminService.getInstance().getPendingRecords(pDto);
 		return response;
 	}
+
+	/**
+	 * Method to get the completed records
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	@POST
+	@Path("/getCompletedRecords")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getCompletedRecords() {
+		ResponseDTO response = AdminService.getInstance().getCompletedRecords();
+		return response;
+	}
+
+	/**
+	 * Method to get the report list for the given status
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param status
+	 * @return
+	 */
+	@POST
+	@Path("/getRecordsDetails")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getRecordsDetails(AdminDTO pDto) {
+		ResponseDTO response = AdminService.getInstance().getRecordsDetails(pDto);
+		return response;
+	}
+
+	//
+	// @POST
+	// @Path("/getExcelResult")
+	// @Consumes(MediaType.APPLICATION_JSON)
+	// @Produces(MediaType.APPLICATION_JSON)
+	// public ResponseDTO getExcelResult(AdminDTO pDto) {
+	// ResponseDTO response = AdminService.getInstance().getExcelResult(pDto);
+	// return response;
+	// }
 }

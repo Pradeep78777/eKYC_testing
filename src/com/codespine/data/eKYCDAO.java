@@ -1911,6 +1911,18 @@ public class eKYCDAO {
 		return isSuccessFull;
 	}
 
+	/**
+	 * Method to insert the IVR details for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @param proofUrl
+	 * @param ivrLat
+	 * @param ivrLong
+	 * @param deviceIP
+	 * @param userAgent
+	 * @return
+	 */
 	public int insertIvrDetails(int applicationId, String proofUrl, String ivrLat, String ivrLong, String deviceIP,
 			String userAgent) {
 		int count = 0;
@@ -1920,16 +1932,8 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"INSERT INTO tbl_ivr_capture(application_id , ivr_image , ivr_lat ,ivr_long , user_agent , device_ip , created_on ) VALUES (?,?,? ,?, ?, ? , ?) "
-							+ "ON DUPLICATE KEY UPDATE  application_id = ?, ivr_image = ? , ivr_lat = ? , ivr_long = ? , user_agent = ? , device_ip = ? , last_updated = ?");
+					"INSERT INTO tbl_ivr_capture(application_id , ivr_image , ivr_lat ,ivr_long , user_agent , device_ip , created_on ) VALUES (?,?,? ,?, ?, ? , ?) ");
 			int paramPos = 1;
-			pStmt.setInt(paramPos++, applicationId);
-			pStmt.setString(paramPos++, proofUrl);
-			pStmt.setString(paramPos++, ivrLat);
-			pStmt.setString(paramPos++, ivrLong);
-			pStmt.setString(paramPos++, userAgent);
-			pStmt.setString(paramPos++, deviceIP);
-			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.setInt(paramPos++, applicationId);
 			pStmt.setString(paramPos++, proofUrl);
 			pStmt.setString(paramPos++, ivrLat);
@@ -2412,6 +2416,8 @@ public class eKYCDAO {
 					+ "bank_phone_2, unique_id, bank_email, bank_contact_name, bank_contact_designation "
 					+ "FROM tbl_ifsccode_details where ");
 			query.append("bank_name like '" + dto.getBank_name() + "%' and bank_city like '" + dto.getBank_city()
+					+ "%' or bank_address_1 like '%" + dto.getBank_city() + "%' or bank_address_2 like '%"
+					+ dto.getBank_city() + "%' or bank_address_3 like '%" + dto.getBank_city()
 					+ "%' and active_status =" + 1);
 			pStmt = conn.prepareStatement(query.toString());
 			// int paramPos = 1;
@@ -2641,5 +2647,42 @@ public class eKYCDAO {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Method to get the application id by the given pan card
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pan_card
+	 * @return
+	 */
+	public int checkPanCardForApplicant(String pan_card) {
+		int tempApplicationId = 0;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement("SELECT application_id FROM tbl_pancard_details where pan_card = ? ");
+			pStmt.setString(paromPos++, pan_card);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					tempApplicationId = rSet.getInt("application_id");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return tempApplicationId;
 	}
 }

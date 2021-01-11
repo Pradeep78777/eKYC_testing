@@ -109,8 +109,7 @@ public class EkycApplicationController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/checkIvrRandom")
-	public Response checkIvrRandom(@QueryParam("randomKey") String randomKey,
-			@QueryParam("appId") int applicationId) {
+	public Response checkIvrRandom(@QueryParam("randomKey") String randomKey, @QueryParam("appId") int applicationId) {
 		/**
 		 * Check the random key is there are not
 		 */
@@ -162,6 +161,15 @@ public class EkycApplicationController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getExcelExport")
+	public ResponseDTO getExcelExport() {
+		ResponseDTO response = EkycApplicationService.getInstance().getExcelExport();
+		return response;
 	}
 
 }

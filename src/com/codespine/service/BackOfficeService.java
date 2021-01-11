@@ -3,6 +3,7 @@ package com.codespine.service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.codespine.data.BackOfficeDAO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
@@ -27,7 +28,7 @@ public class BackOfficeService {
 	String category = "I";
 
 	// public static void main(String[] args) {
-	// sendBackOffice(1);
+	// pushDataToBackOffice(1, "TN3", "GOWRISANKAR", "SANKAR", "MRRR");
 	// }
 
 	public ResponseDTO pushDataToBackOffice(int applicationId, String branchName, String clientCode, String verifiedBy,
@@ -46,8 +47,10 @@ public class BackOfficeService {
 			/**
 			 * Send this to the back office
 			 */
-			Object result = BackOfficeRestService.getInstance().postDataToBackEnd(parameter);
-			System.out.println(parameter);
+			Object result = BackOfficeRestService.getInstance().postDataToBackEnd(parameter, applicationId,
+					verifiedBy.toUpperCase(), verifiedByDesigination.toUpperCase(), branchName.toUpperCase());
+			// System.out.println(parameter);
+			BackOfficeDAO.getInstance().updateApplicationCompleted(applicationId);
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
 			response.setReason(eKYCConstant.SUCCESS_MSG);
@@ -199,10 +202,67 @@ public class BackOfficeService {
 			/**
 			 * Get resitential Address details
 			 */
-			String address_proof1 = "25";
-			String resi_address1 = userApplicationDetails.getAddressDTO().getFlat_no() + ", "
-					+ userApplicationDetails.getAddressDTO().getStreet().toUpperCase();
+
+			/**
+			 * Set address proof for the given user
+			 */
+			// FileUploadDTO proofDetails = userApplicationDetails
+			String addressProofDetails = userApplicationDetails.getFileUploadDTO().getTypeOfProof();
+			String correspondance_address_proof = "";
+			String address_proof1 = "";
+			if (addressProofDetails.equalsIgnoreCase(eKYCConstant.AADHAAR_PROOF)) {
+				correspondance_address_proof = String.valueOf(eKYCConstant.AADHAAR);
+				address_proof1 = String.valueOf(eKYCConstant.AADHAAR);
+			}
+			if (addressProofDetails.equalsIgnoreCase(eKYCConstant.PASSPORT_PROOF)) {
+				correspondance_address_proof = String.valueOf(eKYCConstant.PASSPORT);
+				address_proof1 = String.valueOf(eKYCConstant.PASSPORT);
+			}
+			if (addressProofDetails.equalsIgnoreCase(eKYCConstant.VOTERS_ID_CARD_PROOF)) {
+				correspondance_address_proof = String.valueOf(eKYCConstant.VOTERS_ID_CARD);
+				address_proof1 = String.valueOf(eKYCConstant.VOTERS_ID_CARD);
+			}
+			if (addressProofDetails.equalsIgnoreCase(eKYCConstant.BANK_PROOF_PROOF)) {
+				correspondance_address_proof = String.valueOf(eKYCConstant.BANK_PROOF);
+				address_proof1 = String.valueOf(eKYCConstant.BANK_PROOF);
+			}
+			if (addressProofDetails.equalsIgnoreCase(eKYCConstant.DRIVING_LICENSE_PROOF)) {
+				correspondance_address_proof = String.valueOf(eKYCConstant.DRIVING_LICENSE);
+				address_proof1 = String.valueOf(eKYCConstant.DRIVING_LICENSE);
+			}
+//			} else {
+//				correspondance_address_proof = String.valueOf(eKYCConstant.ORTHERS_PROOF);
+//				address_proof1 = String.valueOf(eKYCConstant.ORTHERS_PROOF);
+//			}
+			// String address_proof1 = "25";
+			String mainAddress = userApplicationDetails.getAddressDTO().getFlat_no() + ", "
+					+ userApplicationDetails.getAddressDTO().getStreet() + ", "
+					+ userApplicationDetails.getAddressDTO().getCity() + ", "
+					+ userApplicationDetails.getAddressDTO().getDistrict();
+			int addressLength = mainAddress.length();
+			StringBuilder address1 = new StringBuilder();
+			StringBuilder address2 = new StringBuilder();
+			StringBuilder address3 = new StringBuilder();
+			for (int itr = 0; itr <= addressLength - 1; itr++) {
+				char tempString = mainAddress.charAt(itr);
+				if (itr < 50) {
+					address1 = address1.append(tempString);
+				}
+				if (itr > 50 && itr < 100) {
+					address2 = address2.append(tempString);
+				}
+				if (itr > 50 && itr > 100 && itr < 150) {
+					address3 = address3.append(tempString);
+				}
+			}
+
+			String resi_address1 = address1.toString();
+			String resi_address2 = address2.toString();
+			String resi_address3 = address3.toString();
 			resi_address1 = resi_address1.replace(" ", "+");
+			resi_address2 = resi_address2.replace(" ", "+");
+			resi_address3 = resi_address3.replace(" ", "+");
+
 			String pin_code = String.valueOf(userApplicationDetails.getAddressDTO().getPin());
 			String city = userApplicationDetails.getAddressDTO().getCity().toUpperCase();
 			String state = userApplicationDetails.getAddressDTO().getState().toUpperCase();
@@ -210,17 +270,48 @@ public class BackOfficeService {
 			String resi_tel_no = String.valueOf(userApplicationDetails.getApplicationMasterDTO().getMobile_number());
 			String emailId = userApplicationDetails.getApplicationMasterDTO().getEmail_id();
 
-			String correspondance_address_proof = "25";
-			String reg_addr1 = userApplicationDetails.getAddressDTO().getFlat_no() + " , "
-					+ userApplicationDetails.getAddressDTO().getStreet().toUpperCase();
-			reg_addr1 = reg_addr1.replace(" ", "+");
+			String reg_addr1 = resi_address1;
+			String reg_addr2 = resi_address2;
+			String reg_addr3 = resi_address3;
+
 			String r_pin_code = String.valueOf(userApplicationDetails.getAddressDTO().getPin());
 			String r_city = userApplicationDetails.getAddressDTO().getCity();
 			String r_state = userApplicationDetails.getAddressDTO().getState();
 			String political_affilication = userApplicationDetails.getPersonalDetailsDTO().getPolitically_exposed();
 			political_affilication = political_affilication.replace(" ", "+");
 
-			String occupation = "STUDENT";
+			String occupation = userApplicationDetails.getPersonalDetailsDTO().getOccupation();
+			if (occupation.equalsIgnoreCase("Private Sector")) {
+				occupation = "Private+Sector+Service";
+			}
+			if (occupation.equalsIgnoreCase("Government Service")) {
+				occupation = "Government+Service";
+			}
+			if (occupation.equalsIgnoreCase("Public Sector")) {
+				occupation = "Public+Sector+Service";
+			}
+			if (occupation.equalsIgnoreCase("Agriculturalist")) {
+				occupation = "Agriculturist";
+			}
+			if (occupation.equalsIgnoreCase("Professional")) {
+				occupation = "Professional";
+			}
+			if (occupation.equalsIgnoreCase("Business")) {
+				occupation = "Business";
+			}
+			if (occupation.equalsIgnoreCase("House wife")) {
+				occupation = "Housewife";
+			}
+			if (occupation.equalsIgnoreCase("Retired")) {
+				occupation = "Retired";
+			}
+			if (occupation.equalsIgnoreCase("Student")) {
+				occupation = "Student";
+			}
+			if (occupation.equalsIgnoreCase("Others")) {
+				occupation = "Others";
+			}
+			occupation = occupation.toUpperCase();
 			String inperson_date = currentDate;
 			String person_verify_name = verifiedBy;
 			String person_verify_designation = verifiedByDesigination;
@@ -233,37 +324,51 @@ public class BackOfficeService {
 			 * TODO : according to selection of annual income it should be send
 			 */
 			String risk_catg = "Low";
+			String portfolio_mk_value = "";
+			String net_Worth_Date = "31/03/2020";
 			String annual_income = userApplicationDetails.getPersonalDetailsDTO().getAnnual_income().toUpperCase();
 			if (annual_income.equalsIgnoreCase("Below 1 Lakh")) {
 				annual_income = "Less Than One Lakhs";
 				annual_income = annual_income.replace(" ", "+");
 				risk_catg = "Low";
+				portfolio_mk_value = "90000";
 			}
 			if (annual_income.equalsIgnoreCase("1L-5L")) {
 				annual_income = "One To Five Lakhs";
 				annual_income = annual_income.replace(" ", "+");
 				risk_catg = "Low";
+				portfolio_mk_value = "400000";
 			}
 			if (annual_income.equalsIgnoreCase("5L-10L")) {
 				annual_income = "Five To Ten Lakhs";
 				annual_income = annual_income.replace(" ", "+");
 				risk_catg = "Medium";
+				portfolio_mk_value = "900000";
 			}
 			if (annual_income.equalsIgnoreCase("10L-25L")) {
 				annual_income = "Ten To TwentyFive Lakhs";
 				annual_income = annual_income.replace(" ", "+");
 				risk_catg = "High";
+				portfolio_mk_value = "2400000";
 			}
 			if (annual_income.equalsIgnoreCase("Above 25L")) {
 				annual_income = "TwentyFive Lakhs To Fifty Lakhs";
 				annual_income = annual_income.replace(" ", "+");
 				risk_catg = "High";
+				portfolio_mk_value = "2900000";
 			}
 			// annual_income = annual_income.replace(" ", "+");
 			// annual_income = "";
 			String grossannualincomedate = currentDate;
 
 			String aadharNumber = String.valueOf(userApplicationDetails.getPanCardDetailsDTO().getAadharNo());
+			/*
+			 * Serial no should be changed according to the data base
+			 */
+			long serialNo = BackOfficeDAO.getInstance().getSerialNo(2, 1);
+			String serial_no = String.valueOf(serialNo);
+
+			BackOfficeDAO.getInstance().updateSerialNo(serialNo + 1, 2, 1);
 
 			/**
 			 * Defalut values
@@ -272,7 +377,7 @@ public class BackOfficeService {
 			String pan_proof = "01";
 			String category = "I";
 			String residential_status = "RI";
-			String serial_no = "12345678";
+
 			String not_eft = "Y";
 			String not_poa = "N";
 			String nri_psi_no = "";
@@ -351,13 +456,14 @@ public class BackOfficeService {
 					+ BackOfficeContants.NOT_DPID + equalSymbol + not_dpid + symbol + BackOfficeContants.NOT_BOID
 					+ equalSymbol + not_boid + symbol + BackOfficeContants.ADDRESS_PROOF1 + equalSymbol + address_proof1
 					+ symbol + BackOfficeContants.RESI_ADDRESS1 + equalSymbol + resi_address1 + symbol
-					+ BackOfficeContants.RESI_ADDRESS2 + equalSymbol + "" + symbol + BackOfficeContants.RESI_ADDRESS3
-					+ equalSymbol + "" + symbol + BackOfficeContants.PIN_CODE + equalSymbol + pin_code + symbol
-					+ BackOfficeContants.CITY + equalSymbol + city + symbol + BackOfficeContants.STATE + equalSymbol
-					+ state + symbol + BackOfficeContants.COUNTRY + equalSymbol + country + symbol
-					+ BackOfficeContants.ISD_CODE + equalSymbol + isd_code + symbol + BackOfficeContants.STD_CODE
-					+ equalSymbol + std_code + symbol + BackOfficeContants.RESI_TEL_NO + equalSymbol + resi_tel_no
-					+ symbol + BackOfficeContants.RESI_FAX_NO + equalSymbol + "" + symbol + BackOfficeContants.MOBILE_NO
+					+ BackOfficeContants.RESI_ADDRESS2 + equalSymbol + resi_address2 + symbol
+					+ BackOfficeContants.RESI_ADDRESS3 + equalSymbol + resi_address3 + symbol
+					+ BackOfficeContants.PIN_CODE + equalSymbol + pin_code + symbol + BackOfficeContants.CITY
+					+ equalSymbol + city + symbol + BackOfficeContants.STATE + equalSymbol + state + symbol
+					+ BackOfficeContants.COUNTRY + equalSymbol + country + symbol + BackOfficeContants.ISD_CODE
+					+ equalSymbol + isd_code + symbol + BackOfficeContants.STD_CODE + equalSymbol + std_code + symbol
+					+ BackOfficeContants.RESI_TEL_NO + equalSymbol + resi_tel_no + symbol
+					+ BackOfficeContants.RESI_FAX_NO + equalSymbol + "" + symbol + BackOfficeContants.MOBILE_NO
 					+ equalSymbol + resi_tel_no + symbol + BackOfficeContants.EMAIL_ID + equalSymbol + emailId + symbol
 					+ BackOfficeContants.EMAIL_ID_BCC + equalSymbol + "" + symbol + BackOfficeContants.UPDATIONFLAG
 					+ equalSymbol + updationflag + symbol + BackOfficeContants.TYPEOFFACILITY + equalSymbol
@@ -382,9 +488,9 @@ public class BackOfficeService {
 					+ BackOfficeContants.NRIPIS + equalSymbol + nripis + symbol
 					+ BackOfficeContants.CORRESPONDANCE_ADDRESS_PROOF + equalSymbol + correspondance_address_proof
 					+ symbol + BackOfficeContants.REG_ADDR1 + equalSymbol + reg_addr1 + symbol
-					+ BackOfficeContants.REG_ADDR2 + equalSymbol + "" + symbol + BackOfficeContants.REG_ADDR3
-					+ equalSymbol + "" + symbol + BackOfficeContants.R_PIN_CODE + equalSymbol + r_pin_code + symbol
-					+ BackOfficeContants.R_CITY + equalSymbol + r_city + symbol + BackOfficeContants.R_STATE
+					+ BackOfficeContants.REG_ADDR2 + equalSymbol + reg_addr2 + symbol + BackOfficeContants.REG_ADDR3
+					+ equalSymbol + reg_addr3 + symbol + BackOfficeContants.R_PIN_CODE + equalSymbol + r_pin_code
+					+ symbol + BackOfficeContants.R_CITY + equalSymbol + r_city + symbol + BackOfficeContants.R_STATE
 					+ equalSymbol + r_state + symbol + BackOfficeContants.R_COUNTRY + equalSymbol + r_country + symbol
 					+ BackOfficeContants.FAMILY_GROUP + equalSymbol + "" + symbol
 					+ BackOfficeContants.RELATIONMANAGER_CODE + equalSymbol + "" + symbol
@@ -455,9 +561,10 @@ public class BackOfficeService {
 					+ BackOfficeContants.PERSON_VERIFY_DESIGNATION + equalSymbol + person_verify_designation + symbol
 					+ BackOfficeContants.ANNUAL_INCOME + equalSymbol + annual_income + symbol
 					+ BackOfficeContants.GROSSANNUALINCOMEDATE + equalSymbol + grossannualincomedate + symbol
-					+ BackOfficeContants.PORTFOLIO_MKT_VALUE + equalSymbol + "" + symbol
-					+ BackOfficeContants.NET_WORTH_DATE + equalSymbol + "" + symbol + BackOfficeContants.PASSPORT_NO
-					+ equalSymbol + "" + symbol + BackOfficeContants.PASSPORT_ISSUED_PLACE + equalSymbol + "" + symbol
+					+ BackOfficeContants.PORTFOLIO_MKT_VALUE + equalSymbol + portfolio_mk_value + symbol
+					+ BackOfficeContants.NET_WORTH_DATE + equalSymbol + net_Worth_Date + symbol
+					+ BackOfficeContants.PASSPORT_NO + equalSymbol + "" + symbol
+					+ BackOfficeContants.PASSPORT_ISSUED_PLACE + equalSymbol + "" + symbol
 					+ BackOfficeContants.PASS_ISSUE_DATE + equalSymbol + "" + symbol
 					+ BackOfficeContants.PASSPORT_EXPIRY_DATE + equalSymbol + "" + symbol
 					+ BackOfficeContants.AADHARCARD + equalSymbol + aadharNumber + symbol
