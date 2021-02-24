@@ -105,8 +105,8 @@ public class eKYCConstant {
 	/**
 	 * File path for Local
 	 */
-	public static final String PROJ_DIR = "D://Zebull E-Kyc//EKYC//e_sign//";
-	public static final String SITE_URL_FILE = "https://oa1.zebull.in//e_sign/";
+	public static final String PROJ_DIR = "D://Zebull E-Kyc//apache-tomcat-9.0.41//webapps//e_sign//";
+	public static final String SITE_URL_FILE = "https://oa.zebull.in/rest/e_sign/";
 	public static final String UPLOADS_DIR = "file//uploads//";
 
 	/**

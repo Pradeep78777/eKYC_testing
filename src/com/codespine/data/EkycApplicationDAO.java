@@ -43,15 +43,15 @@ public class EkycApplicationDAO {
 			String query = "";
 			if (isEmail) {
 				query = "SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, "
-						+ "application_status , document_signed , document_downloaded , email_owner , mob_owner "
-						+ "FROM tbl_application_master where email_id = ? and delete_flag = ?";
+						+ "application_status , document_signed , document_downloaded , email_owner , mob_owner , is_approved , is_rejected , rectify_count "
+						+ "  FROM  tbl_application_master where email_id = ? and delete_flag = ?";
 				pStmt = conn.prepareStatement(query);
 				pStmt.setString(paromPos++, pDto.getEmail());
 				pStmt.setInt(paromPos++, 0);
 			} else {
 				query = "SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, "
-						+ "application_status , document_signed , document_downloaded , email_owner , mob_owner "
-						+ "FROM tbl_application_master where mobile_number = ? and delete_flag = ?";
+						+ "application_status , document_signed , document_downloaded , email_owner , mob_owner , is_approved , is_rejected , rectify_count "
+						+ "  FROM  tbl_application_master where mobile_number = ? and delete_flag = ?";
 				pStmt = conn.prepareStatement(query);
 				pStmt.setLong(paromPos++, pDto.getMobile_number());
 				pStmt.setInt(paromPos++, 0);
@@ -72,6 +72,9 @@ public class EkycApplicationDAO {
 					result.setDocumentDownloaded(rSet.getInt("document_downloaded"));
 					result.setMobile_owner(rSet.getString("mob_owner"));
 					result.setEmail_owner(rSet.getString("email_owner"));
+					result.setIsAproved(rSet.getInt("is_approved"));
+					result.setIsRejected(rSet.getInt("is_rejected"));
+					result.setRectifyCount(rSet.getInt("rectify_count"));
 					response.add(result);
 				}
 			}
@@ -105,9 +108,9 @@ public class EkycApplicationDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			String query = "";
-			query = "SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, "
-					+ "application_status , document_signed , document_downloaded , email_owner , mob_owner "
-					+ "FROM tbl_application_master where application_id = ? and delete_flag = ?";
+			query = " SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, "
+					+ " application_status , document_signed , document_downloaded , email_owner , mob_owner , is_approved , is_rejected , rectify_count "
+					+ "  FROM  tbl_application_master where application_id = ? and delete_flag = ?";
 			pStmt = conn.prepareStatement(query);
 			pStmt.setInt(paromPos++, application_id);
 			pStmt.setInt(paromPos++, 0);
@@ -126,6 +129,9 @@ public class EkycApplicationDAO {
 					result.setDocumentDownloaded(rSet.getInt("document_downloaded"));
 					result.setMobile_owner(rSet.getString("mob_owner"));
 					result.setEmail_owner(rSet.getString("email_owner"));
+					result.setIsAproved(rSet.getInt("is_approved"));
+					result.setIsRejected(rSet.getInt("is_rejected"));
+					result.setRectifyCount(rSet.getInt("rectify_count"));
 				}
 			}
 		} catch (Exception e) {
@@ -200,7 +206,7 @@ public class EkycApplicationDAO {
 			conn = DBUtil.getConnection();
 			String query = "";
 			query = "SELECT application_id, random_key, expiry_date, created_on, created_by, updated_on, updated_by, active_status "
-					+ "FROM tbl_ivr_link_master where application_id = ? ";
+					+ " FROM  tbl_ivr_link_master where application_id = ? ";
 			pStmt = conn.prepareStatement(query);
 			pStmt.setInt(paromPos++, applicationId);
 			rSet = pStmt.executeQuery();
