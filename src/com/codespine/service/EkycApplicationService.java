@@ -93,10 +93,16 @@ public class EkycApplicationService {
 			PersonalDetailsDTO userDetails = EkycApplicationDAO.getApplicationForUser(pDto.getApplication_id());
 			if (userDetails != null) {
 				userDetails.setOtp(0);
+				int isRejected = userDetails.getIsRejected();
+				int isAproved = userDetails.getIsAproved();
+				int retifyCount = userDetails.getRectifyCount();
 				if (userDetails.getApplicationStatus() >= 3) {
 					PanCardDetailsDTO panCardName = eKYCDAO.getInstance().getApplicantName(pDto.getApplication_id());
 					userDetails.setApplicant_name(panCardName.getApplicant_name());
 					userDetails.setFathersName(panCardName.getFathersName());
+					if (isRejected == 1 && retifyCount == 0) {
+						userDetails.setApplicationStatus(2);
+					}
 				}
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);

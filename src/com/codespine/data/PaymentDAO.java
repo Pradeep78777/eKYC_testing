@@ -3,13 +3,13 @@ package com.codespine.data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.codespine.dto.PaymentDto;
 import com.codespine.util.DBUtil;
 import com.codespine.util.StringUtil;
-import com.mysql.jdbc.Statement;
 
 public class PaymentDAO {
 	public static PaymentDAO paymentDAO = null;

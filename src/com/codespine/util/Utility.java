@@ -14,8 +14,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +41,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -496,7 +504,7 @@ public class Utility {
 			String pathToPDF = folderName;
 			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
 			String authMode = "1";
-			String responseUrl = "https://oa2.zebull.in/eKYCService/eKYC/getNsdlXML";
+			String responseUrl = "https://oa.zebull.in/rest/eKYCService/eKYC/getNsdlXML";
 			String p12CertificatePath = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
 			String p12CertiPwd = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
 			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
@@ -835,7 +843,7 @@ public class Utility {
 						+ "<div  style='font-size:14px'><p><b>Hi " + applicantName
 						+ ",</b> <p>Your application has been verified and found some discrepancies. Please find the details mentioned below, </p>"
 						+ " <p>Information & Documents related comments :</p><b> " + documentsBuilder + "</b><br> "
-						+ "<p> We request you to take the remedial action using the below link: https://oa1.zebull.in/  </p>"
+						+ "<p> We request you to take the remedial action using the below link: https://oa.zebull.in/  </p>"
 						+ "<p>Please reach out to our support team on 93 8010 8010 for any further information. </p></div>"
 						+ "<div><p align='left'> " + "<b>Regards,"
 						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
@@ -1059,6 +1067,9 @@ public class Utility {
 		String base64Image = "";
 		try {
 			String replacedURL = StringUtil.replace(imageUrl, " ", "%20");
+			System.out.println(imageUrl);
+			System.out.println(replacedURL);
+			trustedManagement();
 			InputStream in = new URL(replacedURL).openStream();
 			BufferedImage bimg = ImageIO.read(in);
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -1071,5 +1082,34 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return base64Image;
+	}
+
+	private static void trustedManagement() {
+		try {
+			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+
+				public void checkClientTrusted(X509Certificate[] certs, String authType) {
+				}
+
+				public void checkServerTrusted(X509Certificate[] certs, String authType) {
+				}
+			} };
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			HostnameVerifier allHostsValid = new HostnameVerifier() {
+				public boolean verify(String hostname, SSLSession session) {
+					return true;
+				}
+			};
+			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (KeyManagementException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -276,6 +276,22 @@ public class AdminController {
 		return response;
 	}
 
+	/**
+	 * Method to get the report list for the given status without Time
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param status
+	 * @return
+	 */
+	@POST
+	@Path("/getExcelDownloadLink")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getExcelDownloadLink(AdminDTO pDto) {
+		ResponseDTO response = AdminService.getInstance().getExcelDownloadLink(pDto);
+		return response;
+	}
+
 	//
 	// @POST
 	// @Path("/getExcelResult")

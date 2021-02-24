@@ -997,7 +997,7 @@ public class eKYCController {
 	public InputStream htmlCheck() {
 		try {
 			String tempStarting = "<!DOCTYPE html><html><head><title>Zebull E-KYC</title><style>.myDiv {text-align: center;position: absolute;left: 45%; top: 50%;}.colorClass{background: #007aff;border: 2px solid #007aff; border-radius: 3px;  color: #fff; font-size: 16px;width: 100%; font-weight: 600;height: 40px;}</style><script>";
-			String mainString = "function openWin() {  window.open('https://oa1.zebull.in//e_sign/file//uploads//1//PANCARD//motivational-10.jpg' ,'_self' );}";
+			String mainString = "function openWin() {  window.open('https://oa.zebull.in//e_sign/file//uploads//1//PANCARD//motivational-10.jpg' ,'_self' );}";
 			String endStrign = "</script></head><body><div class='myDiv'> <input type='button' class='colorClass' value='Download E-sign Document' onclick='openWin()'></div></body></html>";
 			String mainText = tempStarting + mainString + endStrign;
 			File testFile = new File("signed_pdf.html");

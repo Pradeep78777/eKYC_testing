@@ -49,7 +49,7 @@ public class AdminDAO {
 					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
 							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
 							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ "b.politically_exposed , c.pan_card ,c.dob FROM tbl_application_master A "
+							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
 							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where is_completed = ? order by a.created_date desc");
 			pStmt.setInt(paramPos++, 0);
@@ -77,20 +77,25 @@ public class AdminDAO {
 					result.setDob(rSet.getString("c.dob"));
 					result.setDocumentSigned(rSet.getInt("a.document_signed"));
 					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					if (applicationStatus == eKYCConstant.OTP_VERIFIED
+							|| applicationStatus == eKYCConstant.PAN_CARD_UPDATED) {
+						result.setStatus("Pancard Details");
+						result.setExactStatus("In Process");
+					}
 					if (applicationStatus == eKYCConstant.BASIC_DETAILS_UPDATED) {
-						result.setStatus("BasicDetails");
+						result.setStatus("Basic Details");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.COMMUNICATION_ADDRESS_UPDATED) {
-						result.setStatus("ComminicationAddress");
+						result.setStatus("Comminication Address");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.PERMANENT_ADDRESS_UPDATED) {
-						result.setStatus("PermanentAddress");
+						result.setStatus("Permanent Address");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.BANK_DETAILS_UPDATED) {
-						result.setStatus("BankDetails");
+						result.setStatus("Bank Details");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.EXCH_UPDATED) {
@@ -98,23 +103,23 @@ public class AdminDAO {
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.ATTACHEMENT_UPLOADED) {
-						result.setStatus("DocumentUploaded");
+						result.setStatus("Document Uploaded");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.IPV_UPLOADED) {
-						result.setStatus("IpvUploaded");
+						result.setStatus("Ipv Uploaded");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.DOCUMENT_DOWNLOADED) {
-						result.setStatus("DocumentDownloaded");
+						result.setStatus("Document Downloaded");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.DOCUMENT_SIGNED) {
-						result.setStatus("DocumentSigned");
+						result.setStatus("Document Signed");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus > eKYCConstant.DOCUMENT_SIGNED) {
-						result.setStatus("AdminStartedApplication");
+						result.setStatus("Admin Started Application");
 						result.setExactStatus("Review");
 					}
 					response.add(result);
@@ -250,7 +255,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT attachement_type , attachement_url FROM tbl_application_attachements where application_id = ? ");
+					" SELECT attachement_type , attachement_url  FROM  tbl_application_attachements where application_id = ? ");
 			pStmt.setInt(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -444,7 +449,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT verification_module, start_time, end_time, status, notes FROM tbl_application_status_log where application_id = ? ");
+					" SELECT verification_module, start_time, end_time, status, notes  FROM  tbl_application_status_log where application_id = ? ");
 			pStmt.setInt(paromPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -513,6 +518,42 @@ public class AdminDAO {
 	}
 
 	/**
+	 * Method to update the retify Count
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public boolean updateRetifyCount(int applicationId, int retifyCount) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		boolean issuccessfull = false;
+		int count = 0;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn
+					.prepareStatement("UPDATE tbl_application_master SET rectify_count = ? where application_id = ? ");
+			int parompos = 1;
+			pStmt.setInt(parompos++, retifyCount);
+			pStmt.setInt(parompos++, applicationId);
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				issuccessfull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return issuccessfull;
+	}
+
+	/**
 	 * Method to get the user details by given application id
 	 * 
 	 * @author GOWRI SANKAR R
@@ -528,7 +569,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement("SELECT a.mobile_number, a.email_id ,b.applicant_name "
-					+ "FROM tbl_application_master A inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+					+ " FROM  tbl_application_master A inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 					+ "where a.application_id = ?");
 			pStmt.setLong(paromPos++, applicationId);
 			rSet = pStmt.executeQuery();
@@ -571,7 +612,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT verification_module, start_time, end_time, status, notes FROM tbl_application_status_log where application_id = ? and status = ? ");
+					" SELECT verification_module, start_time, end_time, status, notes  FROM  tbl_application_status_log where application_id = ? and status = ? ");
 			pStmt.setInt(paromPos++, applicationId);
 			pStmt.setInt(paromPos++, 0);
 			rSet = pStmt.executeQuery();
@@ -610,7 +651,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT id FROM tbl_application_status_log where application_id = ? and verification_module = ?");
+					" SELECT id  FROM  tbl_application_status_log where application_id = ? and verification_module = ?");
 			pStmt.setInt(paromPos++, applicationId);
 			pStmt.setString(paromPos++, verificationModule);
 			rSet = pStmt.executeQuery();
@@ -649,7 +690,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT name, admin_email, admin_password, designation FROM tbl_admin_details where admin_email = ? ");
+					"SELECT name, admin_email, admin_password, designation  FROM  tbl_admin_details where admin_email = ? ");
 			pStmt.setString(paromPos++, pDto.getEmail());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -693,7 +734,7 @@ public class AdminDAO {
 			pStmt = conn.prepareStatement(
 					"SELECT application_id, mobile_number, mob_owner, mobile_no_verified, email_id, email_owner, email_activated, "
 							+ "otp_verified_on, email_activated_on, application_status, is_approved, is_rejected, document_signed, document_downloaded, "
-							+ "comments, last_updated, created_date FROM tbl_application_master where delete_flag = ? ");
+							+ "comments, last_updated, created_date  FROM  tbl_application_master where delete_flag = ? ");
 			pStmt.setInt(paramPos++, 0);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -756,7 +797,7 @@ public class AdminDAO {
 			pStmt = conn.prepareStatement(
 					"SELECT application_id, applicant_name, first_name, middle_name, last_name, pan_card, aadhar_no, dob, "
 							+ "pan_card_verified, is_approved, is_rejected, comments, last_updated, created_on "
-							+ "FROM tbl_pancard_details where application_id = ? ");
+							+ " FROM  tbl_pancard_details where application_id = ? ");
 			pStmt.setInt(paramPos++, applicationID);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -811,7 +852,7 @@ public class AdminDAO {
 					"SELECT application_id, applicant_name, mothersName, fathersName, gender, marital_status, "
 							+ "annual_income, trading_experience, occupation, politically_exposed, "
 							+ "is_approved, is_rejected, comments, last_updated, created_on "
-							+ "FROM tbl_account_holder_personal_details where application_id = ? ");
+							+ " FROM  tbl_account_holder_personal_details where application_id = ? ");
 			pStmt.setInt(paramPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -865,7 +906,7 @@ public class AdminDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT application_id, flat_no, street, pin, city, district, state, is_approved, is_rejected, comments, created_on, last_updated "
-							+ "FROM tbl_communication_address where application_id = ? ");
+							+ " FROM  tbl_communication_address where application_id = ? ");
 			pStmt.setInt(paramPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -916,7 +957,7 @@ public class AdminDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT application_id, flat_no, street, pin, city, district, state, is_approved, is_rejected, comments, created_on, last_updated "
-							+ "FROM tbl_permanent_address where application_id = ? ");
+							+ " FROM  tbl_permanent_address where application_id = ? ");
 			pStmt.setInt(paramPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -968,7 +1009,7 @@ public class AdminDAO {
 			pStmt = conn.prepareStatement(
 					"SELECT application_id, bank_name, micr_code, account_holder_name, ifsc_code, bank_account_no, "
 							+ "bank_address, account_type, is_approved, is_rejected, comments, last_updated, created_on "
-							+ "FROM tbl_bank_account_details where application_id = ? ");
+							+ " FROM  tbl_bank_account_details where application_id = ? ");
 			pStmt.setInt(paramPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1020,7 +1061,7 @@ public class AdminDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT application_id, nse_eq, bse_eq, mf, nse_fo, bse_fo, cds, bcd, mcx, icex, nse_com, bse_com, last_updated, created_on "
-							+ "FROM tbl_exch_segments where application_id = ? ");
+							+ " FROM  tbl_exch_segments where application_id = ? ");
 			pStmt.setInt(paramPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1074,7 +1115,7 @@ public class AdminDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT application_id, attachement_type, type_of_proof, attachement_url, is_approved, is_rejected, comments, last_update, created_on, delete_flag "
-							+ "FROM tbl_application_attachements where application_id = ? ");
+							+ " FROM  tbl_application_attachements where application_id = ? ");
 			pStmt.setInt(paramPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1126,7 +1167,7 @@ public class AdminDAO {
 					+ "a.email_activated,a.application_status , a.document_signed , a.document_downloaded , "
 					+ "b.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income, "
 					+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob , d.branch_name ,"
-					+ "d.verified_by , d.verified_by_desigination FROM tbl_application_master A "
+					+ "d.verified_by , d.verified_by_desigination  FROM  tbl_application_master A "
 					+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 					+ "inner join tbl_pancard_details c on a.application_id = c.application_id "
 					+ "inner join tbl_backoffice_request_parameter D on a.application_id = d.application_id  "
@@ -1196,11 +1237,11 @@ public class AdminDAO {
 					+ "a.email_activated,a.application_status , a.document_signed , a.document_downloaded , "
 					+ "b.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income, "
 					+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob , d.branch_name ,"
-					+ "d.verified_by , d.verified_by_desigination FROM tbl_application_master A "
+					+ "d.verified_by , d.verified_by_desigination  FROM  tbl_application_master A "
 					+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 					+ "inner join tbl_pancard_details c on a.application_id = c.application_id "
 					+ "inner join tbl_backoffice_request_parameter D on a.application_id = d.application_id  "
-					+ "where a.is_completed = ? and a.created_date >= ? and a.created_date <= ? order by a.created_date desc");
+					+ "where a.is_completed = ? and a.last_updated >= ? and a.last_updated <= ? order by a.created_date desc");
 			pStmt.setInt(paramPos++, 1);
 			pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
 			pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
@@ -1231,6 +1272,8 @@ public class AdminDAO {
 					result.setBranchName(rSet.getString("d.branch_name"));
 					result.setVerifiedBy(rSet.getString("d.verified_by"));
 					result.setVerifiedByDesigination(rSet.getString("d.verified_by_desigination"));
+					result.setStatus("Completed");
+					result.setExactStatus("Completed");
 					response.add(result);
 				}
 			}
@@ -1267,7 +1310,7 @@ public class AdminDAO {
 					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
 							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
 							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ "b.politically_exposed , c.pan_card ,c.dob FROM tbl_application_master A "
+							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
 							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
 							+ "a.is_approved = ? and a.is_rejected = ? and a.created_date >= ? and a.created_date <= ? "
@@ -1301,20 +1344,25 @@ public class AdminDAO {
 					result.setDob(rSet.getString("c.dob"));
 					result.setDocumentSigned(rSet.getInt("a.document_signed"));
 					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					if (applicationStatus == eKYCConstant.OTP_VERIFIED
+							|| applicationStatus == eKYCConstant.PAN_CARD_UPDATED) {
+						result.setStatus("Pancard Details");
+						result.setExactStatus("In Process");
+					}
 					if (applicationStatus == eKYCConstant.BASIC_DETAILS_UPDATED) {
-						result.setStatus("BasicDetails");
+						result.setStatus("Basic Details");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.COMMUNICATION_ADDRESS_UPDATED) {
-						result.setStatus("ComminicationAddress");
+						result.setStatus("Comminication Address");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.PERMANENT_ADDRESS_UPDATED) {
-						result.setStatus("PermanentAddress");
+						result.setStatus("Permanent Address");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.BANK_DETAILS_UPDATED) {
-						result.setStatus("BankDetails");
+						result.setStatus("Bank Details");
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus == eKYCConstant.EXCH_UPDATED) {
@@ -1338,7 +1386,7 @@ public class AdminDAO {
 						result.setExactStatus("In Process");
 					}
 					if (applicationStatus > eKYCConstant.DOCUMENT_SIGNED) {
-						result.setStatus("Admin Started Application");
+						result.setStatus("Approval In Process");
 						result.setExactStatus("Review");
 					}
 					response.add(result);
@@ -1377,13 +1425,341 @@ public class AdminDAO {
 					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
 							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
 							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ "b.politically_exposed , c.pan_card ,c.dob FROM tbl_application_master A "
+							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
 							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
-							+ "a.is_approved = ? and a.is_rejected = ? and a.created_date >= ? and a.created_date <= ? "
+							+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count = ? and a.last_updated >= ? and a.last_updated <= ? "
 							+ "order by a.created_date desc");
 			pStmt.setInt(paramPos++, 0);
 			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 1);
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+			pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PersonalDetailsDTO();
+					int applicationStatus = rSet.getInt("a.application_status");
+					result.setApplication_id(rSet.getInt("a.application_id"));
+					result.setMobile_number(rSet.getLong("a.mobile_number"));
+					result.setMobile_number_verified(rSet.getInt("a.mobile_no_verified"));
+					result.setEmail(rSet.getString("a.email_id"));
+					result.setEmail_id_verified(rSet.getInt("a.email_activated"));
+					result.setApplicationStatus(applicationStatus);
+					result.setApplicant_name(rSet.getString("b.applicant_name"));
+					result.setMothersName(rSet.getString("b.mothersName"));
+					result.setFathersName(rSet.getString("b.fathersName"));
+					result.setGender(rSet.getString("b.gender"));
+					result.setMarital_status(rSet.getString("b.marital_status"));
+					result.setAnnual_income(rSet.getString("b.annual_income"));
+					result.setTrading_experience(rSet.getString("b.trading_experience"));
+					result.setOccupation(rSet.getString("b.occupation"));
+					result.setPolitically_exposed(rSet.getString("b.politically_exposed"));
+					result.setPancard(rSet.getString("c.pan_card"));
+					result.setDob(rSet.getString("c.dob"));
+					result.setDocumentSigned(rSet.getInt("a.document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					result.setStatus("Rejected");
+					result.setExactStatus("Rejected");
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * method to get the completed list from the data base using time
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public List<PersonalDetailsDTO> getCompletedRecords(AdminDTO pDto) {
+		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			int paramPos = 1;
+			pStmt = conn.prepareStatement("SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id,"
+					+ "a.email_activated,a.application_status , a.document_signed , a.document_downloaded , "
+					+ "b.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income, "
+					+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob , d.branch_name ,"
+					+ "d.verified_by , d.verified_by_desigination  FROM  tbl_application_master A "
+					+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+					+ "inner join tbl_pancard_details c on a.application_id = c.application_id "
+					+ "inner join tbl_backoffice_request_parameter D on a.application_id = d.application_id  "
+					+ "where a.is_completed = ?  order by a.created_date desc");
+			pStmt.setInt(paramPos++, 1);
+			// pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+			// pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PersonalDetailsDTO();
+					int applicationStatus = rSet.getInt("a.application_status");
+					result.setApplication_id(rSet.getInt("a.application_id"));
+					result.setMobile_number(rSet.getLong("a.mobile_number"));
+					result.setMobile_number_verified(rSet.getInt("a.mobile_no_verified"));
+					result.setEmail(rSet.getString("a.email_id"));
+					result.setEmail_id_verified(rSet.getInt("a.email_activated"));
+					result.setApplicationStatus(applicationStatus);
+					result.setApplicant_name(rSet.getString("b.applicant_name"));
+					result.setMothersName(rSet.getString("b.mothersName"));
+					result.setFathersName(rSet.getString("b.fathersName"));
+					result.setGender(rSet.getString("b.gender"));
+					result.setMarital_status(rSet.getString("b.marital_status"));
+					result.setAnnual_income(rSet.getString("b.annual_income"));
+					result.setTrading_experience(rSet.getString("b.trading_experience"));
+					result.setOccupation(rSet.getString("b.occupation"));
+					result.setPolitically_exposed(rSet.getString("b.politically_exposed"));
+					result.setPancard(rSet.getString("c.pan_card"));
+					result.setDob(rSet.getString("c.dob"));
+					result.setDocumentSigned(rSet.getInt("a.document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					result.setBranchName(rSet.getString("d.branch_name"));
+					result.setVerifiedBy(rSet.getString("d.verified_by"));
+					result.setVerifiedByDesigination(rSet.getString("d.verified_by_desigination"));
+					result.setStatus("Completed");
+					result.setExactStatus("Completed");
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Get user record from the data base which are in IN-process
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	public List<PersonalDetailsDTO> getInprogressRecords(AdminDTO pDto) {
+		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
+							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+							+ "a.is_approved = ? and a.is_rejected = ? order by a.created_date desc");
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 0);
+			// pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+			// pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PersonalDetailsDTO();
+					int applicationStatus = rSet.getInt("a.application_status");
+					result.setApplication_id(rSet.getInt("a.application_id"));
+					result.setMobile_number(rSet.getLong("a.mobile_number"));
+					result.setMobile_number_verified(rSet.getInt("a.mobile_no_verified"));
+					result.setEmail(rSet.getString("a.email_id"));
+					result.setEmail_id_verified(rSet.getInt("a.email_activated"));
+					result.setApplicationStatus(applicationStatus);
+					result.setApplicant_name(rSet.getString("b.applicant_name"));
+					result.setMothersName(rSet.getString("b.mothersName"));
+					result.setFathersName(rSet.getString("b.fathersName"));
+					result.setGender(rSet.getString("b.gender"));
+					result.setMarital_status(rSet.getString("b.marital_status"));
+					result.setAnnual_income(rSet.getString("b.annual_income"));
+					result.setTrading_experience(rSet.getString("b.trading_experience"));
+					result.setOccupation(rSet.getString("b.occupation"));
+					result.setPolitically_exposed(rSet.getString("b.politically_exposed"));
+					result.setPancard(rSet.getString("c.pan_card"));
+					result.setDob(rSet.getString("c.dob"));
+					result.setDocumentSigned(rSet.getInt("a.document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					if (applicationStatus == eKYCConstant.BASIC_DETAILS_UPDATED) {
+						result.setStatus("Basic Details");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.COMMUNICATION_ADDRESS_UPDATED) {
+						result.setStatus("Comminication Address");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.PERMANENT_ADDRESS_UPDATED) {
+						result.setStatus("Permanent Address");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.BANK_DETAILS_UPDATED) {
+						result.setStatus("Bank Details");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.EXCH_UPDATED) {
+						result.setStatus("EXCH");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.ATTACHEMENT_UPLOADED) {
+						result.setStatus("Document Uploaded");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.IPV_UPLOADED) {
+						result.setStatus("Ipv Uploaded");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.DOCUMENT_DOWNLOADED) {
+						result.setStatus("Document Downloaded");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus == eKYCConstant.DOCUMENT_SIGNED) {
+						result.setStatus("Document Signed");
+						result.setExactStatus("In Process");
+					}
+					if (applicationStatus > eKYCConstant.DOCUMENT_SIGNED) {
+						result.setStatus("Approval In Process");
+						result.setExactStatus("Review");
+					}
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Get user record from the data base which are in IN-process
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	public List<PersonalDetailsDTO> getRejectedList(AdminDTO pDto) {
+		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
+							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+							+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count = ? order by a.created_date desc");
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 1);
+			pStmt.setInt(paramPos++, 0);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PersonalDetailsDTO();
+					int applicationStatus = rSet.getInt("a.application_status");
+					result.setApplication_id(rSet.getInt("a.application_id"));
+					result.setMobile_number(rSet.getLong("a.mobile_number"));
+					result.setMobile_number_verified(rSet.getInt("a.mobile_no_verified"));
+					result.setEmail(rSet.getString("a.email_id"));
+					result.setEmail_id_verified(rSet.getInt("a.email_activated"));
+					result.setApplicationStatus(applicationStatus);
+					result.setApplicant_name(rSet.getString("b.applicant_name"));
+					result.setMothersName(rSet.getString("b.mothersName"));
+					result.setFathersName(rSet.getString("b.fathersName"));
+					result.setGender(rSet.getString("b.gender"));
+					result.setMarital_status(rSet.getString("b.marital_status"));
+					result.setAnnual_income(rSet.getString("b.annual_income"));
+					result.setTrading_experience(rSet.getString("b.trading_experience"));
+					result.setOccupation(rSet.getString("b.occupation"));
+					result.setPolitically_exposed(rSet.getString("b.politically_exposed"));
+					result.setPancard(rSet.getString("c.pan_card"));
+					result.setDob(rSet.getString("c.dob"));
+					result.setDocumentSigned(rSet.getInt("a.document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					result.setStatus("Rejected");
+					result.setExactStatus("Rejected");
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the retify of document from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public List<PersonalDetailsDTO> getRetifyListByTime(AdminDTO pDto) {
+		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
+							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+							+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count >= ? and a.last_updated >= ? and a.last_updated <= ? "
+							+ "order by a.created_date desc");
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 1);
 			pStmt.setInt(paramPos++, 1);
 			pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
 			pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
@@ -1411,46 +1787,80 @@ public class AdminDAO {
 					result.setDob(rSet.getString("c.dob"));
 					result.setDocumentSigned(rSet.getInt("a.document_signed"));
 					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
-					if (applicationStatus == eKYCConstant.BASIC_DETAILS_UPDATED) {
-						result.setStatus("BasicDetails");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.COMMUNICATION_ADDRESS_UPDATED) {
-						result.setStatus("ComminicationAddress");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.PERMANENT_ADDRESS_UPDATED) {
-						result.setStatus("PermanentAddress");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.BANK_DETAILS_UPDATED) {
-						result.setStatus("BankDetails");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.EXCH_UPDATED) {
-						result.setStatus("EXCH");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.ATTACHEMENT_UPLOADED) {
-						result.setStatus("DocumentUploaded");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.IPV_UPLOADED) {
-						result.setStatus("IpvUploaded");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.DOCUMENT_DOWNLOADED) {
-						result.setStatus("DocumentDownloaded");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus == eKYCConstant.DOCUMENT_SIGNED) {
-						result.setStatus("DocumentSigned");
-						result.setExactStatus("In Process");
-					}
-					if (applicationStatus > eKYCConstant.DOCUMENT_SIGNED) {
-						result.setStatus("AdminStartedApplication");
-						result.setExactStatus("Review");
-					}
+					result.setStatus("Rectified");
+					result.setExactStatus("Rectified");
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the retify of document from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public List<PersonalDetailsDTO> getRetifyList(AdminDTO pDto) {
+		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+							+ "a.application_status , a.document_signed , a.document_downloaded , b.applicant_name , b.mothersName, "
+							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+							+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count >= ? "
+							+ "order by a.created_date desc");
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 0);
+			pStmt.setInt(paramPos++, 1);
+			pStmt.setInt(paramPos++, 1);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new PersonalDetailsDTO();
+					int applicationStatus = rSet.getInt("a.application_status");
+					result.setApplication_id(rSet.getInt("a.application_id"));
+					result.setMobile_number(rSet.getLong("a.mobile_number"));
+					result.setMobile_number_verified(rSet.getInt("a.mobile_no_verified"));
+					result.setEmail(rSet.getString("a.email_id"));
+					result.setEmail_id_verified(rSet.getInt("a.email_activated"));
+					result.setApplicationStatus(applicationStatus);
+					result.setApplicant_name(rSet.getString("b.applicant_name"));
+					result.setMothersName(rSet.getString("b.mothersName"));
+					result.setFathersName(rSet.getString("b.fathersName"));
+					result.setGender(rSet.getString("b.gender"));
+					result.setMarital_status(rSet.getString("b.marital_status"));
+					result.setAnnual_income(rSet.getString("b.annual_income"));
+					result.setTrading_experience(rSet.getString("b.trading_experience"));
+					result.setOccupation(rSet.getString("b.occupation"));
+					result.setPolitically_exposed(rSet.getString("b.politically_exposed"));
+					result.setPancard(rSet.getString("c.pan_card"));
+					result.setDob(rSet.getString("c.dob"));
+					result.setDocumentSigned(rSet.getInt("a.document_signed"));
+					result.setDocumentDownloaded(rSet.getInt("a.document_downloaded"));
+					result.setStatus("Rectified");
+					result.setExactStatus("Rectified");
 					response.add(result);
 				}
 			}

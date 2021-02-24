@@ -58,8 +58,8 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					" SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, application_status , "
-							+ "document_signed , document_downloaded , email_owner , mob_owner"
-							+ " FROM tbl_application_master where mobile_number = ? and delete_flag = ? ");
+							+ " document_signed , document_downloaded , email_owner , mob_owner , is_approved , is_rejected , rectify_count "
+							+ "  FROM  tbl_application_master where mobile_number = ? and delete_flag = ? ");
 			pStmt.setLong(paromPos++, pDto.getMobile_number());
 			pStmt.setLong(paromPos++, 0);
 			rSet = pStmt.executeQuery();
@@ -77,6 +77,9 @@ public class eKYCDAO {
 					result.setDocumentDownloaded(rSet.getInt("document_downloaded"));
 					result.setMobile_owner(rSet.getString("mob_owner"));
 					result.setEmail_owner(rSet.getString("email_owner"));
+					result.setIsAproved(rSet.getInt("is_approved"));
+					result.setIsRejected(rSet.getInt("is_rejected"));
+					result.setRectifyCount(rSet.getInt("rectify_count"));
 				}
 			}
 		} catch (Exception e) {
@@ -109,8 +112,8 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, application_status"
-							+ " FROM tbl_application_master where application_id = ? and delete_flag = ? ");
+					" SELECT application_id , mobile_number ,mobile_otp, mobile_no_verified, email_id, email_activated, application_status , is_approved , is_rejected , rectify_count "
+							+ "  FROM  tbl_application_master where application_id = ? and delete_flag = ? ");
 			pStmt.setLong(paromPos++, pDto.getApplication_id());
 			pStmt.setLong(paromPos++, 0);
 			rSet = pStmt.executeQuery();
@@ -124,6 +127,9 @@ public class eKYCDAO {
 					result.setEmail(rSet.getString("email_id"));
 					result.setEmail_id_verified(rSet.getInt("email_activated"));
 					result.setApplicationStatus(rSet.getInt("application_status"));
+					result.setIsAproved(rSet.getInt("is_approved"));
+					result.setIsRejected(rSet.getInt("is_rejected"));
+					result.setRectifyCount(rSet.getInt("rectify_count"));
 				}
 			}
 		} catch (Exception e) {
@@ -255,7 +261,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id  FROM tbl_application_master where email_id = ? and email_activation_code = ? ");
+					" SELECT application_id   FROM  tbl_application_master where email_id = ? and email_activation_code = ? ");
 			pStmt.setString(paromPos++, email);
 			pStmt.setString(paromPos++, link);
 			rSet = pStmt.executeQuery();
@@ -711,7 +717,7 @@ public class eKYCDAO {
 			pStmt = conn.prepareStatement(
 					" SELECT id,application_id,applicant_name, mothersName, fathersName, gender, marital_status, annual_income, "
 							+ "trading_experience, occupation, politically_exposed "
-							+ " FROM tbl_account_holder_personal_details where application_id = ? ");
+							+ "  FROM  tbl_account_holder_personal_details where application_id = ? ");
 			pStmt.setLong(paromPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -772,7 +778,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_communication_address where application_id = ? ");
+					" SELECT application_id,flat_no,street,pin,city,district,state   FROM  tbl_communication_address where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -838,7 +844,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id,flat_no,street,pin,city,district,state  FROM tbl_permanent_address where application_id = ? ");
+					" SELECT application_id,flat_no,street,pin,city,district,state   FROM  tbl_permanent_address where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1012,7 +1018,7 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					" SELECT id,application_id,bank_name,micr_code, bank_address, account_type,account_holder_name,ifsc_code,"
-							+ "bank_account_no,account_type FROM tbl_bank_account_details where application_id = ? ");
+							+ "bank_account_no,account_type  FROM  tbl_bank_account_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1165,7 +1171,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT application_id , applicant_name , first_name , middle_name , last_name,pan_card,aadhar_no,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob  FROM tbl_pancard_details where application_id = ? ");
+					" SELECT application_id , applicant_name , first_name , middle_name , last_name,pan_card,aadhar_no,dob,mothersName,fathersName,pan_card_verified,nsdl_name,nsdl_dob   FROM  tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1300,7 +1306,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT applicant_name , fathersName  FROM tbl_pancard_details where application_id = ? ");
+					" SELECT applicant_name , fathersName   FROM  tbl_pancard_details where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1341,7 +1347,7 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					" SELECT id, application_id, nse_eq, bse_eq, mf, nse_fo, bse_fo, cds, bcd, mcx, icex, nse_com, bse_com  "
-							+ "FROM tbl_exch_segments where application_id = ? ");
+							+ " FROM  tbl_exch_segments where application_id = ? ");
 			pStmt.setLong(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1594,7 +1600,7 @@ public class eKYCDAO {
 					.prepareStatement(" SELECT application_id,mobile_number,mobile_no_verified,mob_owner,mobile_otp,"
 							+ "email_id,email_owner,email_activation_code,email_activated,otp_verified_on,"
 							+ "email_activated_on,application_status,last_updated,created_date ,ref_code "
-							+ " FROM tbl_application_master where application_id = ?  ");
+							+ "  FROM  tbl_application_master where application_id = ?  ");
 			pStmt.setInt(paromPos++, pDto.getApplication_id());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1651,7 +1657,7 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					" SELECT  id,name,mobile_number,email,otp,email_verified,verified,verification_key,verified_on,created_on,application_id"
-							+ " FROM tbl_account_holder_details where application_id = ? ");
+							+ "  FROM  tbl_account_holder_details where application_id = ? ");
 			pStmt.setInt(paromPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1692,7 +1698,7 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT column_name,coordinates,page_number,is_default,is_value_reduced FROM tbl_pdf_orgins order by page_number asc ");
+					" SELECT column_name,coordinates,page_number,is_default,is_value_reduced  FROM  tbl_pdf_orgins order by page_number asc ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1729,7 +1735,7 @@ public class eKYCDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT column_name FROM tbl_pdf_coordinations ");
+			pStmt = conn.prepareStatement(" SELECT column_name  FROM  tbl_pdf_coordinations ");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1758,7 +1764,7 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(" SELECT Value FROM tbl_keyvaluepair where MasterkeyDesc = ? ");
+			pStmt = conn.prepareStatement(" SELECT Value  FROM  tbl_keyvaluepair where MasterkeyDesc = ? ");
 			pStmt.setString(paromPos++, key);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1789,7 +1795,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT attachement_url FROM tbl_application_attachements where application_id = ? and attachement_type = ? order by last_update desc ");
+					" SELECT attachement_url  FROM  tbl_application_attachements where application_id = ? and attachement_type = ? order by last_update desc ");
 			pStmt.setInt(paromPos++, application_id);
 			pStmt.setString(paromPos++, attachementType);
 			rSet = pStmt.executeQuery();
@@ -1822,7 +1828,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT attachement_type , attachement_url , type_of_proof FROM tbl_application_attachements where application_id = ? ");
+					" SELECT attachement_type , attachement_url , type_of_proof  FROM  tbl_application_attachements where application_id = ? ");
 			pStmt.setInt(paromPos++, application_id);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -1857,7 +1863,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT id FROM tbl_application_attachements where application_id = ? and attachement_type = ? ");
+					" SELECT id  FROM  tbl_application_attachements where application_id = ? and attachement_type = ? ");
 			pStmt.setInt(paromPos++, applicationId);
 			pStmt.setString(paromPos++, proofType);
 			rSet = pStmt.executeQuery();
@@ -2108,7 +2114,7 @@ public class eKYCDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"SELECT b.application_id , b.applicant_name , c.city  , a.txn , a.folder_location  "
-							+ "FROM tbl_txn_details A inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+							+ " FROM  tbl_txn_details A inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
 							+ "inner join tbl_communication_address C  on a.application_id = c.application_id "
 							+ "where a.txn = ? ");
 			pStmt.setString(paromPos++, txnName);
@@ -2146,7 +2152,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT attachement_url FROM tbl_application_attachements where application_id = ? and attachement_type = ? order by last_update desc");
+					" SELECT attachement_url  FROM  tbl_application_attachements where application_id = ? and attachement_type = ? order by last_update desc");
 			pStmt.setInt(paromPos++, application_id);
 			pStmt.setString(paromPos++, signedEkycDocument);
 			rSet = pStmt.executeQuery();
@@ -2224,7 +2230,7 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT pin_code, district_code, city_name ,district_name, state_name, status FROM tbl_pincode where pin_code like '"
+					"SELECT pin_code, district_code, city_name ,district_name, state_name, status  FROM  tbl_pincode where pin_code like '"
 							+ dto.getPin_code() + "%' limit 100");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -2272,7 +2278,7 @@ public class eKYCDAO {
 			pStmt = conn.prepareStatement(
 					"SELECT bank_id, micr_code, ifc_code, bank_name, bank_address_1, bank_address_2, bank_address_3, "
 							+ "bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, bank_phone_2, unique_id, "
-							+ "bank_email, bank_contact_name, bank_contact_designation FROM tbl_ifsccode_details where ifc_code = ? limit 100");
+							+ "bank_email, bank_contact_name, bank_contact_designation  FROM  tbl_ifsccode_details where ifc_code = ? limit 100");
 			int paramPos = 1;
 			pStmt.setString(paramPos++, dto.getIfc_code());
 			rSet = pStmt.executeQuery();
@@ -2329,8 +2335,9 @@ public class eKYCDAO {
 		String tempBankName = "";
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement("SELECT  distinct(bank_name) FROM tbl_ifsccode_details where bank_name like '"
-					+ dto.getBank_name() + "%' and active_status = 1 limit 100");
+			pStmt = conn
+					.prepareStatement("SELECT  distinct(bank_name)  FROM  tbl_ifsccode_details where bank_name like '"
+							+ dto.getBank_name() + "%' and active_status = 1 limit 100");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				response = new ArrayList<String>();
@@ -2369,7 +2376,7 @@ public class eKYCDAO {
 		try {
 			int paramPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement("SELECT distinct(bank_city) as place FROM tbl_ifsccode_details "
+			pStmt = conn.prepareStatement("SELECT distinct(bank_city) as place  FROM  tbl_ifsccode_details "
 					+ "where active_status = 1 and bank_name = ? and bank_city like '" + dto.getBank_city()
 					+ "%' limit 100");
 			pStmt.setString(paramPos++, dto.getBank_name());
@@ -2414,7 +2421,7 @@ public class eKYCDAO {
 			query.append("SELECT bank_id, micr_code, ifc_code, bank_name, bank_address_1, bank_address_2, "
 					+ "bank_address_3,bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, "
 					+ "bank_phone_2, unique_id, bank_email, bank_contact_name, bank_contact_designation "
-					+ "FROM tbl_ifsccode_details where ");
+					+ " FROM  tbl_ifsccode_details where ");
 			query.append("bank_name like '" + dto.getBank_name() + "%' and bank_city like '" + dto.getBank_city()
 					+ "%' or bank_address_1 like '%" + dto.getBank_city() + "%' or bank_address_2 like '%"
 					+ dto.getBank_city() + "%' or bank_address_3 like '%" + dto.getBank_city()
@@ -2514,7 +2521,7 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT  ivr_image, ivr_lat, ivr_long FROM  tbl_ivr_capture where application_id = ? ");
+					"SELECT  ivr_image, ivr_lat, ivr_long  FROM   tbl_ivr_capture where application_id = ? ");
 			int paramPos = 1;
 			pStmt.setInt(paramPos++, application_id);
 			rSet = pStmt.executeQuery();
@@ -2621,7 +2628,7 @@ public class eKYCDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" SELECT attachement_type , attachement_url , type_of_proof FROM tbl_application_attachements where application_id = ? and attachement_type = 'ADDRESS' ");
+					" SELECT attachement_type , attachement_url , type_of_proof  FROM  tbl_application_attachements where application_id = ? and attachement_type = 'ADDRESS' ");
 			pStmt.setInt(paromPos++, applicationId);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -2664,7 +2671,7 @@ public class eKYCDAO {
 		try {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement("SELECT application_id FROM tbl_pancard_details where pan_card = ? ");
+			pStmt = conn.prepareStatement("SELECT application_id  FROM  tbl_pancard_details where pan_card = ? ");
 			pStmt.setString(paromPos++, pan_card);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {

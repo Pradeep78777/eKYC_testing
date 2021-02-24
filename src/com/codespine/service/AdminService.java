@@ -558,6 +558,11 @@ public class AdminService {
 				} else if (pDto.getIsApprove() == 0 && pDto.getIsRejected() == 1) {
 					List<ApplicationLogDTO> result = AdminDAO.getInstance().rejectedDocuments(pDto.getApplicationId());
 					Utility.applicationRejectedMessage(userDetails.getEmail(), userDetails.getApplicant_name(), result);
+
+					/**
+					 * if the second time rejected set retify count as 0
+					 */
+					AdminDAO.getInstance().updateRetifyCount(pDto.getApplicationId(), 0);
 				}
 				/**
 				 * Get applicant name and email address for the given
@@ -1009,6 +1014,9 @@ public class AdminService {
 				if (applicationStatus.equalsIgnoreCase("Rejected")) {
 					result = AdminDAO.getInstance().getRejectedListByTime(pDto);
 				}
+				if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+					result = AdminDAO.getInstance().getRetifyListByTime(pDto);
+				}
 
 				/*
 				 * Check the list and send the response
@@ -1031,6 +1039,146 @@ public class AdminService {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
 			response.setReason(eKYCConstant.INVALID_REQUEST);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the record for given status without time
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getRecordsDetailsWiti(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null) {
+			String startDate = pDto.getStartDate();
+			String endDate = pDto.getEndDate();
+			String applicationStatus = pDto.getStatus();
+			if (startDate != null && endDate != null && applicationStatus != null && !startDate.equalsIgnoreCase("")
+					&& !endDate.equalsIgnoreCase("") && !applicationStatus.equalsIgnoreCase("") && !startDate.isEmpty()
+					&& !endDate.isEmpty() && !applicationStatus.isEmpty()) {
+				List<PersonalDetailsDTO> result = new ArrayList<PersonalDetailsDTO>();
+				if (applicationStatus.equalsIgnoreCase("In Process") || applicationStatus.equalsIgnoreCase("Review")) {
+					result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto);
+				}
+				if (applicationStatus.equalsIgnoreCase("Completed")) {
+					result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto);
+				}
+				if (applicationStatus.equalsIgnoreCase("Rejected")) {
+					result = AdminDAO.getInstance().getRejectedListByTime(pDto);
+				}
+				/*
+				 * Check the list and send the response
+				 */
+				if (result != null && result.size() > 0) {
+					response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					response.setMessage(eKYCConstant.SUCCESS_MSG);
+					response.setResult(result);
+				} else {
+					response.setStatus(eKYCConstant.FAILED_STATUS);
+					response.setMessage(eKYCConstant.FAILED_MSG);
+					response.setReason(eKYCConstant.NO_RECORD_FOUND);
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INVALID_REQUEST);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INVALID_REQUEST);
+		}
+		return response;
+	}
+
+	/**
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getExcelDownloadLink(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			String startDate = pDto.getStartDate();
+			String endDate = pDto.getEndDate();
+			String applicationStatus = pDto.getStatus();
+			List<PersonalDetailsDTO> result = null;
+			if (startDate != null && endDate != null && applicationStatus != null && !startDate.equalsIgnoreCase("")
+					&& !endDate.equalsIgnoreCase("") && !applicationStatus.equalsIgnoreCase("") && !startDate.isEmpty()
+					&& !endDate.isEmpty() && !applicationStatus.isEmpty()) {
+				result = new ArrayList<PersonalDetailsDTO>();
+				if (applicationStatus.equalsIgnoreCase("In Process") || applicationStatus.equalsIgnoreCase("Review")) {
+					result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto);
+				}
+				if (applicationStatus.equalsIgnoreCase("Completed")) {
+					result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto);
+				}
+				if (applicationStatus.equalsIgnoreCase("Rejected")) {
+					result = AdminDAO.getInstance().getRejectedListByTime(pDto);
+				}
+				if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+					result = AdminDAO.getInstance().getRetifyListByTime(pDto);
+				}
+			}
+			if (result != null && result.size() > 0) {
+				String dummyFileName = System.currentTimeMillis() + "Reports.xlsx";
+				String filename = eKYCConstant.PROJ_DIR + eKYCConstant.UPLOADS_DIR + "Reports//" + dummyFileName;
+				HSSFWorkbook workbook = new HSSFWorkbook();
+				HSSFSheet sheet = workbook.createSheet("Reports");
+				HSSFRow rowhead = sheet.createRow((short) 0);
+				rowhead.createCell(0).setCellValue("Id");
+				rowhead.createCell(1).setCellValue("Application id");
+				rowhead.createCell(2).setCellValue("Name");
+				rowhead.createCell(3).setCellValue("Mobile number");
+				rowhead.createCell(4).setCellValue("Pan");
+				rowhead.createCell(5).setCellValue("Status");
+				rowhead.createCell(6).setCellValue("Dob");
+				rowhead.createCell(7).setCellValue("Fathers name");
+				rowhead.createCell(8).setCellValue("Mothers name");
+				rowhead.createCell(9).setCellValue("Gender");
+				rowhead.createCell(10).setCellValue("Marital status");
+				rowhead.createCell(11).setCellValue("Occupation");
+				rowhead.createCell(12).setCellValue("Politically exposed Person");
+				rowhead.createCell(13).setCellValue("Trading Experience");
+				int size = result.size();
+				for (int itr = 0; itr < size; itr++) {
+					PersonalDetailsDTO personal = result.get(itr);
+					HSSFRow row = sheet.createRow((short) itr + 1);
+					row.createCell(0).setCellValue(itr + 1);
+					row.createCell(1).setCellValue(personal.getApplication_id());
+					row.createCell(2).setCellValue(personal.getApplicant_name());
+					row.createCell(3).setCellValue(personal.getMobile_number());
+					row.createCell(4).setCellValue(personal.getPancard().toUpperCase());
+					row.createCell(5).setCellValue(personal.getStatus());
+					row.createCell(6).setCellValue(personal.getDob());
+					row.createCell(7).setCellValue(personal.getFathersName());
+					row.createCell(8).setCellValue(personal.getMothersName());
+					row.createCell(9).setCellValue(personal.getGender());
+					row.createCell(10).setCellValue(personal.getMarital_status());
+					row.createCell(11).setCellValue(personal.getOccupation());
+					row.createCell(12).setCellValue(personal.getPolitically_exposed());
+					row.createCell(13).setCellValue(personal.getTrading_experience());
+				}
+				FileOutputStream fileOut = new FileOutputStream(filename);
+				workbook.write(fileOut);
+				fileOut.close();
+				workbook.close();
+				String fileUrl = eKYCConstant.SITE_URL_FILE + eKYCConstant.UPLOADS_DIR + "Reports//" + dummyFileName;
+				JSONObject originalResult = new JSONObject();
+				originalResult.put("csvUrl", fileUrl);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(originalResult);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.NO_RECORD_FOUND);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return response;
 	}
