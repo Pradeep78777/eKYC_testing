@@ -48,7 +48,7 @@ public class Test {
 		// eKYCConstant.PDF_FILE_EXTENSION);
 		// PDDocument document = PDDocument.load(file);
 		// pdfimageInserter(0, document, 474.5f, 594, pdf, "1", "E:\\ekyc\\2");
-		checkPayment();
+//		checkPayment();
 		// shrinkgOnePage();
 
 	}

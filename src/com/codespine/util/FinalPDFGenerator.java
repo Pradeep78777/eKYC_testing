@@ -25,6 +25,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -51,7 +52,7 @@ import com.codespine.dto.PdfCoordinationsDTO;
 import com.codespine.dto.eKYCDTO;
 
 public class FinalPDFGenerator {
-	static String filePath = eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH);
+	static String filePath = eKYCDAO.getInstance().getFileLocation(eKYCConstant.TESTING_FILE_PATH);
 	static String sourceFilePath = filePath + eKYCDAO.getInstance().getFileLocation(eKYCConstant.CONSTANT_PDF_NAME);
 	static String destinationFilePath = filePath;
 	// static String filePath = "";
@@ -181,22 +182,29 @@ public class FinalPDFGenerator {
 				for (String url : urls) {
 					String replacedURL = StringUtil.replace(url, " ", "%20");
 					if (StringUtil.isStrContainsWithEqIgnoreCase(url, ".pdf")) {
+						PDFMergerUtility merger = new PDFMergerUtility();
 						InputStream inputStream = new URL(replacedURL).openStream();
-						PDPageTree mergePD = document.getPages();
-						PDDocument pddDocument2 = PDDocument.load(inputStream);
-						PDPageTree mergePD1 = pddDocument2.getPages();
-						if (mergePD1.getCount() > 1) {
-							for (int ii = mergePD1.getCount() - 1; ii >= 0; ii--) {
-								mergePD.insertAfter(mergePD1.get(ii), document.getPage(x));
-							}
-						} else {
-							PDPage page = mergePD1.get(0);
-							mergePD.insertAfter(page, document.getPage(x));
-							x++;
-						}
-						inputStream.close();
-						pddDocument2.close();
-					} else {
+//						PDPageTree mergePD = document.getPages();
+//						PDDocument pddDocument2 = PDDocument.load(inputStream);
+						PDDocument combine = PDDocument.load(inputStream);
+						merger.appendDocument(document, combine);
+						merger.mergeDocuments();
+//						pddDocument2.save(new File(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + i+".pdf"));
+//						PDPageTree mergePD1 = pddDocument2.getPages();
+//						if (mergePD1.getCount() > 1) {
+//							for (int ii = mergePD1.getCount() - 1; ii >= 0; ii--) {
+//								mergePD.insertAfter(mergePD1.get(ii), document.getPage(x));
+//							}
+//						} else {
+//							PDPage page = mergePD1.get(0);
+//							mergePD.insertAfter(page, document.getPage(x));
+//							x++;
+//						}
+//						inputStream.close();
+//						pddDocument2.close();
+						combine.close();
+					} 
+					else {
 						InputStream in = new URL(replacedURL).openStream();
 						BufferedImage bimg = ImageIO.read(in);
 						PDPage page = new PDPage(new PDRectangle(612, 858));
@@ -241,9 +249,9 @@ public class FinalPDFGenerator {
 						} else {
 							pdImage = PDImageXObject.createFromFile(imagePath, document);
 						}
-						PDPageContentStream contentStream = new PDPageContentStream(document, page);
-						contentStream.drawImage(pdImage, 25, (833 - height));
-						contentStream.close();
+						PDPageContentStream imagecontentStream = new PDPageContentStream(document, page);
+						imagecontentStream.drawImage(pdImage, 25, (833 - height));
+						imagecontentStream.close();
 						in.close();
 					}
 					i++;
@@ -254,7 +262,7 @@ public class FinalPDFGenerator {
 			shrinkPdf(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName);
 			System.out.println("pdf Generated");
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		return application_id + eKYCConstant.WINDOWS_FORMAT_SLASH + folderName + eKYCConstant.WINDOWS_FORMAT_SLASH
 				+ finalPDFName;

@@ -127,6 +127,7 @@ public class eKYCConstant {
 	// "C:\\Users\\user\\Downloads\\";
 
 	public static final String FILE_PATH = "FILE_PATH";
+	public static final String TESTING_FILE_PATH = "TESTING_FILE_PATH";
 	public static final String CONSTANT_PDF_NAME = "CONSTANT_PDF_NAME";
 	public static final String GENERATED_PDF_NAME = "GENERATED_PDF_NAME";
 	public static final String JPG_FILE_EXTENSION = ".jpg";
