@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
+import com.codespine.dto.ApplicationStatusDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.util.DBUtil;
 
@@ -232,4 +233,52 @@ public class EkycApplicationDAO {
 		return result;
 	}
 
+	/**
+	 * Method to get the application status for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @return
+	 */
+	public ApplicationStatusDTO getApplicationStatus(int applicationId) {
+		ApplicationStatusDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			int paromPos = 1;
+			conn = DBUtil.getConnection();
+			String query = "";
+			query = "SELECT a.otp_verified_on as otpVerifiedOn , b.created_on as personalDetails , c.created_on as panCard, "
+					+ " d.created_on as esignedOn FROM  tbl_application_master A "
+					+ " inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+					+ " inner join tbl_pancard_details C on a.application_id = c.application_id "
+					+ " join tbl_application_attachements D on a.application_id = d.application_id  where a.application_id = ? "
+					+ " and d.attachement_type = 'SIGNED_EKYC_DOCUMENT' ";
+			pStmt = conn.prepareStatement(query);
+			pStmt.setInt(paromPos++, applicationId);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new ApplicationStatusDTO();
+					result.setApplicationId(applicationId);
+					result.setApplicationStartedOn(rSet.getString("otpVerifiedOn"));
+					result.setEsignedOn(rSet.getString("esignedOn"));
+					result.setPancardUpdatedOn(rSet.getString("panCard"));
+					result.setPersonalDetailsUpdatedOn(rSet.getString("personalDetails"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 }

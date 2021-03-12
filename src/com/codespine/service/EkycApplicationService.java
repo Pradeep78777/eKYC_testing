@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 import com.codespine.data.AdminDAO;
 import com.codespine.data.EkycApplicationDAO;
 import com.codespine.data.eKYCDAO;
+import com.codespine.dto.ApplicationStatusDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
@@ -287,6 +288,28 @@ public class EkycApplicationService {
 	public ResponseDTO getExcelExport() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Method to get the application status for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getApplicationStatus(ApplicationStatusDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null && pDto.getApplicationId() > 0) {
+			ApplicationStatusDTO result = EkycApplicationDAO.getInstance()
+					.getApplicationStatus(pDto.getApplicationId());
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setResult(result);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.APPLICATION_ID_ERROR);
+		}
+		return response;
 	}
 
 }

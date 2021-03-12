@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,14 +19,23 @@ import javax.ws.rs.core.Response;
 import org.json.simple.JSONObject;
 
 import com.codespine.data.EkycApplicationDAO;
+import com.codespine.dto.AccesslogDTO;
+import com.codespine.dto.ApplicationStatusDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.service.EkycApplicationService;
 import com.codespine.util.CSEnvVariables;
+import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
 @Path("/eKYCapplication")
 public class EkycApplicationController {
+
+	AccesslogDTO accessLog = new AccesslogDTO();
+	String contentType = "content-type";
+	@Context
+	HttpServletRequest request;
+	java.sql.Timestamp created_on = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 
 	/**
 	 * Method to resume the application
@@ -41,6 +51,12 @@ public class EkycApplicationController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseDTO resumeApplication(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+
 		response = EkycApplicationService.getInstance().resumeApplication(pDto);
 		return response;
 	}
@@ -60,6 +76,13 @@ public class EkycApplicationController {
 	public ResponseDTO verifyOtpToResumeApplication(@Context ContainerRequestContext requestContext,
 			PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
+
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+
 		response = EkycApplicationService.getInstance().verifyOtpToResumeApplication(pDto);
 		return response;
 	}
@@ -78,6 +101,13 @@ public class EkycApplicationController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseDTO getApplicationForUser(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
+
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+
 		response = EkycApplicationService.getInstance().getApplicationForUser(pDto);
 		return response;
 	}
@@ -93,8 +123,15 @@ public class EkycApplicationController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getIPVlink")
-	public ResponseDTO getIPVlink(PersonalDetailsDTO dto) {
-		ResponseDTO response = EkycApplicationService.getInstance().getIPVlink(dto);
+	public ResponseDTO getIPVlink(@Context ContainerRequestContext requestContext, PersonalDetailsDTO pDto) {
+
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+
+		ResponseDTO response = EkycApplicationService.getInstance().getIPVlink(pDto);
 		return response;
 	}
 
@@ -167,9 +204,35 @@ public class EkycApplicationController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getExcelExport")
-	public ResponseDTO getExcelExport() {
+	public ResponseDTO getExcelExport(@Context ContainerRequestContext requestContext) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, "", "");
 		ResponseDTO response = EkycApplicationService.getInstance().getExcelExport();
 		return response;
 	}
 
+	/**
+	 * Method to get the application status for the given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/getApplicationStatus")
+	public ResponseDTO getApplicationStatus(@Context ContainerRequestContext requestContext,
+			ApplicationStatusDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = EkycApplicationService.getInstance().getApplicationStatus(pDto);
+		return response;
+	}
 }

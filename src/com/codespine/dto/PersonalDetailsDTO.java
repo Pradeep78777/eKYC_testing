@@ -47,6 +47,7 @@ public class PersonalDetailsDTO {
 	private String verifiedBy;
 	private String verifiedByDesigination;
 	private int rectifyCount;
+	private String reviewedBy;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -390,6 +391,14 @@ public class PersonalDetailsDTO {
 
 	public void setRectifyCount(int rectifyCount) {
 		this.rectifyCount = rectifyCount;
+	}
+
+	public String getReviewedBy() {
+		return reviewedBy;
+	}
+
+	public void setReviewedBy(String reviewedBy) {
+		this.reviewedBy = reviewedBy;
 	}
 
 }

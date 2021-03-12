@@ -1,14 +1,22 @@
 package com.codespine.controller;
 
+import java.util.Calendar;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.codespine.dto.AccesslogDTO;
 import com.codespine.dto.AdminDTO;
+import com.codespine.dto.PerformanceDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.service.AdminService;
+import com.codespine.util.Utility;
 
 @Path("/admin")
 public class AdminController {
@@ -21,6 +29,12 @@ public class AdminController {
 		return AdminController;
 	}
 
+	AccesslogDTO accessLog = new AccesslogDTO();
+	String contentType = "content-type";
+	@Context
+	HttpServletRequest request;
+	java.sql.Timestamp created_on = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+
 	/**
 	 * Method to login for admin using email and password
 	 * 
@@ -31,8 +45,13 @@ public class AdminController {
 	@Path("/adminLogin")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO adminLogin(AdminDTO pDto) {
+	public ResponseDTO adminLogin(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		response = AdminService.getInstance().adminLogin(pDto);
 		return response;
 	}
@@ -47,9 +66,35 @@ public class AdminController {
 	@Path("/getAllUserRecords")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getAllUserRecords() {
+	public ResponseDTO getAllUserRecords(@Context ContainerRequestContext requestContext) {
 		ResponseDTO response = new ResponseDTO();
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, "", "");
 		response = AdminService.getInstance().getAllUserRecords();
+		return response;
+	}
+
+	/**
+	 * Method to get report list from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	@POST
+	@Path("/getUserReportList")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getUserReportList(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		response = AdminService.getInstance().getUserReportList(pDto);
 		return response;
 	}
 
@@ -64,7 +109,12 @@ public class AdminController {
 	@Path("/respondPanCard")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO respondPanCard(AdminDTO pDto) {
+	public ResponseDTO respondPanCard(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().respondPanCard(pDto);
 		return response;
 	}
@@ -80,7 +130,12 @@ public class AdminController {
 	@Path("/respondPersonalDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO respondPersonalDetails(AdminDTO pDto) {
+	public ResponseDTO respondPersonalDetails(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().respondPersonalDetails(pDto);
 		return response;
 	}
@@ -96,7 +151,12 @@ public class AdminController {
 	@Path("/respondBankAccountDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO respondBankAccountDetails(AdminDTO pDto) {
+	public ResponseDTO respondBankAccountDetails(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().respondBankAccountDetails(pDto);
 		return response;
 	}
@@ -112,7 +172,12 @@ public class AdminController {
 	@Path("/respondCommunicationAddress")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO respondCommunicationAddress(AdminDTO pDto) {
+	public ResponseDTO respondCommunicationAddress(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().respondCommunicationAddress(pDto);
 		return response;
 	}
@@ -128,7 +193,12 @@ public class AdminController {
 	@Path("/respondPermanentAddress")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO respondPermanentAddress(AdminDTO pDto) {
+	public ResponseDTO respondPermanentAddress(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().respondPermanentAddress(pDto);
 		return response;
 	}
@@ -144,7 +214,12 @@ public class AdminController {
 	@Path("/respondAttachementDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO respondAttachementDetails(AdminDTO pDto) {
+	public ResponseDTO respondAttachementDetails(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().respondAttachementDetails(pDto);
 		return response;
 	}
@@ -160,7 +235,12 @@ public class AdminController {
 	@Path("/getAttachedFileDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getAttachedFileDetails(AdminDTO pDto) {
+	public ResponseDTO getAttachedFileDetails(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().getAttachedFileDetails(pDto);
 		return response;
 	}
@@ -176,7 +256,12 @@ public class AdminController {
 	@Path("/startApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO startApplication(AdminDTO pDto) {
+	public ResponseDTO startApplication(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().startApplication(pDto);
 		return response;
 	}
@@ -192,7 +277,12 @@ public class AdminController {
 	@Path("/endApplication")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO endApplication(AdminDTO pDto) {
+	public ResponseDTO endApplication(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().endApplication(pDto);
 		return response;
 	}
@@ -208,7 +298,12 @@ public class AdminController {
 	@Path("/getRejectedDocuments")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getRejectedDocuments(AdminDTO pDto) {
+	public ResponseDTO getRejectedDocuments(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().getRejectedDocuments(pDto);
 		return response;
 	}
@@ -224,7 +319,12 @@ public class AdminController {
 	@Path("/getApplicationStatus")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getApplicationStatus(AdminDTO pDto) {
+	public ResponseDTO getApplicationStatus(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().getApplicationStatus(pDto);
 		return response;
 	}
@@ -240,7 +340,12 @@ public class AdminController {
 	@Path("/getPendingRecords")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getPendingRecords(AdminDTO pDto) {
+	public ResponseDTO getPendingRecords(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().getPendingRecords(pDto);
 		return response;
 	}
@@ -255,7 +360,12 @@ public class AdminController {
 	@Path("/getCompletedRecords")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getCompletedRecords() {
+	public ResponseDTO getCompletedRecords(@Context ContainerRequestContext requestContext) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, "", "");
 		ResponseDTO response = AdminService.getInstance().getCompletedRecords();
 		return response;
 	}
@@ -271,7 +381,12 @@ public class AdminController {
 	@Path("/getRecordsDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getRecordsDetails(AdminDTO pDto) {
+	public ResponseDTO getRecordsDetails(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().getRecordsDetails(pDto);
 		return response;
 	}
@@ -287,7 +402,12 @@ public class AdminController {
 	@Path("/getExcelDownloadLink")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getExcelDownloadLink(AdminDTO pDto) {
+	public ResponseDTO getExcelDownloadLink(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplicationId() + "");
 		ResponseDTO response = AdminService.getInstance().getExcelDownloadLink(pDto);
 		return response;
 	}
@@ -301,4 +421,25 @@ public class AdminController {
 	// ResponseDTO response = AdminService.getInstance().getExcelResult(pDto);
 	// return response;
 	// }
+
+	/**
+	 * Method to get the Chart data from data base
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+
+	@POST
+	@Path("/performanceChart")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO PerformanceChart(@Context ContainerRequestContext requestContext, PerformanceDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().PerformanceChart(pDto);
+		return response;
+	}
 }

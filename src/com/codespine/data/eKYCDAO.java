@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import com.codespine.dto.AccountHolderDetailsDTO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.CityListDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.IfscCodeDTO;
@@ -915,6 +918,39 @@ public class eKYCDAO {
 	}
 
 	/**
+	 * Method to update the Admin name who is started the application in data
+	 * base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param applicationId
+	 * @param applicationStatus
+	 */
+	public void updateAdminName(int applicationId, String adminName) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_application_master SET reviewed_by = ? , last_updated = ? where application_id = ? ");
+			int paramPos = 1;
+			pStmt.setString(paramPos++, adminName);
+			pStmt.setTimestamp(paramPos++, timestamp);
+			pStmt.setInt(paramPos++, applicationId);
+			pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * To insert the bank Details for user by using application id
 	 * 
 	 * @author GOWRI SANKAR R
@@ -1183,7 +1219,12 @@ public class eKYCDAO {
 					result.setAadharNo(rSet.getLong("aadhar_no"));
 					json.put("pan_card", rSet.getString("pan_card").toUpperCase());
 					json.put("aadhar_no", String.valueOf(rSet.getLong("aadhar_no")));
-					result.setDob(rSet.getString("dob"));
+					String tempDate = rSet.getString("dob");
+					Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(tempDate);
+					SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
+					String actualData = formatter.format(date1);
+					// pDto.setDob(actualData);
+					result.setDob(actualData);
 					json.put("dob", DateUtil.parseDateStringForDOB(rSet.getString("dob")));
 					result.setMothersName(rSet.getString("mothersName"));
 					result.setFathersName(rSet.getString("fathersName"));
@@ -2638,7 +2679,7 @@ public class eKYCDAO {
 					result.setProofType(rSet.getString("attachement_type"));
 					result.setProof(rSet.getString("attachement_url"));
 					result.setTypeOfProof(rSet.getString("type_of_proof"));
-					if(StringUtil.isNotNullOrEmpty(rSet.getString("type_of_proof"))) {
+					if (StringUtil.isNotNullOrEmpty(rSet.getString("type_of_proof"))) {
 						json.put("proofType", rSet.getString("type_of_proof").toUpperCase());
 					}
 					result.setForPDFKeyValue(json);
@@ -2693,5 +2734,47 @@ public class eKYCDAO {
 			}
 		}
 		return tempApplicationId;
+	}
+
+	/**
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+	public List<CityListDTO> getCityName(CityListDTO dto) {
+		List<CityListDTO> response = null;
+		CityListDTO result = null;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement("SELECT city_code, city_name, state, active_status FROM ekyc.tbl_city_master "
+					+ " where state = ? AND city_name like '" + dto.getCity_name() + "%'limit 100");
+			int paromPos = 1;
+			pStmt.setString(paromPos++, dto.getState());
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<CityListDTO>();
+				while (rSet.next()) {
+					result = new CityListDTO();
+					result.setCity_name(rSet.getString("city_name"));
+					result.setCity_code(rSet.getString("city_code"));
+					result.setState(rSet.getString("state"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pStmt.close();
+				conn.close();
+				rSet.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
 	}
 }
