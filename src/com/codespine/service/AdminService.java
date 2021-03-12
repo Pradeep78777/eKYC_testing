@@ -1,7 +1,9 @@
 package com.codespine.service;
 
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -19,12 +21,14 @@ import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
+import com.codespine.dto.PerformanceDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
+@SuppressWarnings("unchecked")
 public class AdminService {
 	public static AdminService AdminService = null;
 
@@ -511,6 +515,10 @@ public class AdminService {
 			if (result != null && result.size() > 0) {
 				eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
 						eKYCConstant.APPLICATION_STARTED_BY_ADMIN);
+				/*
+				 * Set the Admin name in data base
+				 */
+				eKYCDAO.getInstance().updateAdminName(pDto.getApplicationId(), pDto.getAdminName());
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
 				response.setResult(result);
@@ -519,6 +527,10 @@ public class AdminService {
 				if (isSuccessfull) {
 					eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
 							eKYCConstant.APPLICATION_STARTED_BY_ADMIN);
+					/*
+					 * Set Admin name in data base
+					 */
+					eKYCDAO.getInstance().updateAdminName(pDto.getApplicationId(), pDto.getAdminName());
 					response.setStatus(eKYCConstant.SUCCESS_STATUS);
 					response.setMessage(eKYCConstant.SUCCESS_MSG);
 					response.setResult(null);
@@ -653,7 +665,6 @@ public class AdminService {
 	 * @param pDto
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public ResponseDTO adminLogin(AdminDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		AdminDTO adminDetails = AdminDAO.getInstance().adminLogin(pDto);
@@ -687,7 +698,6 @@ public class AdminService {
 	 * @param pDto
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public ResponseDTO getPendingRecords(AdminDTO pDto) {
 		List<JSONObject> finalRespone = new ArrayList<JSONObject>();
 		// List<JSONObject> finalResult = new ArrayList<JSONObject>();
@@ -1143,6 +1153,11 @@ public class AdminService {
 				rowhead.createCell(11).setCellValue("Occupation");
 				rowhead.createCell(12).setCellValue("Politically exposed Person");
 				rowhead.createCell(13).setCellValue("Trading Experience");
+				rowhead.createCell(14).setCellValue("Created At");
+				rowhead.createCell(15).setCellValue("Last Updated At");
+				rowhead.createCell(16).setCellValue("Refferal Code");
+				rowhead.createCell(17).setCellValue("Esigned");
+				rowhead.createCell(18).setCellValue("Reviewed by");
 				int size = result.size();
 				for (int itr = 0; itr < size; itr++) {
 					PersonalDetailsDTO personal = result.get(itr);
@@ -1161,6 +1176,11 @@ public class AdminService {
 					row.createCell(11).setCellValue(personal.getOccupation());
 					row.createCell(12).setCellValue(personal.getPolitically_exposed());
 					row.createCell(13).setCellValue(personal.getTrading_experience());
+					row.createCell(14).setCellValue(personal.getCreatedAt());
+					row.createCell(15).setCellValue(personal.getLastUpdatedAt());
+					row.createCell(16).setCellValue(personal.getReffCode());
+					row.createCell(17).setCellValue(personal.getEsign_document());
+					row.createCell(18).setCellValue(personal.getReviewedBy());
 				}
 				FileOutputStream fileOut = new FileOutputStream(filename);
 				workbook.write(fileOut);
@@ -1183,4 +1203,93 @@ public class AdminService {
 		return response;
 	}
 
+	/**
+	 * @author user
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO PerformanceChart(PerformanceDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		/*
+		 * 
+		 */
+		List<String> oneMonthDates = new ArrayList<String>();
+		Calendar start = Calendar.getInstance();
+		start.add(Calendar.DATE, -30);
+		Calendar end = Calendar.getInstance();
+		for (Calendar date = start; date.before(end); date.add(Calendar.DATE, 1)) {
+			String modifiedDate = new SimpleDateFormat("dd-MM-yyyy").format(date.getTime());
+			oneMonthDates.add(modifiedDate);
+		}
+		List<PerformanceDTO> result = AdminDAO.getInstance().PerformanceChart(oneMonthDates);
+		List<PerformanceDTO> approvedresult = AdminDAO.getInstance().PerformanceChartapproved(oneMonthDates);
+		List<PerformanceDTO> signedresult = AdminDAO.getInstance().PerformanceChartsigned(oneMonthDates);
+		JSONObject res = new JSONObject();
+		res.put("total_record", result);
+		res.put("approved", approvedresult);
+		res.put("signed", signedresult);
+		if (result != null && result.size() > 0) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setReason(eKYCConstant.SUCCESS_MSG);
+			response.setResult(res);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.FAILED_MSG);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the report list from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	public ResponseDTO getUserReportList(AdminDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		try {
+			if (pDto != null) {
+				List<PersonalDetailsDTO> result = null;
+				if (pDto.getStartDate() != null && pDto.getEndDate() != null && !pDto.getStartDate().isEmpty()
+						&& !pDto.getEndDate().isEmpty()) {
+					/*
+					 * Get the Report list for the given date
+					 */
+					result = AdminDAO.getInstance().getUserReportListByTime(pDto.getStartDate(), pDto.getEndDate());
+					if (result != null && result.size() > 0) {
+						response.setStatus(eKYCConstant.SUCCESS_STATUS);
+						response.setMessage(eKYCConstant.SUCCESS_MSG);
+						response.setResult(result);
+					} else {
+						response.setStatus(eKYCConstant.FAILED_STATUS);
+						response.setMessage(eKYCConstant.FAILED_MSG);
+						response.setReason(eKYCConstant.NO_RECORD_FOUND);
+					}
+				} else {
+					/*
+					 * Send the last updated 100 member from data base
+					 */
+					result = AdminDAO.getInstance().getUserReportList();
+					if (result != null && result.size() > 0) {
+						response.setStatus(eKYCConstant.SUCCESS_STATUS);
+						response.setMessage(eKYCConstant.SUCCESS_MSG);
+						response.setResult(result);
+					} else {
+						response.setStatus(eKYCConstant.FAILED_STATUS);
+						response.setMessage(eKYCConstant.FAILED_MSG);
+						response.setReason(eKYCConstant.NO_RECORD_FOUND);
+					}
+				}
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INVALID_REQUEST);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.ApplicationMasterDTO;
 import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.CityListDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.IfscCodeDTO;
@@ -289,7 +291,7 @@ public class eKYCService {
 					 * Change the date format for saving into data base
 					 */
 					String tempDate = pDto.getDob();
-					Date date1 = new SimpleDateFormat("MM/dd/yyyy").parse(tempDate);
+					Date date1 = new SimpleDateFormat("dd/MMM/yyyy").parse(tempDate);
 					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 					String actualData = formatter.format(date1);
 					pDto.setDob(actualData);
@@ -930,7 +932,7 @@ public class eKYCService {
 					} else {
 						response.setStatus(eKYCConstant.FAILED_STATUS);
 						response.setMessage(eKYCConstant.FAILED_MSG);
-						response.setMessage(eKYCConstant.FAILED_MSG);
+						response.setReason(eKYCConstant.FAILED_MSG);
 					}
 					// }
 				} else {
@@ -1928,6 +1930,28 @@ public class eKYCService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return response;
+	}
+
+	/**
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+	public ResponseDTO getCityDetails(CityListDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		List<CityListDTO> results = new ArrayList<CityListDTO>();
+		if (dto.getCity_name().length() >= 3) {
+			results = eKYCDAO.getInstance().getCityName(dto);
+			if (results != null && results.size() > 0) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(results);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
 		}
 		return response;
 	}
