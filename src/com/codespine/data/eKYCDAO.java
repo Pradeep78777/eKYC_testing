@@ -1222,9 +1222,10 @@ public class eKYCDAO {
 					String tempDate = rSet.getString("dob");
 					Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(tempDate);
 					SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
-					String actualData = formatter.format(date1);
+					String actualDate = formatter.format(date1);
 					// pDto.setDob(actualData);
-					result.setDob(actualData);
+					result.setDob(tempDate);
+					result.setDateOfBirth(actualDate);
 					json.put("dob", DateUtil.parseDateStringForDOB(rSet.getString("dob")));
 					result.setMothersName(rSet.getString("mothersName"));
 					result.setFathersName(rSet.getString("fathersName"));

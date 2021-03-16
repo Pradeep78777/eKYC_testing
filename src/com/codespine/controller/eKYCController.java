@@ -72,7 +72,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getEmail());
 
 		response = eKYCService.getInstance().newRegistration(pDto);
 		return response;
@@ -161,7 +161,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getEmail());
 
 		response = eKYCService.getInstance().verifyOtp(pDto);
 		return response;
@@ -187,7 +187,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().verifyPan(pDto);
 		return response;
@@ -213,7 +213,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().basicInformation(pDto);
 		return response;
@@ -239,7 +239,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().updateAddress(pDto);
 		return response;
@@ -265,7 +265,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().updateCommunicationAddress(pDto);
 		return response;
@@ -291,7 +291,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().updatePermanentAddress(pDto);
 		return response;
@@ -317,7 +317,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().updateBankAccountDetails(pDto);
 		return response;
@@ -343,7 +343,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().updateEmail(pDto);
 		return response;
@@ -394,7 +394,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().updateExchDetails(pDto);
 		return response;
@@ -443,7 +443,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getXmlEncode(pDto);
 		return response;
@@ -462,7 +462,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, applicationId, "");
+		Utility.inputAccessLogDetails(accessLog, applicationId, applicationId + "");
 
 		eKYCDTO eKYCdto = eKYCService.getInstance().finalPDFGenerator(applicationId);
 		if (eKYCdto != null) {
@@ -498,7 +498,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		ResponseDTO repsonse = eKYCService.getInstance().getDocumentLink(pDto);
 		return repsonse;
@@ -517,7 +517,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getEsignedDocument(pDto);
 		return response;
@@ -543,7 +543,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getPanCardDetails(pDto);
 		return response;
@@ -569,7 +569,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getBasicInformation(pDto);
 		return response;
@@ -596,7 +596,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getCommunicationAddress(pDto);
 		return response;
@@ -622,7 +622,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getPermanentAddress(pDto);
 		return response;
@@ -647,7 +647,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getBankDetails(pDto);
 		return response;
@@ -671,7 +671,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getExchDetails(pDto);
 		return response;
@@ -695,7 +695,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getUploadedFile(pDto);
 		return response;
@@ -722,7 +722,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		Utility.inputAccessLogDetails(accessLog, pDto, pDto.getApplication_id() + "");
 
 		response = eKYCService.getInstance().getIvrDetails(pDto);
 		return response;
@@ -753,7 +753,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, "", "");
+		Utility.inputAccessLogDetails(accessLog, ivrImage, applicationId + "");
 
 		response = eKYCService.getInstance().uploadIvrCapture(ivrImage, ivrLat, ivrLong, applicationId,
 				request.getHeader("X-Forwarded-For"), request.getHeader("user-agent"));
@@ -785,7 +785,7 @@ public class eKYCController {
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, "", "");
+		Utility.inputAccessLogDetails(accessLog, ivrImage, applicationId + "");
 
 		if (randomKey != null && !randomKey.isEmpty() && !randomKey.equalsIgnoreCase("")) {
 			response = eKYCService.getInstance().uploadIvrMobile(ivrImage, ivrLat, ivrLong, applicationId,
@@ -854,11 +854,11 @@ public class eKYCController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getPostalCode")
 	public ResponseDTO getPostalCode(@Context ContainerRequestContext requestContext, PostalCodesDTO dto) {
-		accessLog.setDevice_ip(request.getRemoteAddr());
-		accessLog.setUser_agent(request.getHeader("user-agent"));
-		accessLog.setUri(requestContext.getUriInfo().getPath());
-		accessLog.setCreated_on(created_on);
-		Utility.inputAccessLogDetails(accessLog, dto, "");
+//		accessLog.setDevice_ip(request.getRemoteAddr());
+//		accessLog.setUser_agent(request.getHeader("user-agent"));
+//		accessLog.setUri(requestContext.getUriInfo().getPath());
+//		accessLog.setCreated_on(created_on);
+//		Utility.inputAccessLogDetails(accessLog, dto, "");
 
 		ResponseDTO response = eKYCService.getInstance().getPostalCode(dto);
 		return response;

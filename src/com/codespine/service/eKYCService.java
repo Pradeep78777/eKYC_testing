@@ -149,7 +149,7 @@ public class eKYCService {
 			result.setDocumentDownloaded(checkUser.getDocumentDownloaded());
 			result.setDocumentSigned(checkUser.getDocumentSigned());
 			int isRejected = checkUser.getIsRejected();
-			int isAproved = checkUser.getIsAproved();
+//			int isAproved = checkUser.getIsAproved();
 			int retifyCount = checkUser.getRectifyCount();
 			/**
 			 * Check the user given the same email id or not
@@ -1373,7 +1373,7 @@ public class eKYCService {
 						PersonalDetailsDTO dummyDto = new PersonalDetailsDTO();
 						dummyDto.setApplication_id(applicationNumber.getApplication_id());
 						PersonalDetailsDTO profileDetails = eKYCDAO.getInstance().getProfileDetails(dummyDto);
-						int isAproved = profileDetails.getIsAproved();
+//						int isAproved = profileDetails.getIsAproved();
 						int isRejected = profileDetails.getIsRejected();
 						int rectified = profileDetails.getRectifyCount();
 						if (profileDetails.getApplicationStatus() < eKYCConstant.DOCUMENT_SIGNED) {

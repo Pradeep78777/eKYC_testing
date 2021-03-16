@@ -25,6 +25,7 @@ public class PanCardDetailsDTO {
 	private String comments;
 	private String createdAt;
 	private String lastUpdatedAt;
+	private String dateOfBirth;
 
 	public Map<String, String> getForPDFKeyValue() {
 		return forPDFKeyValue;
@@ -200,6 +201,14 @@ public class PanCardDetailsDTO {
 
 	public void setLastUpdatedAt(String lastUpdatedAt) {
 		this.lastUpdatedAt = lastUpdatedAt;
+	}
+
+	public String getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(String dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 }

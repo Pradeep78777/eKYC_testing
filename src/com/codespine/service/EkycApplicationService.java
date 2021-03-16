@@ -95,7 +95,7 @@ public class EkycApplicationService {
 			if (userDetails != null) {
 				userDetails.setOtp(0);
 				int isRejected = userDetails.getIsRejected();
-				int isAproved = userDetails.getIsAproved();
+//				int isAproved = userDetails.getIsAproved();
 				int retifyCount = userDetails.getRectifyCount();
 				if (userDetails.getApplicationStatus() >= 3) {
 					PanCardDetailsDTO panCardName = eKYCDAO.getInstance().getApplicantName(pDto.getApplication_id());
