@@ -49,12 +49,18 @@ public class BackOfficeService {
 			 */
 			Object result = BackOfficeRestService.getInstance().postDataToBackEnd(parameter, applicationId,
 					verifiedBy.toUpperCase(), verifiedByDesigination.toUpperCase(), branchName.toUpperCase());
-			// System.out.println(parameter);
-			BackOfficeDAO.getInstance().updateApplicationCompleted(applicationId);
-			response.setStatus(eKYCConstant.SUCCESS_STATUS);
-			response.setMessage(eKYCConstant.SUCCESS_MSG);
-			response.setReason(eKYCConstant.SUCCESS_MSG);
-			response.setResult(result);
+			if (result != null) {
+				// System.out.println(parameter);
+				BackOfficeDAO.getInstance().updateApplicationCompleted(applicationId);
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.BACKOFFICE_ERROR);
+			}
 		}
 		return response;
 	}
@@ -230,10 +236,11 @@ public class BackOfficeService {
 				correspondance_address_proof = String.valueOf(eKYCConstant.DRIVING_LICENSE);
 				address_proof1 = String.valueOf(eKYCConstant.DRIVING_LICENSE);
 			}
-//			} else {
-//				correspondance_address_proof = String.valueOf(eKYCConstant.ORTHERS_PROOF);
-//				address_proof1 = String.valueOf(eKYCConstant.ORTHERS_PROOF);
-//			}
+			// } else {
+			// correspondance_address_proof =
+			// String.valueOf(eKYCConstant.ORTHERS_PROOF);
+			// address_proof1 = String.valueOf(eKYCConstant.ORTHERS_PROOF);
+			// }
 			// String address_proof1 = "25";
 			String mainAddress = userApplicationDetails.getAddressDTO().getFlat_no() + ", "
 					+ userApplicationDetails.getAddressDTO().getStreet() + ", "
