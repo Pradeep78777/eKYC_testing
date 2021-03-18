@@ -179,4 +179,53 @@ public class AccessLogDAO {
 		return isSuccessful;
 	}
 
+	/**
+	 * @author GOWRI SANKAR R
+	 * @param pAccesslogDto
+	 * @return
+	 */
+	public boolean insertBackOfficeError(AccesslogDTO pAccesslogDto) {
+		Connection conn = null;
+		boolean isSuccessful = false;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement("INSERT INTO tbl_access_log(uri,user_id,device_ip,user_agent,content_type,"
+					+ "authenticate_token,input,created_on) values(?,?,?,?,?,?,?,?)");
+			int paramPos = 1;
+			pStmt.setString(paramPos++, pAccesslogDto.getUri());
+			pStmt.setString(paramPos++, pAccesslogDto.getUser_id());
+			pStmt.setString(paramPos++, pAccesslogDto.getDevice_ip());
+			pStmt.setString(paramPos++, pAccesslogDto.getUser_agent());
+			pStmt.setString(paramPos++, pAccesslogDto.getContent_type());
+			pStmt.setInt(paramPos++, pAccesslogDto.getAuthenticate_token());
+			pStmt.setString(paramPos++, pAccesslogDto.getInput());
+			pStmt.setTimestamp(paramPos++, pAccesslogDto.getCreated_on());
+			isSuccessful = pStmt.execute();
+		} catch (Exception e) {
+			errorlog.error("AccessLogDAO/insertCommunicationAccessLogRecords", e);
+			e.printStackTrace();
+			errordao.insertErrorLogRecords("AccessLogDAO", "insertCommunicationAccessLogRecords",
+					pAccesslogDto.toString(), "conn not closed", e.getMessage());
+		} finally {
+			try {
+				if (rSet != null) {
+					rSet.close();
+				}
+				if (pStmt != null) {
+					pStmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				errorlog.error("AccessLogDAO/insertCommunicationAccessLogRecords -- connectionNotClosed", e);
+				errordao.insertErrorLogRecords("AccessLogDAO", "insertCommunicationAccessLogRecords", "conn not closed",
+						"conn not closed", e.getMessage());
+			}
+		}
+		return isSuccessful;
+	}
 }
