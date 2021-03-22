@@ -149,7 +149,7 @@ public class eKYCService {
 			result.setDocumentDownloaded(checkUser.getDocumentDownloaded());
 			result.setDocumentSigned(checkUser.getDocumentSigned());
 			int isRejected = checkUser.getIsRejected();
-//			int isAproved = checkUser.getIsAproved();
+			// int isAproved = checkUser.getIsAproved();
 			int retifyCount = checkUser.getRectifyCount();
 			/**
 			 * Check the user given the same email id or not
@@ -815,7 +815,7 @@ public class eKYCService {
 				/**
 				 * Call to NSDL for getting the xml form the NSDL
 				 */
-				String getXml = Utility.getXmlForEsign(pDto.getApplication_id(),
+				String getXml = NsdlPanVerificationRestService.getInstance().getXmlForEsign(pDto.getApplication_id(),
 						eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH) + filePath);
 				Utility.createNewXmlFile(eKYCDAO.getInstance().getFileLocation(eKYCConstant.FILE_PATH)
 						+ pDto.getApplication_id() + "\\" + folderName, getXml);
@@ -1373,7 +1373,7 @@ public class eKYCService {
 						PersonalDetailsDTO dummyDto = new PersonalDetailsDTO();
 						dummyDto.setApplication_id(applicationNumber.getApplication_id());
 						PersonalDetailsDTO profileDetails = eKYCDAO.getInstance().getProfileDetails(dummyDto);
-//						int isAproved = profileDetails.getIsAproved();
+						// int isAproved = profileDetails.getIsAproved();
 						int isRejected = profileDetails.getIsRejected();
 						int rectified = profileDetails.getRectifyCount();
 						if (profileDetails.getApplicationStatus() < eKYCConstant.DOCUMENT_SIGNED) {
@@ -1396,12 +1396,12 @@ public class eKYCService {
 						// System.out.println("BBBBBBBBBB"+filePath);
 						String resposne = "";
 						if (pancardName != null && pancardName.getPan_card() != "") {
-							resposne = Utility.getSignFromNsdl(
+							resposne = NsdlPanVerificationRestService.getInstance().getSignFromNsdl(
 									filePath + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card()
 											+ eKYCConstant.PDF_FILE_EXTENSION,
 									filePath, msg, applicationNumber.getApplicant_name(), applicationNumber.getCity());
 						} else {
-							resposne = Utility.getSignFromNsdl(
+							resposne = NsdlPanVerificationRestService.getInstance().getSignFromNsdl(
 									filePath + eKYCConstant.WINDOWS_FORMAT_SLASH + pancardName.getPan_card()
 											+ eKYCConstant.PDF_FILE_EXTENSION,
 									filePath, msg, applicationNumber.getApplicant_name(), applicationNumber.getCity());

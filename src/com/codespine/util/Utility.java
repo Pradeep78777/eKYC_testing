@@ -312,7 +312,7 @@ public class Utility {
 				builder.append(" <p style=\"margin:0 0 15px \"><a href= " + activationLink
 						+ " class='link' width='20%' style=\"outline:none;color:#0a0a09;text-decoration:underline\">"
 						+ activationLink + "</a></p>\r\n"
-						+ " <p style=\"margin:0 0 15px \">Thank you! <br>ZEBULL E-Kyc</p>\r\n" + " </td>\r\n"
+						+ " <p style=\"margin:0 0 15px \">Thank you! <br>ZEBU e-Kyc</p>\r\n" + " </td>\r\n"
 						+ " </tr></tbody>\r\n" + " </table>\r\n" + " </td>\r\n" + " </tr></tbody>\r\n" + " </table>\r\n"
 						+ " \r\n" + "</tr><tr>\r\n"
 						+ "<td bgcolor=\"#ffffff\" style=\"mso-line-height-rule:exactly;mso-line-height-rule: exactly;\">\r\n"
@@ -493,54 +493,14 @@ public class Utility {
 	}
 
 	/**
-	 * To get the XML code for getting esign
+	 * Metho to conver the base 64 to image and save in the given location
 	 * 
 	 * @author GOWRI SANKAR R
+	 * @param base64
+	 * @param location
+	 * @param applicationId
 	 * @return
 	 */
-	public static String getXmlForEsign(int applicationId, String folderName) {
-		String response = "";
-		try {
-			String pathToPDF = folderName;
-			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
-			String authMode = "1";
-			String responseUrl = "https://oa.zebull.in/rest/eKYCService/eKYC/getNsdlXML";
-			String p12CertificatePath = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
-			String p12CertiPwd = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
-			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
-			int serverTime = 10;
-			String alias = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ALIAS);
-			int pageNumberToInsertSignatureStamp = 1;
-			String nameToShowOnSignatureStamp = "Test";
-			String locationToShowOnSignatureStamp = "Test";
-			String reasonForSign = "";
-			int xCo_ordinates = 100;
-			int yCo_ordinates = 100;
-			int signatureWidth = 20;
-			int signatureHeight = 5;
-			String pdfPassword = "";
-			String txn = "";
-			try {
-				EsignApplication eSignApp = new EsignApplication();
-				// eSignApp.getSignOnDocument(eSignResp, PdfSigneture,
-				// tickImagePath, serverTime, pageNumberToInsertSignatureStamp,
-				// nameToShowOnSignatureStamp, locationToShowOnSignatureStamp,
-				// reasonForSign, xCo_ordinates, yCo_ordinates, signatureWidth,
-				// signatureHeight, pdfPassword, outputFinalPdfPath)
-				response = eSignApp.getEsignRequestXml("", pathToPDF, aspID, authMode, responseUrl, p12CertificatePath,
-						p12CertiPwd, tickImagePath, serverTime, alias, pageNumberToInsertSignatureStamp,
-						nameToShowOnSignatureStamp, locationToShowOnSignatureStamp, reasonForSign, xCo_ordinates,
-						yCo_ordinates, signatureWidth, signatureHeight, pdfPassword, txn);
-				System.out.println(response);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return response;
-	}
-
 	public static String convertBase64ToImage(String base64, String location, int applicationId) {
 		String siteUrl = "";
 		String base64String = base64;
@@ -630,22 +590,23 @@ public class Utility {
 		return sessionId;
 	}
 
-	/**
-	 * Method to copy one folder to another folder
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param sourceLocation
-	 * @param desinitionLocation
-	 */
-	public static void exampleDocumentToNewUser(String sourceLocation, String desinitionLocation) {
-		File source = new File(sourceLocation);
-		File dest = new File(desinitionLocation);
-		try {
-			FileUtils.copyDirectory(source, dest);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	// /**
+	// * Method to copy one folder to another folder
+	// *
+	// * @author GOWRI SANKAR R
+	// * @param sourceLocation
+	// * @param desinitionLocation
+	// */
+	// public static void exampleDocumentToNewUser(String sourceLocation, String
+	// desinitionLocation) {
+	// File source = new File(sourceLocation);
+	// File dest = new File(desinitionLocation);
+	// try {
+	// FileUtils.copyDirectory(source, dest);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	/**
 	 * To create the new xml document and write the response Xml from the NSDL
@@ -688,53 +649,6 @@ public class Utility {
 			e.printStackTrace();
 		}
 		return txnId;
-	}
-
-	/**
-	 * Get the signed document from the NSDL
-	 * 
-	 * @author GOWRI SANKAR R
-	 * @param dcoumentLocation
-	 * @param documentToBeSavedLocation
-	 * @param receivedXml
-	 * @param applicantName
-	 * @param city
-	 * @return
-	 */
-	public static String getSignFromNsdl(String dcoumentLocation, String documentToBeSavedLocation, String receivedXml,
-			String applicantName, String city) {
-		String responseText = null;
-		try {
-			String pathToPDF = dcoumentLocation;
-			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
-			int serverTime = 10;
-			PDDocument pdDoc = PDDocument.load(new File(pathToPDF));
-			int pageNumberToInsertSignatureStamp = pdDoc.getNumberOfPages();
-			String nameToShowOnSignatureStamp = applicantName.toUpperCase();
-			String locationToShowOnSignatureStamp = city.toUpperCase();
-			String reasonForSign = "";
-			int xCo_ordinates = 10;
-			int yCo_ordinates = 190;
-			int signatureWidth = 200;
-			int signatureHeight = 50;
-			String pdfPassword = "";
-			String esignXml = receivedXml;
-			String returnPath = documentToBeSavedLocation;
-			try {
-				EsignApplication eSignApp = new EsignApplication();
-				responseText = eSignApp.getSignOnDocument(esignXml, pathToPDF, tickImagePath, serverTime,
-						pageNumberToInsertSignatureStamp, nameToShowOnSignatureStamp, locationToShowOnSignatureStamp,
-						reasonForSign, xCo_ordinates, yCo_ordinates, signatureWidth, signatureHeight, pdfPassword,
-						returnPath);
-				System.out.println("Response from NSDL" + responseText);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return responseText;
 	}
 
 	/**
@@ -1034,12 +948,12 @@ public class Utility {
 						+ "th{background :#1e3465;color:white;}</style></head><body><div>"
 						+ "<div  style='font-size:14px'><p>Hi User,</p><p>Your verification OTP for resume application is </p>"
 						+ "<p> " + otp + " </p></div>" + "<div><p align='left'>" + "<b>Regards,"
-						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
+						+ "<br>Zebu e-Kyc.</b></p></div></div></body></html>";
 				builder.append(hs);
 				MimeMessage message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
-				message.setSubject("Message From Zebu eTrade");
+				message.setSubject("OTP to resume application");
 				BodyPart messageBodyPart1 = new MimeBodyPart();
 				messageBodyPart1.setContent(builder.toString(), "text/html");
 				Multipart multipart = new MimeMultipart();
