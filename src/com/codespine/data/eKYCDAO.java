@@ -2751,9 +2751,9 @@ public class eKYCDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement("SELECT city_code, city_name, state, active_status FROM ekyc.tbl_city_master "
-					+ " where state = ? AND city_name like '" + dto.getCity_name() + "%'limit 100");
-			int paromPos = 1;
-			pStmt.setString(paromPos++, dto.getState());
+					+ " where city_name like '" + dto.getCity_name() + "%'limit 100");
+			// int paromPos = 1;
+			// pStmt.setString(paromPos++, dto.getState());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				response = new ArrayList<CityListDTO>();

@@ -33,7 +33,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
@@ -81,6 +80,7 @@ public class FinalPDFGenerator {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public static String pdfInserterRequiredValues(eKYCDTO eKYCdto, String folderName) {
 		String application_id = "";
 		String finalPDFName = "";
@@ -180,6 +180,13 @@ public class FinalPDFGenerator {
 			// String ivrImage =
 			// attaching external required documents
 			List<String> urls = getAttachedDocumentURLs(Integer.parseInt(application_id), finalSestinationFilePath);
+			JSONObject jsonObject = eKYCDAO.getInstance().getIvrDetails(Integer.parseInt(application_id));
+			if (jsonObject != null) {
+				if (StringUtil.isNotNullOrEmpty((String) jsonObject.get("ivr_image"))) {
+					urls.add((String) jsonObject.get("ivr_image"));
+				}
+			}
+
 			if (urls != null && urls.size() > 0) {
 				int i = 1;
 				// int x = 16;
@@ -266,7 +273,7 @@ public class FinalPDFGenerator {
 			}
 			document.save(new File(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName));
 			document.close();
-			shrinkPdf(finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName);
+			shrinkPdf(application_id, finalSestinationFilePath + eKYCConstant.WINDOWS_FORMAT_SLASH + finalPDFName);
 			System.out.println("pdf Generated");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -630,14 +637,16 @@ public class FinalPDFGenerator {
 				}
 			}
 		}
+
 		return urls;
 	}
 
-	private static void shrinkPdf(String fileURL) throws InvalidPasswordException, IOException {
+	private static void shrinkPdf(String applicationId,String fileURL) throws Exception {
 		PDDocument pdDocument = new PDDocument();
 		PDDocument oDocument = PDDocument.load(new File(fileURL));
 		PDFRenderer pdfRenderer = new PDFRenderer(oDocument);
 		int numberOfPages = oDocument.getNumberOfPages();
+		System.out.println(numberOfPages);
 		PDPage page = null;
 
 		for (int i = 0; i < numberOfPages; i++) {
@@ -654,6 +663,18 @@ public class FinalPDFGenerator {
 
 			pdDocument.addPage(page);
 		}
+		JSONObject jsonObject = eKYCDAO.getInstance().getIvrDetails(Integer.parseInt(applicationId));
+		if (jsonObject != null) {
+			if (StringUtil.isNotNullOrEmpty((String) jsonObject.get("ivr_lat"))) {
+				pdfTextInserter(numberOfPages-1, pdDocument, "Latitude :" + (String) jsonObject.get("ivr_lat"), 10, 40, 0,
+						"");
+			}
+			if (StringUtil.isNotNullOrEmpty((String) jsonObject.get("ivr_long"))) {
+				pdfTextInserter(numberOfPages-1, pdDocument, "Longitude :" + (String) jsonObject.get("ivr_long"), 10, 30,
+						0, "");
+			}
+		}
+
 		PDPage page1 = new PDPage(PDRectangle.A4);
 		PDPageTree mergePD = pdDocument.getPages();
 		mergePD.insertAfter(page1, pdDocument.getPage(pdDocument.getNumberOfPages() - 1));

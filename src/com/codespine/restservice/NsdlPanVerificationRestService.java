@@ -38,17 +38,29 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.util.encoders.Base64;
 
-import com.codespine.util.CSEnvVariables;
-import com.codespine.util.eKYCConstant;
 import com.codespine.util.APIBased.DummyHostnameVerifier;
 import com.codespine.util.APIBased.DummyTrustManager;
+import com.codespine.util.CSEnvVariables;
+import com.codespine.util.eKYCConstant;
+import com.nsdl.esign.preverifiedNo.controller.EsignApplication;
 
 public class NsdlPanVerificationRestService {
+
+	public static NsdlPanVerificationRestService NsdlPanVerificationRestService = null;
+
+	public static NsdlPanVerificationRestService getInstance() {
+		if (NsdlPanVerificationRestService == null) {
+			NsdlPanVerificationRestService = new NsdlPanVerificationRestService();
+		}
+		return NsdlPanVerificationRestService;
+	}
+
 	/**
 	 * To create the pfx to jks File
 	 * 
@@ -312,5 +324,101 @@ public class NsdlPanVerificationRestService {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	/**
+	 * Method to get the xml code for entering into the NSDL Page
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @return
+	 */
+	public String getXmlForEsign(int applicationId, String folderName) {
+		String response = "";
+		try {
+			String pathToPDF = folderName;
+			String aspID = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ASP_ID);
+			String authMode = "1";
+			String responseUrl = "https://oa.zebull.in/rest/eKYCService/eKYC/getNsdlXML";
+			String p12CertificatePath = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_LOCATION);
+			String p12CertiPwd = CSEnvVariables.getProperty(eKYCConstant.PFX_FILE_PASSWORD);
+			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
+			int serverTime = 10;
+			String alias = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_ALIAS);
+			int pageNumberToInsertSignatureStamp = 1;
+			String nameToShowOnSignatureStamp = "Test";
+			String locationToShowOnSignatureStamp = "Test";
+			String reasonForSign = "";
+			int xCo_ordinates = 100;
+			int yCo_ordinates = 100;
+			int signatureWidth = 20;
+			int signatureHeight = 5;
+			String pdfPassword = "";
+			String txn = "";
+			try {
+				EsignApplication eSignApp = new EsignApplication();
+				// eSignApp.getSignOnDocument(eSignResp, PdfSigneture,
+				// tickImagePath, serverTime, pageNumberToInsertSignatureStamp,
+				// nameToShowOnSignatureStamp, locationToShowOnSignatureStamp,
+				// reasonForSign, xCo_ordinates, yCo_ordinates, signatureWidth,
+				// signatureHeight, pdfPassword, outputFinalPdfPath)
+				response = eSignApp.getEsignRequestXml("", pathToPDF, aspID, authMode, responseUrl, p12CertificatePath,
+						p12CertiPwd, tickImagePath, serverTime, alias, pageNumberToInsertSignatureStamp,
+						nameToShowOnSignatureStamp, locationToShowOnSignatureStamp, reasonForSign, xCo_ordinates,
+						yCo_ordinates, signatureWidth, signatureHeight, pdfPassword, txn);
+				System.out.println(response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	/**
+	 * Get the signed document from the NSDL
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param dcoumentLocation
+	 * @param documentToBeSavedLocation
+	 * @param receivedXml
+	 * @param applicantName
+	 * @param city
+	 * @return
+	 */
+	public String getSignFromNsdl(String dcoumentLocation, String documentToBeSavedLocation, String receivedXml,
+			String applicantName, String city) {
+		String responseText = null;
+		try {
+			String pathToPDF = dcoumentLocation;
+			String tickImagePath = CSEnvVariables.getProperty(eKYCConstant.E_SIGN_TICK_IMAGE);
+			int serverTime = 10;
+			PDDocument pdDoc = PDDocument.load(new File(pathToPDF));
+			int pageNumberToInsertSignatureStamp = pdDoc.getNumberOfPages();
+			String nameToShowOnSignatureStamp = applicantName.toUpperCase();
+			String locationToShowOnSignatureStamp = city.toUpperCase();
+			String reasonForSign = "";
+			int xCo_ordinates = 10;
+			int yCo_ordinates = 190;
+			int signatureWidth = 200;
+			int signatureHeight = 50;
+			String pdfPassword = "";
+			String esignXml = receivedXml;
+			String returnPath = documentToBeSavedLocation;
+			try {
+				EsignApplication eSignApp = new EsignApplication();
+				responseText = eSignApp.getSignOnDocument(esignXml, pathToPDF, tickImagePath, serverTime,
+						pageNumberToInsertSignatureStamp, nameToShowOnSignatureStamp, locationToShowOnSignatureStamp,
+						reasonForSign, xCo_ordinates, yCo_ordinates, signatureWidth, signatureHeight, pdfPassword,
+						returnPath);
+				System.out.println("Response from NSDL" + responseText);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return responseText;
 	}
 }

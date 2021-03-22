@@ -201,9 +201,9 @@ public class eKYCConstant {
 
 	public static final String NOT_A_VALID_PASSWORD = "Please enter the valid password";
 
-	public static final String PHONE_EXISTS_WITH_BACK_OFFICE = "Invalid Phone. You have already created the account with Zebull using this registered mobile number";
-	public static final String EMAIL_EXISTS_WITH_BACK_OFFICE = "Invalid Email. You have already created the account with Zebull using this registered email";
-	public static final String PAN_EXISTS_WITH_BACK_OFFICE = "Invalid Pan. You have already created the account with Zebull using this registered email";
+	public static final String PHONE_EXISTS_WITH_BACK_OFFICE = "You have already created the account with Zebull using this registered mobile number";
+	public static final String EMAIL_EXISTS_WITH_BACK_OFFICE = "You have already created the account with Zebull using this registered email";
+	public static final String PAN_EXISTS_WITH_BACK_OFFICE = "You have already created the account with Zebull using this PAN ";
 
 	public static final String IVP_BASE_URL = "ivpBaseURl";
 	public static final String NOT_IN_PDF_FORMAT = "Given file is not in PDF format";
