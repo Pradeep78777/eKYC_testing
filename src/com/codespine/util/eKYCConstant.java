@@ -282,4 +282,10 @@ public class eKYCConstant {
 
 	public static final String BACKOFFICE_ERROR = "Error while pushing the data to back office";
 
+	public static final String ERROR_LOADING_NSDL = "NSDL server Seems to be down, Please try again after some time";
+
+	/**
+	 * Esigned Failed url
+	 */
+	public static final String ESIGN_FAILED = "https://oa.zebull.in/ekyc/#/?rd=esignFailed&";
 }

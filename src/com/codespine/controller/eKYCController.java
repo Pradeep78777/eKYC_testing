@@ -854,11 +854,11 @@ public class eKYCController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/getPostalCode")
 	public ResponseDTO getPostalCode(@Context ContainerRequestContext requestContext, PostalCodesDTO dto) {
-//		accessLog.setDevice_ip(request.getRemoteAddr());
-//		accessLog.setUser_agent(request.getHeader("user-agent"));
-//		accessLog.setUri(requestContext.getUriInfo().getPath());
-//		accessLog.setCreated_on(created_on);
-//		Utility.inputAccessLogDetails(accessLog, dto, "");
+		// accessLog.setDevice_ip(request.getRemoteAddr());
+		// accessLog.setUser_agent(request.getHeader("user-agent"));
+		// accessLog.setUri(requestContext.getUriInfo().getPath());
+		// accessLog.setCreated_on(created_on);
+		// Utility.inputAccessLogDetails(accessLog, dto, "");
 
 		ResponseDTO response = eKYCService.getInstance().getPostalCode(dto);
 		return response;
