@@ -51,8 +51,6 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.w3c.dom.Document;
@@ -63,7 +61,6 @@ import com.codespine.dto.AccesslogDTO;
 import com.codespine.dto.ApplicationLogDTO;
 import com.codespine.service.AccessLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nsdl.esign.preverifiedNo.controller.EsignApplication;
 
 import sun.misc.BASE64Encoder;
 
@@ -228,8 +225,7 @@ public class Utility {
 				}
 			});
 			try {
-				String hs = "<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n"
-						+ "<head><title>Zebull E-Kyc</title>\r\n"
+				String hs = "<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n" + "<head><title>Zebu E-Kyc</title>\r\n"
 						+ "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\r\n"
 						+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
 						+ "<style type=\"text/css\">\r\n" + "\r\n"
@@ -312,7 +308,7 @@ public class Utility {
 				builder.append(" <p style=\"margin:0 0 15px \"><a href= " + activationLink
 						+ " class='link' width='20%' style=\"outline:none;color:#0a0a09;text-decoration:underline\">"
 						+ activationLink + "</a></p>\r\n"
-						+ " <p style=\"margin:0 0 15px \">Thank you! <br>ZEBU e-Kyc</p>\r\n" + " </td>\r\n"
+						+ " <p style=\"margin:0 0 15px \">Thank you! <br>Zebu e-Kyc</p>\r\n" + " </td>\r\n"
 						+ " </tr></tbody>\r\n" + " </table>\r\n" + " </td>\r\n" + " </tr></tbody>\r\n" + " </table>\r\n"
 						+ " \r\n" + "</tr><tr>\r\n"
 						+ "<td bgcolor=\"#ffffff\" style=\"mso-line-height-rule:exactly;mso-line-height-rule: exactly;\">\r\n"
@@ -418,7 +414,6 @@ public class Utility {
 	 */
 	public static void sendIPVLink(long mobileNumber, String bitlyUrl, String applicantName) {
 		try {
-			String newline = System.getProperty("line.separator");
 			String message = "Dear " + applicantName + ", Your eKYC Application IPV is pending. Kindly click here "
 					+ bitlyUrl + " to take this forward and complete your IPV.";
 			message = message.replace(" ", "%20");
@@ -590,24 +585,6 @@ public class Utility {
 		return sessionId;
 	}
 
-	// /**
-	// * Method to copy one folder to another folder
-	// *
-	// * @author GOWRI SANKAR R
-	// * @param sourceLocation
-	// * @param desinitionLocation
-	// */
-	// public static void exampleDocumentToNewUser(String sourceLocation, String
-	// desinitionLocation) {
-	// File source = new File(sourceLocation);
-	// File dest = new File(desinitionLocation);
-	// try {
-	// FileUtils.copyDirectory(source, dest);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-
 	/**
 	 * To create the new xml document and write the response Xml from the NSDL
 	 * 
@@ -691,13 +668,12 @@ public class Utility {
 						+ ",</b></p><br><p>Your application information and documents are successfully verified and accepted. "
 						+ "You will receive an email with your account details shortly with login credentials. </p>"
 						+ "<br><p>Thank you for choosing Zebu Etrade and we wish you all the best </p></div>"
-						+ "<div><p align='left'>" + "<b>Regards,"
-						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
+						+ "<div><p align='left'>" + "<b>Regards," + "<br>Zebu e-Kyc.</b></p></div></div></body></html>";
 				builder.append(hs);
 				MimeMessage message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.trim()));
-				message.setSubject("Zebull E-Kyc Application status");
+				message.setSubject("Zebu e-Kyc Application status");
 				BodyPart messageBodyPart1 = new MimeBodyPart();
 				messageBodyPart1.setContent(builder.toString(), "text/html");
 				Multipart multipart = new MimeMultipart();
@@ -760,12 +736,12 @@ public class Utility {
 						+ "<p> We request you to take the remedial action using the below link: https://oa.zebull.in/  </p>"
 						+ "<p>Please reach out to our support team on 93 8010 8010 for any further information. </p></div>"
 						+ "<div><p align='left'> " + "<b>Regards,"
-						+ "<br>Zebu E-Trade Services.</b></p></div></div></body></html>";
+						+ "<br>Zebu e-Kyc.</b></p></div></div></body></html>";
 				builder.append(hs);
 				MimeMessage message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(CSEnvVariables.getProperty(eKYCConstant.FROM)));
 				message.setRecipient(Message.RecipientType.TO, new InternetAddress(email.trim()));
-				message.setSubject("Zebull E-Kyc Application status");
+				message.setSubject("Zebu e-Kyc Application status");
 				BodyPart messageBodyPart1 = new MimeBodyPart();
 				messageBodyPart1.setContent(builder.toString(), "text/html");
 				Multipart multipart = new MimeMultipart();
@@ -998,6 +974,11 @@ public class Utility {
 		return base64Image;
 	}
 
+	/**
+	 * Method to make this the trusted site
+	 * 
+	 * @author GOWRI SANKAR R
+	 */
 	private static void trustedManagement() {
 		try {
 			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {

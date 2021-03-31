@@ -2070,7 +2070,7 @@ public class AdminDAO {
 							+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
 							+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
 							+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-							+ " left join tbl_pancard_details c on a.application_id = c.application_id order by a.created_date desc limit 1000");
+							+ " left join tbl_pancard_details c on a.application_id = c.application_id order by a.created_date desc limit 500");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {

@@ -2162,8 +2162,8 @@ public class eKYCDAO {
 			pStmt.setString(paromPos++, txnName);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
-				result = new esignDTO();
 				while (rSet.next()) {
+					result = new esignDTO();
 					result.setApplication_id(rSet.getInt("b.application_id"));
 					result.setApplicant_name(rSet.getString("b.applicant_name"));
 					result.setCity(rSet.getString("c.city"));
