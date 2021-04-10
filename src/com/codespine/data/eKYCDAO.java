@@ -701,8 +701,7 @@ public class eKYCDAO {
 	}
 
 	/**
-	 * To check the basic information for the application is already inserted or
-	 * not
+	 * To check the basic information for the application is already inserted or not
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param applicationId
@@ -918,8 +917,7 @@ public class eKYCDAO {
 	}
 
 	/**
-	 * Method to update the Admin name who is started the application in data
-	 * base
+	 * Method to update the Admin name who is started the application in data base
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param applicationId
@@ -2778,4 +2776,64 @@ public class eKYCDAO {
 		}
 		return response;
 	}
+
+	public PersonalDetailsDTO dbCheck() {
+		PersonalDetailsDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" SELECT application_id , mobile_number ,mobile_otp, email_id  FROM  tbl_application_master ");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+//					if (isNumeric(rSet.getString("email_id"))) {
+//						System.out.println("email_id - yes");
+//					}
+//					if (isNumeric(rSet.getString("mobile_number"))) {
+//						System.out.println("mobile_number - yes");
+//						 BigInteger number = new BigInteger(rSet.getString("mobile_number"));
+//						if(number.longValueExact() < Long.MAX_VALUE && number.longValue() > Long.MIN_VALUE) {
+//							System.out.println("mobile_number - nn");
+//						}
+//					 Integer number1 = new Integer(rSet.getString("application_id"));
+//						if(number1.longValue() < Integer.MAX_VALUE && number1.longValue() > Integer.MIN_VALUE) {
+//							System.out.println("app - mm");
+//						}
+//						Integer number2 = new Integer(rSet.getString("mobile_number"));
+//						if(number2.longValue() < Integer.MAX_VALUE && number2.longValue() > Integer.MIN_VALUE) {
+//							System.out.println("mobile_number - nnn");
+//						}
+//					}
+//					if (isNumeric(rSet.getString("application_id"))) {
+//						System.out.println("application_id - yes");
+//					}
+					result = new PersonalDetailsDTO();
+					result.setApplication_id(rSet.getInt("application_id"));
+					result.setOtp(rSet.getInt("mobile_otp"));
+					result.setMobile_number(rSet.getLong("mobile_number"));
+					result.setEmail(rSet.getString("email_id"));
+				}
+			}
+			rSet.close();
+			pStmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+//	public static boolean isNumeric(String strNum) {
+//	    if (strNum == null) {
+//	        return false;
+//	    }
+//	    try {
+//	        double d = Double.parseDouble(strNum);
+//	    } catch (NumberFormatException nfe) {
+//	        return false;
+//	    }
+//	    return true;
+//	}
 }

@@ -134,4 +134,16 @@ public class StringUtil {
 		}
 		return stringConditions;
 	}
+	@SuppressWarnings("rawtypes")
+	public static boolean isListNullOrEmpty(List list){
+		boolean isNullOrEmpty = false;
+		if(list == null || list.isEmpty()){
+			isNullOrEmpty = true;
+		}
+		return isNullOrEmpty;
+	}
+	@SuppressWarnings("rawtypes")
+	public static boolean isListNotNullOrEmpty(List list){
+		return !isListNullOrEmpty(list);
+	}
 }

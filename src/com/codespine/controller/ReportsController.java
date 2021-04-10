@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.codespine.dto.AccesslogDTO;
+import com.codespine.dto.AdminDTO;
 import com.codespine.dto.ReportsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.service.ReportsService;
@@ -39,6 +40,21 @@ public class ReportsController {
 	public ResponseDTO reportGeneration(@Context ContainerRequestContext requestContext, ReportsDTO pObject) {
 		ResponseDTO response = new ResponseDTO();
 		response = ReportsService.getInstance().reportGeneration(pObject);
+		return response;
+	}
+
+	/**
+	 * Method to get OTP Records
+	 * 
+	 * @author pradeep
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/getOtpFullDatas")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getOtpFullDatas(AdminDTO pDto) {
+		ResponseDTO response = ReportsService.getInstance().getOtpFullDatas(pDto);
 		return response;
 	}
 }
