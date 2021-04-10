@@ -1,87 +1,124 @@
 package com.codespine.dto;
 
+import java.util.List;
+
 public class ReportsDTO {
 
-	private String[] userDetails;
-	private String[] panDetails;
-	private String[] basicInformation;
-	private String[] communicationAddress;
-	private String[] permananentAddress;
-	private String[] bankDetails;
-	private String[] tradingPreferences;
-	private String[] documentUpload;
-	private String[] esgin;
-
-	public String[] getUserDetails() {
+	private List<ReportColumnDTO> userDetails;
+	private List<ReportColumnDTO> panDetails;
+	private List<ReportColumnDTO> basicInformation;
+	private List<ReportColumnDTO> communicationAddress;
+	private List<ReportColumnDTO> permananentAddress;
+	private List<ReportColumnDTO> bankDetails;
+	private List<ReportColumnDTO> tradingPreferences;
+	private List<ReportColumnDTO> adminPanDetails;
+	private List<ReportColumnDTO> adminBasicInfo;
+	private List<ReportColumnDTO> adminCommunicationAddress;
+	private List<ReportColumnDTO> adminPermanentAddress;
+	private List<ReportColumnDTO> adminBankAccountDetail;
+	private List<ReportColumnDTO> eSign;
+	
+	public List<ReportColumnDTO> getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails(String[] userDetails) {
+	public void setUserDetails(List<ReportColumnDTO> userDetails) {
 		this.userDetails = userDetails;
 	}
 
-	public String[] getPanDetails() {
+	public List<ReportColumnDTO> getPanDetails() {
 		return panDetails;
 	}
 
-	public void setPanDetails(String[] panDetails) {
+	public void setPanDetails(List<ReportColumnDTO> panDetails) {
 		this.panDetails = panDetails;
 	}
 
-	public String[] getBasicInformation() {
+	public List<ReportColumnDTO> getBasicInformation() {
 		return basicInformation;
 	}
 
-	public void setBasicInformation(String[] basicInformation) {
+	public void setBasicInformation(List<ReportColumnDTO> basicInformation) {
 		this.basicInformation = basicInformation;
 	}
 
-	public String[] getCommunicationAddress() {
+	public List<ReportColumnDTO> getCommunicationAddress() {
 		return communicationAddress;
 	}
 
-	public void setCommunicationAddress(String[] communicationAddress) {
+	public void setCommunicationAddress(List<ReportColumnDTO> communicationAddress) {
 		this.communicationAddress = communicationAddress;
 	}
 
-	public String[] getPermananentAddress() {
+	public List<ReportColumnDTO> getPermananentAddress() {
 		return permananentAddress;
 	}
 
-	public void setPermananentAddress(String[] permananentAddress) {
+	public void setPermananentAddress(List<ReportColumnDTO> permananentAddress) {
 		this.permananentAddress = permananentAddress;
 	}
 
-	public String[] getBankDetails() {
+	public List<ReportColumnDTO> getBankDetails() {
 		return bankDetails;
 	}
 
-	public void setBankDetails(String[] bankDetails) {
+	public void setBankDetails(List<ReportColumnDTO> bankDetails) {
 		this.bankDetails = bankDetails;
 	}
 
-	public String[] getTradingPreferences() {
+	public List<ReportColumnDTO> getTradingPreferences() {
 		return tradingPreferences;
 	}
 
-	public void setTradingPreferences(String[] tradingPreferences) {
+	public void setTradingPreferences(List<ReportColumnDTO> tradingPreferences) {
 		this.tradingPreferences = tradingPreferences;
 	}
 
-	public String[] getDocumentUpload() {
-		return documentUpload;
+	public List<ReportColumnDTO> getAdminPanDetails() {
+		return adminPanDetails;
 	}
 
-	public void setDocumentUpload(String[] documentUpload) {
-		this.documentUpload = documentUpload;
+	public void setAdminPanDetails(List<ReportColumnDTO> adminPanDetails) {
+		this.adminPanDetails = adminPanDetails;
 	}
 
-	public String[] getEsgin() {
-		return esgin;
+	public List<ReportColumnDTO> getAdminBasicInfo() {
+		return adminBasicInfo;
 	}
 
-	public void setEsgin(String[] esgin) {
-		this.esgin = esgin;
+	public void setAdminBasicInfo(List<ReportColumnDTO> adminBasicInfo) {
+		this.adminBasicInfo = adminBasicInfo;
 	}
 
+	public List<ReportColumnDTO> getAdminCommunicationAddress() {
+		return adminCommunicationAddress;
+	}
+
+	public void setAdminCommunicationAddress(List<ReportColumnDTO> adminCommunicationAddress) {
+		this.adminCommunicationAddress = adminCommunicationAddress;
+	}
+
+	public List<ReportColumnDTO> getAdminPermanentAddress() {
+		return adminPermanentAddress;
+	}
+
+	public void setAdminPermanentAddress(List<ReportColumnDTO> adminPermanentAddress) {
+		this.adminPermanentAddress = adminPermanentAddress;
+	}
+
+	public List<ReportColumnDTO> getAdminBankAccountDetail() {
+		return adminBankAccountDetail;
+	}
+
+	public void setAdminBankAccountDetail(List<ReportColumnDTO> adminBankAccountDetail) {
+		this.adminBankAccountDetail = adminBankAccountDetail;
+	}
+
+	public List<ReportColumnDTO> geteSign() {
+		return eSign;
+	}
+
+	public void seteSign(List<ReportColumnDTO> eSign) {
+		this.eSign = eSign;
+	}
 }
