@@ -35,7 +35,6 @@ public class ReportsService {
 		ResponseDTO response = new ResponseDTO();
 		List<String> tableNames = new ArrayList<>();
 		List<String> columnNames = new ArrayList<String>();
-		;
 		StringBuffer queryString = new StringBuffer();
 		queryString.append(" SELECT ");
 		String tableApplicationMaster = "tbl_application_master";
@@ -68,16 +67,22 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
-					tableNames.add(tableApplicationMaster);
+					if (!tableNames.contains(tableApplicationMaster)) {
+						tableNames.add(tableApplicationMaster);
+					}
 					queryString.append(searchText);
 				} else {
-					tableNames.add(tableApplicationMaster);
+					if (!tableNames.contains(tableApplicationMaster)) {
+						tableNames.add(tableApplicationMaster);
+					}
 					searchText = "tbl_application_master.mobile_number";
 					columnNames.add("mobile_number");
 					queryString.append(searchText);
 				}
 			} else {
-				tableNames.add(tableApplicationMaster);
+				if (!tableNames.contains(tableApplicationMaster)) {
+					tableNames.add(tableApplicationMaster);
+				}
 				String searchText = "tbl_application_master.mobile_number";
 				columnNames.add("mobile_number");
 				queryString.append(searchText);
@@ -103,7 +108,9 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
-					tableNames.add(tablePanMaster);
+					if (!tableNames.contains(tablePanMaster)) {
+						tableNames.add(tablePanMaster);
+					}
 					queryString.append("," + searchText);
 				}
 			}
@@ -128,7 +135,9 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
-					tableNames.add(tableBasicInformation);
+					if (!tableNames.contains(tableBasicInformation)) {
+						tableNames.add(tableBasicInformation);
+					}
 					queryString.append("," + searchText);
 				}
 			}
@@ -153,7 +162,9 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
-					tableNames.add(tableCommunicationAddress);
+					if (!tableNames.contains(tableCommunicationAddress)) {
+						tableNames.add(tableCommunicationAddress);
+					}
 					queryString.append("," + searchText);
 				}
 			}
@@ -178,7 +189,9 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
-					tableNames.add(tablePermanentAddress);
+					if (!tableNames.contains(tablePermanentAddress)) {
+						tableNames.add(tablePermanentAddress);
+					}
 					queryString.append("," + searchText);
 				}
 			}
@@ -203,7 +216,9 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
-					tableNames.add(tableBankDetails);
+					if (!tableNames.contains(tableBankDetails)) {
+						tableNames.add(tableBankDetails);
+					}
 					queryString.append("," + searchText);
 				}
 			}
@@ -228,7 +243,9 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
-					tableNames.add(tableEXCHSegment);
+					if (!tableNames.contains(tableEXCHSegment)) {
+						tableNames.add(tableEXCHSegment);
+					}
 					queryString.append("," + searchText);
 				}
 			}
@@ -253,6 +270,152 @@ public class ReportsService {
 					}
 				}
 				if (StringUtil.isNotNullOrEmpty(searchText)) {
+					if (!tableNames.contains(tableApplicationMaster)) {
+						tableNames.add(tableApplicationMaster);
+					}
+					queryString.append("," + searchText);
+				}
+			}
+
+			if (StringUtil.isListNotNullOrEmpty(pObject.getAdminBankAccountDetail())) {
+				String searchText = "";
+				for (ReportColumnDTO reportColumnDTO : pObject.getAdminBankAccountDetail()) {
+					if (reportColumnDTO != null) {
+						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
+							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
+							int size = columnName.length;
+							for (int i = 0; i < size; i++) {
+								if (StringUtil.isNotNullOrEmpty(columnName[i])
+										&& !StringUtil.isEqual(columnName[i], "undefined")) {
+									columnNames.add(tableBankDetails + "_" + columnName[i]);
+									searchText += tableBankDetails + "." + columnName[i] + " as " + tableBankDetails
+											+ "_" + columnName[i];
+									if ((i + 1) < size) {
+										searchText = searchText + ",";
+									}
+								}
+							}
+						}
+					}
+				}
+				if (StringUtil.isNotNullOrEmpty(searchText)) {
+					if (!tableNames.contains(tableBankDetails)) {
+						tableNames.add(tableBankDetails);
+					}
+					queryString.append("," + searchText);
+				}
+			}
+			if (StringUtil.isListNotNullOrEmpty(pObject.getAdminBasicInfo())) {
+				String searchText = "";
+				for (ReportColumnDTO reportColumnDTO : pObject.getAdminBasicInfo()) {
+					if (reportColumnDTO != null) {
+						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
+							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
+							int size = columnName.length;
+							for (int i = 0; i < size; i++) {
+								if (StringUtil.isNotNullOrEmpty(columnName[i])
+										&& !StringUtil.isEqual(columnName[i], "undefined")) {
+									columnNames.add(tableBasicInformation + "_" + columnName[i]);
+									searchText += tableBasicInformation + "." + columnName[i] + " as "
+											+ tableBasicInformation + "_" + columnName[i];
+									if ((i + 1) < size) {
+										searchText = searchText + ",";
+									}
+								}
+							}
+						}
+					}
+				}
+				if (StringUtil.isNotNullOrEmpty(searchText)) {
+					if (!tableNames.contains(tableBasicInformation)) {
+						tableNames.add(tableBasicInformation);
+					}
+					queryString.append("," + searchText);
+				}
+			}
+
+			if (StringUtil.isListNotNullOrEmpty(pObject.getAdminCommunicationAddress())) {
+				String searchText = "";
+				for (ReportColumnDTO reportColumnDTO : pObject.getAdminCommunicationAddress()) {
+					if (reportColumnDTO != null) {
+						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
+							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
+							int size = columnName.length;
+							for (int i = 0; i < size; i++) {
+								if (StringUtil.isNotNullOrEmpty(columnName[i])
+										&& !StringUtil.isEqual(columnName[i], "undefined")) {
+									columnNames.add(tableCommunicationAddress + "_" + columnName[i]);
+									searchText += tableCommunicationAddress + "." + columnName[i] + " as "
+											+ tableCommunicationAddress + "_" + columnName[i];
+									if ((i + 1) < size) {
+										searchText = searchText + ",";
+									}
+								}
+							}
+						}
+					}
+				}
+				if (StringUtil.isNotNullOrEmpty(searchText)) {
+					if (!tableNames.contains(tableCommunicationAddress)) {
+						tableNames.add(tableCommunicationAddress);
+					}
+					queryString.append("," + searchText);
+				}
+
+			}
+			if (StringUtil.isListNotNullOrEmpty(pObject.getAdminPermanentAddress())) {
+				String searchText = "";
+				for (ReportColumnDTO reportColumnDTO : pObject.getAdminPermanentAddress()) {
+					if (reportColumnDTO != null) {
+						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
+							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
+							int size = columnName.length;
+							for (int i = 0; i < size; i++) {
+								if (StringUtil.isNotNullOrEmpty(columnName[i])
+										&& !StringUtil.isEqual(columnName[i], "undefined")) {
+									columnNames.add(tablePermanentAddress + "_" + columnName[i]);
+									searchText += tablePermanentAddress + "." + columnName[i] + " as "
+											+ tablePermanentAddress + "_" + columnName[i];
+									if ((i + 1) < size) {
+										searchText = searchText + ",";
+									}
+								}
+							}
+						}
+					}
+				}
+				if (StringUtil.isNotNullOrEmpty(searchText)) {
+					if (!tableNames.contains(tablePermanentAddress)) {
+						tableNames.add(tablePermanentAddress);
+					}
+					queryString.append("," + searchText);
+				}
+			}
+			if (StringUtil.isListNotNullOrEmpty(pObject.getAdminPanDetails())) {
+				String searchText = "";
+				for (ReportColumnDTO reportColumnDTO : pObject.getAdminPanDetails()) {
+					if (reportColumnDTO != null) {
+						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
+							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
+							int size = columnName.length;
+							for (int i = 0; i < size; i++) {
+								if (StringUtil.isNotNullOrEmpty(columnName[i])
+										&& !StringUtil.isEqual(columnName[i], "undefined")) {
+									columnNames.add(tablePanMaster + "_" + columnName[i]);
+									searchText += tablePanMaster + "." + columnName[i] + " as " + tablePanMaster + "_"
+											+ columnName[i];
+									if ((i + 1) < size) {
+										searchText = searchText + ",";
+									}
+								}
+							}
+						}
+					}
+				}
+				if (StringUtil.isNotNullOrEmpty(searchText)) {
+					if (!tableNames.contains(tablePanMaster)) {
+						tableNames.add(tablePanMaster);
+					}
 					queryString.append("," + searchText);
 				}
 			}
@@ -262,6 +425,7 @@ public class ReportsService {
 			List<ReportOutputDTO> dtos = ResportsDAO.getInstance().reportGeneration(queryString, columnNames);
 			if (StringUtil.isListNotNullOrEmpty(dtos)) {
 				ReportListDTO listDTO = new ReportListDTO();
+				refactorColumnNames(columnNames);
 				listDTO.setColumnNames(columnNames);
 				listDTO.setReportOutputDTOs(dtos);
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
@@ -418,6 +582,43 @@ public class ReportsService {
 			response.setReason(eKYCConstant.INVALID_REQUEST);
 		}
 		return response;
+	}
+
+	private void refactorColumnNames(List<String> columnNames) {
+		for (int i = 0; i < columnNames.size(); i++) {
+			if (StringUtil.isEqual(columnNames.get(i), "tbl_pancard_details_is_approved")) {
+				columnNames.set(i, "panIsAproved");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_pancard_details_is_rejected")) {
+				columnNames.set(i, "panIsRejected");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_pancard_details_comments")) {
+				columnNames.set(i, "panComments");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_account_holder_personal_details_is_approved")) {
+				columnNames.set(i, "personalIsAproved");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_account_holder_personal_details_is_rejected")) {
+				columnNames.set(i, "personalIsRejected");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_account_holder_personal_details_comments")) {
+				columnNames.set(i, "personalComments");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_communication_address_is_approved")) {
+				columnNames.set(i, "addressIsAproved");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_communication_address_is_rejected")) {
+				columnNames.set(i, "addressIsRejected");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_communication_address_comments")) {
+				columnNames.set(i, "addresscomments");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_permanent_address_is_approved")) {
+				columnNames.set(i, "p_addressIsAproved");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_permanent_address_is_rejected")) {
+				columnNames.set(i, "p_addressIsRejected");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_permanent_address_comments")) {
+				columnNames.set(i, "p_addresscomments");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_bank_account_details_is_approved")) {
+				columnNames.set(i, "bankIsAproved");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_bank_account_details_is_rejected")) {
+				columnNames.set(i, "bankIsRejected");
+			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_bank_account_details_comments")) {
+				columnNames.set(i, "bankComments");
+			}
+		}
+
 	}
 
 	private String generateInnerJoinCondition(List<String> tableNames) {
