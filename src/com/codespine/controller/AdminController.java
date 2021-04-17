@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.codespine.dto.AccesslogDTO;
 import com.codespine.dto.AdminDTO;
+import com.codespine.dto.BranchListDTO;
 import com.codespine.dto.PerformanceDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.service.AdminService;
@@ -66,14 +67,14 @@ public class AdminController {
 	@Path("/getAllUserRecords")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getAllUserRecords(@Context ContainerRequestContext requestContext) {
+	public ResponseDTO getAllUserRecords(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
 		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
 		accessLog.setUser_agent(request.getHeader("user-agent"));
 		accessLog.setUri(requestContext.getUriInfo().getPath());
 		accessLog.setCreated_on(created_on);
 		Utility.inputAccessLogDetails(accessLog, "", "");
-		response = AdminService.getInstance().getAllUserRecords();
+		response = AdminService.getInstance().getAllUserRecords(pDto);
 		return response;
 	}
 
@@ -440,6 +441,73 @@ public class AdminController {
 		accessLog.setCreated_on(created_on);
 		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().PerformanceChart(pDto);
+		return response;
+	}
+
+	/**
+	 * Method to get the branch list from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param requestContext
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/getBranchList")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getBranchList(@Context ContainerRequestContext requestContext, BranchListDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().getBranchList(pDto);
+		return response;
+	}
+
+	/**
+	 * method to get remishree list from data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param requestContext
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/getRemishreeList")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getRemishreeList(@Context ContainerRequestContext requestContext, BranchListDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().getRemishreeList(pDto);
+		return response;
+	}
+
+	/**
+	 * Method to update the client code details into the data base for the given
+	 * application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param requestContext
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/updateClientCodeDetails")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO updateClientCodeDetails(@Context ContainerRequestContext requestContext, BranchListDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().updateClientCodeDetails(pDto);
 		return response;
 	}
 }

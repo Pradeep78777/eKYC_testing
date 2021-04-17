@@ -12,6 +12,7 @@ import com.codespine.dto.AdminDTO;
 import com.codespine.dto.ApplicationAttachementsDTO;
 import com.codespine.dto.ApplicationLogDTO;
 import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.BranchListDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
@@ -37,7 +38,8 @@ public class AdminDAO {
 	 * @author GOWRI SANKAR R
 	 * @return
 	 */
-	public List<PersonalDetailsDTO> getAllUserRecords() {
+	public List<PersonalDetailsDTO> getAllUserRecords(AdminDTO pDto, boolean isAdmin, boolean isBranch,
+			boolean isRemishree) {
 		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
@@ -46,14 +48,36 @@ public class AdminDAO {
 		try {
 			int paramPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
-							+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code, a.reviewed_by ,c.applicant_name , b.mothersName, "
-							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
-							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where is_completed = ? order by a.created_date desc");
-			pStmt.setInt(paramPos++, 0);
+			if (isAdmin) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code, a.reviewed_by ,c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where is_completed = ? order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+			} else if (isBranch) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code, a.reviewed_by ,c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where is_completed = ? and a.branch_code = ?  order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getBranchCode());
+			} else if (isRemishree) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code, a.reviewed_by ,c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where is_completed = ? and a.remishree_code = ?  order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getRemishreeCode());
+			}
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -693,7 +717,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT name, admin_email, admin_password, designation  FROM  tbl_admin_details where admin_email = ? ");
+					"SELECT name, admin_email, admin_password, designation , branch_code , remishree_code , role FROM  tbl_admin_details where admin_email = ? ");
 			pStmt.setString(paromPos++, pDto.getEmail());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -703,6 +727,9 @@ public class AdminDAO {
 					result.setEmail(rSet.getString("admin_email"));
 					result.setPassword(rSet.getString("admin_password"));
 					result.setDesignation(rSet.getString("designation"));
+					result.setRole(rSet.getInt("role"));
+					result.setBranchCode(rSet.getString("branch_code"));
+					result.setRemishreeCode(rSet.getString("remishree_code"));
 				}
 			}
 		} catch (Exception e) {
@@ -1227,7 +1254,8 @@ public class AdminDAO {
 	 * @param pDto
 	 * @return
 	 */
-	public List<PersonalDetailsDTO> getCompletedRecordsWithTime(AdminDTO pDto) {
+	public List<PersonalDetailsDTO> getCompletedRecordsWithTime(AdminDTO pDto, boolean isAdmin, boolean isBranch,
+			boolean isRemishree) {
 		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
@@ -1236,18 +1264,52 @@ public class AdminDAO {
 		try {
 			conn = DBUtil.getConnection();
 			int paramPos = 1;
-			pStmt = conn.prepareStatement("SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id,"
-					+ "a.email_activated,a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by  "
-					+ " , a.created_date , a.last_updated , c.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income, "
-					+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob , d.branch_name ,"
-					+ "d.verified_by , d.verified_by_desigination  FROM  tbl_application_master A "
-					+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-					+ "inner join tbl_pancard_details c on a.application_id = c.application_id "
-					+ "inner join tbl_backoffice_request_parameter D on a.application_id = d.application_id  "
-					+ "where a.is_completed = ? and a.last_updated >= ? and a.last_updated <= ? order by a.created_date desc");
-			pStmt.setInt(paramPos++, 1);
-			pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
-			pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			if (isAdmin) {
+				pStmt = conn
+						.prepareStatement("SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id,"
+								+ "a.email_activated,a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by  "
+								+ " , a.created_date , a.last_updated , c.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income, "
+								+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob , d.branch_name ,"
+								+ "d.verified_by , d.verified_by_desigination  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id "
+								+ "inner join tbl_backoffice_request_parameter D on a.application_id = d.application_id  "
+								+ "where a.is_completed = ? and a.last_updated >= ? and a.last_updated <= ? order by a.created_date desc");
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			} else if (isBranch) {
+				pStmt = conn
+						.prepareStatement("SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id,"
+								+ "a.email_activated,a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by  "
+								+ " , a.created_date , a.last_updated , c.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income, "
+								+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob , d.branch_name ,"
+								+ "d.verified_by , d.verified_by_desigination  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id "
+								+ "inner join tbl_backoffice_request_parameter D on a.application_id = d.application_id  "
+								+ "where a.is_completed = ? and a.last_updated >= ? and a.last_updated <= ? and a.branch_code = ? order by a.created_date desc");
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getBranchCode());
+			} else if (isRemishree) {
+				pStmt = conn
+						.prepareStatement("SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id,"
+								+ "a.email_activated,a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by  "
+								+ " , a.created_date , a.last_updated , c.applicant_name , b.mothersName, b.fathersName, b.gender, b.marital_status, b.annual_income, "
+								+ "b.trading_experience, b.occupation, b.politically_exposed , c.pan_card ,c.dob , d.branch_name ,"
+								+ "d.verified_by , d.verified_by_desigination  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id "
+								+ "inner join tbl_backoffice_request_parameter D on a.application_id = d.application_id  "
+								+ "where a.is_completed = ? and a.last_updated >= ? and a.last_updated <= ? and a.remishree_code = ?  order by a.created_date desc");
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getRemishreeCode());
+			}
+
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1304,7 +1366,8 @@ public class AdminDAO {
 	 * @author GOWRI SANKAR R
 	 * @return
 	 */
-	public List<PersonalDetailsDTO> getInprogressRecordsByTime(AdminDTO pDto) {
+	public List<PersonalDetailsDTO> getInprogressRecordsByTime(AdminDTO pDto, boolean isAdmin, boolean isBranch,
+			boolean isRemishree) {
 		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
@@ -1313,20 +1376,54 @@ public class AdminDAO {
 		try {
 			int paramPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
-							+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated, c.applicant_name , b.mothersName, "
-							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
-							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
-							+ "a.is_approved = ? and a.is_rejected = ? and a.created_date >= ? and a.created_date <= ? "
-							+ "order by a.created_date desc");
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
-			pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			if (isAdmin) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated, c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.created_date >= ? and a.created_date <= ? "
+								+ "order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			} else if (isBranch) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated, c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.created_date >= ? and a.created_date <= ? and a.branch_code = ? "
+								+ "order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getBranchCode());
+			} else if (isRemishree) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated, c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.created_date >= ? and a.created_date <= ? and a.remishree_code = ?  "
+								+ "order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getRemishreeCode());
+			}
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1423,7 +1520,8 @@ public class AdminDAO {
 	 * @author GOWRI SANKAR R
 	 * @return
 	 */
-	public List<PersonalDetailsDTO> getRejectedListByTime(AdminDTO pDto) {
+	public List<PersonalDetailsDTO> getRejectedListByTime(AdminDTO pDto, boolean isAdmin, boolean isBranch,
+			boolean isRemishree) {
 		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
@@ -1432,21 +1530,57 @@ public class AdminDAO {
 		try {
 			int paramPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
-							+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
-							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
-							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
-							+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count = ? and a.last_updated >= ? and a.last_updated <= ? "
-							+ "order by a.created_date desc");
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 1);
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
-			pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			if (isAdmin) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count = ? and a.last_updated >= ? and a.last_updated <= ? "
+								+ "order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			} else if (isBranch) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count = ? and a.last_updated >= ? "
+								+ "and a.last_updated <= ? and a.branch_code = ? order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getBranchCode());
+			} else if (isRemishree) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count = ? and a.last_updated >= ? "
+								+ "and a.last_updated <= ? and a.remishree_code = ? order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getRemishreeCode());
+			}
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -1754,7 +1888,8 @@ public class AdminDAO {
 	 * @param pDto
 	 * @return
 	 */
-	public List<PersonalDetailsDTO> getRetifyListByTime(AdminDTO pDto) {
+	public List<PersonalDetailsDTO> getRetifyListByTime(AdminDTO pDto, boolean isAdmin, boolean isBranch,
+			boolean isRemishree) {
 		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
@@ -1763,21 +1898,57 @@ public class AdminDAO {
 		try {
 			int paramPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
-							+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
-							+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
-							+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-							+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
-							+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count >= ? and a.last_updated >= ? and a.last_updated <= ? "
-							+ "order by a.created_date desc");
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 0);
-			pStmt.setInt(paramPos++, 1);
-			pStmt.setInt(paramPos++, 1);
-			pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
-			pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			if (isAdmin) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count >= ? and a.last_updated >= ? and a.last_updated <= ? "
+								+ "order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+			} else if (isBranch) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count >= ? and a.last_updated >= ? and"
+								+ " a.last_updated <= ? and a.branch_code = ? order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getBranchCode());
+			} else if (isRemishree) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated,"
+								+ "a.application_status , a.document_signed , a.document_downloaded , a.ref_code ,a.reviewed_by , a.created_date , a.last_updated , c.applicant_name , b.mothersName, "
+								+ "b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ "b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ "inner join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ "inner join tbl_pancard_details c on a.application_id = c.application_id where a.is_completed = ? and "
+								+ "a.is_approved = ? and a.is_rejected = ? and a.rectify_count >= ? and a.last_updated >= ? "
+								+ "and a.last_updated <= ?  and a.remishree_code = ? order by a.created_date desc");
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:00");
+				pStmt.setString(paramPos++, pDto.getRemishreeCode());
+			}
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -2055,7 +2226,8 @@ public class AdminDAO {
 	 * @author GOWRI SANKAR R
 	 * @return
 	 */
-	public List<PersonalDetailsDTO> getUserReportList() {
+	public List<PersonalDetailsDTO> getUserReportList(AdminDTO pDto, boolean isAdmin, boolean isBranch,
+			boolean isRemishree) {
 		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
@@ -2063,14 +2235,38 @@ public class AdminDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
-							+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
-							+ " c.applicant_name , b.mothersName, "
-							+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
-							+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-							+ " left join tbl_pancard_details c on a.application_id = c.application_id order by a.created_date desc limit 500");
+			int paramPos = 1;
+			if (isAdmin) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
+								+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
+								+ " c.applicant_name , b.mothersName, "
+								+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ " left join tbl_pancard_details c on a.application_id = c.application_id order by a.created_date desc limit 500");
+			} else if (isBranch) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
+								+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
+								+ " c.applicant_name , b.mothersName, "
+								+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ " left join tbl_pancard_details c on a.application_id = c.application_id order where a.branch_code = ? order by a.created_date desc limit 500");
+				pStmt.setString(paramPos++, pDto.getBranchCode());
+			} else if (isRemishree) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
+								+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
+								+ " c.applicant_name , b.mothersName, "
+								+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ " left join tbl_pancard_details c on a.application_id = c.application_id  where a.remishree_code = ? order by a.created_date desc limit 500");
+				pStmt.setString(paramPos++, pDto.getRemishreeCode());
+			}
+
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -2172,7 +2368,8 @@ public class AdminDAO {
 	 * @param endDate
 	 * @return
 	 */
-	public List<PersonalDetailsDTO> getUserReportListByTime(String startDate, String endDate) {
+	public List<PersonalDetailsDTO> getUserReportListByTime(AdminDTO pDto, boolean isAdmin, boolean isBranch,
+			boolean isRemishree) {
 		List<PersonalDetailsDTO> response = new ArrayList<PersonalDetailsDTO>();
 		PersonalDetailsDTO result = null;
 		Connection conn = null;
@@ -2181,17 +2378,45 @@ public class AdminDAO {
 		try {
 			int paramPos = 1;
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
-							+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
-							+ " c.applicant_name , b.mothersName, "
-							+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
-							+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
-							+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
-							+ " left join tbl_pancard_details c on a.application_id = c.application_id where a.created_date >= ? "
-							+ " and a.created_date <= ? order by a.created_date desc limit 1000");
-			pStmt.setString(paramPos++, startDate + " 00:00:00");
-			pStmt.setString(paramPos++, endDate + " 23:59:59");
+			if (isAdmin) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
+								+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
+								+ " c.applicant_name , b.mothersName, "
+								+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ " left join tbl_pancard_details c on a.application_id = c.application_id where a.created_date >= ? "
+								+ " and a.created_date <= ? order by a.created_date desc limit 1000");
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:59");
+			} else if (isBranch) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
+								+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
+								+ " c.applicant_name , b.mothersName, "
+								+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ " left join tbl_pancard_details c on a.application_id = c.application_id where a.created_date >= ? "
+								+ " and a.created_date <= ? and a.branch_code = ? order by a.created_date desc limit 1000");
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:59");
+				pStmt.setString(paramPos++, pDto.getBranchCode());
+			} else if (isRemishree) {
+				pStmt = conn.prepareStatement(
+						"SELECT a.application_id, a.mobile_number, a.mobile_no_verified, a.email_id, a.email_activated, "
+								+ " a.application_status , a.document_signed , a.document_downloaded , a.ref_code , a.created_date , a.last_updated ,"
+								+ " c.applicant_name , b.mothersName, "
+								+ " b.fathersName, b.gender, b.marital_status, b.annual_income, b.trading_experience, b.occupation, "
+								+ " b.politically_exposed , c.pan_card ,c.dob  FROM  tbl_application_master A "
+								+ " left join tbl_account_holder_personal_details B on a.application_id = b.application_id "
+								+ " left join tbl_pancard_details c on a.application_id = c.application_id where a.created_date >= ? "
+								+ " and a.created_date <= ? and a.remishree_code = ? order by a.created_date desc limit 1000");
+				pStmt.setString(paramPos++, pDto.getStartDate() + " 00:00:00");
+				pStmt.setString(paramPos++, pDto.getEndDate() + " 23:59:59");
+				pStmt.setString(paramPos++, pDto.getRemishreeCode());
+			}
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -2283,6 +2508,137 @@ public class AdminDAO {
 			}
 		}
 		return response;
+	}
+
+	/**
+	 * Method to get the branch list from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public List<BranchListDTO> getBranchList(BranchListDTO pDto) {
+		List<BranchListDTO> response = new ArrayList<BranchListDTO>();
+		BranchListDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			int paramPos = 1;
+			pStmt = conn.prepareStatement(
+					"SELECT branch_code, branch_name, user_id, type, sub4, sub3, sub2, sub1, sub, main, master, "
+							+ "region, area FROM tbl_branch_list where branch_code like '%" + pDto.getBranchCode()
+							+ "%' and active_status =  ?");
+			pStmt.setInt(paramPos++, 1);
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new BranchListDTO();
+					result.setBranchCode(rSet.getString("branch_code"));
+					result.setBranchName(rSet.getString("branch_name"));
+					result.setUserId(rSet.getString("user_id"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+
+	}
+
+	/**
+	 * Method to get the remishree list from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * 
+	 * @return
+	 */
+	public List<BranchListDTO> getRemishreeList(BranchListDTO pDto) {
+		List<BranchListDTO> response = new ArrayList<BranchListDTO>();
+		BranchListDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			int paramPos = 1;
+			pStmt = conn.prepareStatement(
+					"SELECT remeshire_code, branch_code FROM ekyc.tbl_remishree_list where branch_code = ?");
+			pStmt.setString(paramPos++, pDto.getBranchCode());
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new BranchListDTO();
+					result.setRemeshireCode(rSet.getString("remeshire_code"));
+					result.setBranchCode(rSet.getString("branch_code"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+
+	}
+
+	/**
+	 * Method to update the client code details in the data base *
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public boolean updateClientCodeDetails(BranchListDTO pDto) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		boolean issuccessfull = false;
+		int count = 0;
+		try {
+			java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_application_master SET branch_code = ? , client_code = ? , remishree_code = ? , last_updated = ?  "
+							+ "where application_id = ? ");
+			int parompos = 1;
+			pStmt.setString(parompos++, pDto.getBranchCode());
+			pStmt.setString(parompos++, pDto.getClientCode());
+			pStmt.setString(parompos++, pDto.getRemeshireCode());
+			pStmt.setTimestamp(parompos++, timestamp);
+			pStmt.setInt(parompos++, pDto.getApplicationId());
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				issuccessfull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return issuccessfull;
 	}
 
 }

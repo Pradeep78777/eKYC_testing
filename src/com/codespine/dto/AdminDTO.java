@@ -15,6 +15,9 @@ public class AdminDTO {
 	private String status;
 	private String startDate;
 	private String endDate;
+	private int role;
+	private String branchCode;
+	private String remishreeCode;
 
 	public int getApplicationId() {
 		return applicationId;
@@ -118,6 +121,30 @@ public class AdminDTO {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public int getRole() {
+		return role;
+	}
+
+	public void setRole(int role) {
+		this.role = role;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getRemishreeCode() {
+		return remishreeCode;
+	}
+
+	public void setRemishreeCode(String remishreeCode) {
+		this.remishreeCode = remishreeCode;
 	}
 
 }

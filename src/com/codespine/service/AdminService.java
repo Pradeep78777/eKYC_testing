@@ -18,6 +18,7 @@ import com.codespine.dto.AdminDTO;
 import com.codespine.dto.ApplicationAttachementsDTO;
 import com.codespine.dto.ApplicationLogDTO;
 import com.codespine.dto.BankDetailsDTO;
+import com.codespine.dto.BranchListDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
 import com.codespine.dto.PanCardDetailsDTO;
@@ -45,9 +46,17 @@ public class AdminService {
 	 * @author GOWRI SANKAR R
 	 * @return
 	 */
-	public ResponseDTO getAllUserRecords() {
+	public ResponseDTO getAllUserRecords(AdminDTO pDto) {
 		ResponseDTO response = new ResponseDTO();
-		List<PersonalDetailsDTO> result = AdminDAO.getInstance().getAllUserRecords();
+		List<PersonalDetailsDTO> result = new ArrayList<PersonalDetailsDTO>();
+		if (pDto.getRole() == 10 || pDto.getRole() == 20) {
+			result = AdminDAO.getInstance().getAllUserRecords(pDto, true, false, false);
+		} else if (pDto.getRole() == 30) {
+			result = AdminDAO.getInstance().getAllUserRecords(pDto, false, true, false);
+		} else if (pDto.getRole() == 40) {
+			result = AdminDAO.getInstance().getAllUserRecords(pDto, false, false, true);
+		}
+
 		if (result != null && result.size() > 0) {
 			response.setStatus(eKYCConstant.SUCCESS_STATUS);
 			response.setMessage(eKYCConstant.SUCCESS_MSG);
@@ -675,6 +684,9 @@ public class AdminService {
 			if (actualPassword.equals(givenEncryptedPassword)) {
 				result.put("adminName", adminDetails.getName());
 				result.put("adminDesignation", adminDetails.getDesignation());
+				result.put("role", adminDetails.getRole());
+				result.put("branchCode", adminDetails.getBranchCode());
+				result.put("remishreeCode", adminDetails.getRemishreeCode());
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
 				response.setResult(result);
@@ -1015,19 +1027,49 @@ public class AdminService {
 					&& !endDate.equalsIgnoreCase("") && !applicationStatus.equalsIgnoreCase("") && !startDate.isEmpty()
 					&& !endDate.isEmpty() && !applicationStatus.isEmpty()) {
 				List<PersonalDetailsDTO> result = new ArrayList<PersonalDetailsDTO>();
-				if (applicationStatus.equalsIgnoreCase("In Process") || applicationStatus.equalsIgnoreCase("Review")) {
-					result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto);
+				if (pDto.getRole() == 10 || pDto.getRole() == 20) {
+					if (applicationStatus.equalsIgnoreCase("In Process")
+							|| applicationStatus.equalsIgnoreCase("Review")) {
+						result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto, true, false, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Completed")) {
+						result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto, true, false, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rejected")) {
+						result = AdminDAO.getInstance().getRejectedListByTime(pDto, true, false, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+						result = AdminDAO.getInstance().getRetifyListByTime(pDto, true, false, false);
+					}
+				} else if (pDto.getRole() == 30) {
+					if (applicationStatus.equalsIgnoreCase("In Process")
+							|| applicationStatus.equalsIgnoreCase("Review")) {
+						result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto, false, true, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Completed")) {
+						result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto, false, true, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rejected")) {
+						result = AdminDAO.getInstance().getRejectedListByTime(pDto, false, true, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+						result = AdminDAO.getInstance().getRetifyListByTime(pDto, false, true, false);
+					}
+				} else if (pDto.getRole() == 40) {
+					if (applicationStatus.equalsIgnoreCase("In Process")
+							|| applicationStatus.equalsIgnoreCase("Review")) {
+						result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto, false, false, true);
+					}
+					if (applicationStatus.equalsIgnoreCase("Completed")) {
+						result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto, false, false, true);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rejected")) {
+						result = AdminDAO.getInstance().getRejectedListByTime(pDto, false, false, true);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+						result = AdminDAO.getInstance().getRetifyListByTime(pDto, false, false, true);
+					}
 				}
-				if (applicationStatus.equalsIgnoreCase("Completed")) {
-					result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto);
-				}
-				if (applicationStatus.equalsIgnoreCase("Rejected")) {
-					result = AdminDAO.getInstance().getRejectedListByTime(pDto);
-				}
-				if (applicationStatus.equalsIgnoreCase("Rectifi")) {
-					result = AdminDAO.getInstance().getRetifyListByTime(pDto);
-				}
-
 				/*
 				 * Check the list and send the response
 				 */
@@ -1060,49 +1102,52 @@ public class AdminService {
 	 * @param pDto
 	 * @return
 	 */
-	public ResponseDTO getRecordsDetailsWiti(AdminDTO pDto) {
-		ResponseDTO response = new ResponseDTO();
-		if (pDto != null) {
-			String startDate = pDto.getStartDate();
-			String endDate = pDto.getEndDate();
-			String applicationStatus = pDto.getStatus();
-			if (startDate != null && endDate != null && applicationStatus != null && !startDate.equalsIgnoreCase("")
-					&& !endDate.equalsIgnoreCase("") && !applicationStatus.equalsIgnoreCase("") && !startDate.isEmpty()
-					&& !endDate.isEmpty() && !applicationStatus.isEmpty()) {
-				List<PersonalDetailsDTO> result = new ArrayList<PersonalDetailsDTO>();
-				if (applicationStatus.equalsIgnoreCase("In Process") || applicationStatus.equalsIgnoreCase("Review")) {
-					result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto);
-				}
-				if (applicationStatus.equalsIgnoreCase("Completed")) {
-					result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto);
-				}
-				if (applicationStatus.equalsIgnoreCase("Rejected")) {
-					result = AdminDAO.getInstance().getRejectedListByTime(pDto);
-				}
-				/*
-				 * Check the list and send the response
-				 */
-				if (result != null && result.size() > 0) {
-					response.setStatus(eKYCConstant.SUCCESS_STATUS);
-					response.setMessage(eKYCConstant.SUCCESS_MSG);
-					response.setResult(result);
-				} else {
-					response.setStatus(eKYCConstant.FAILED_STATUS);
-					response.setMessage(eKYCConstant.FAILED_MSG);
-					response.setReason(eKYCConstant.NO_RECORD_FOUND);
-				}
-			} else {
-				response.setStatus(eKYCConstant.FAILED_STATUS);
-				response.setMessage(eKYCConstant.FAILED_MSG);
-				response.setReason(eKYCConstant.INVALID_REQUEST);
-			}
-		} else {
-			response.setStatus(eKYCConstant.FAILED_STATUS);
-			response.setMessage(eKYCConstant.FAILED_MSG);
-			response.setReason(eKYCConstant.INVALID_REQUEST);
-		}
-		return response;
-	}
+	// public ResponseDTO getRecordsDetailsWiti(AdminDTO pDto) {
+	// ResponseDTO response = new ResponseDTO();
+	// if (pDto != null) {
+	// String startDate = pDto.getStartDate();
+	// String endDate = pDto.getEndDate();
+	// String applicationStatus = pDto.getStatus();
+	// if (startDate != null && endDate != null && applicationStatus != null &&
+	// !startDate.equalsIgnoreCase("")
+	// && !endDate.equalsIgnoreCase("") &&
+	// !applicationStatus.equalsIgnoreCase("") && !startDate.isEmpty()
+	// && !endDate.isEmpty() && !applicationStatus.isEmpty()) {
+	// List<PersonalDetailsDTO> result = new ArrayList<PersonalDetailsDTO>();
+	// if (applicationStatus.equalsIgnoreCase("In Process") ||
+	// applicationStatus.equalsIgnoreCase("Review")) {
+	// result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto);
+	// }
+	// if (applicationStatus.equalsIgnoreCase("Completed")) {
+	// result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto);
+	// }
+	// if (applicationStatus.equalsIgnoreCase("Rejected")) {
+	// result = AdminDAO.getInstance().getRejectedListByTime(pDto);
+	// }
+	// /*
+	// * Check the list and send the response
+	// */
+	// if (result != null && result.size() > 0) {
+	// response.setStatus(eKYCConstant.SUCCESS_STATUS);
+	// response.setMessage(eKYCConstant.SUCCESS_MSG);
+	// response.setResult(result);
+	// } else {
+	// response.setStatus(eKYCConstant.FAILED_STATUS);
+	// response.setMessage(eKYCConstant.FAILED_MSG);
+	// response.setReason(eKYCConstant.NO_RECORD_FOUND);
+	// }
+	// } else {
+	// response.setStatus(eKYCConstant.FAILED_STATUS);
+	// response.setMessage(eKYCConstant.FAILED_MSG);
+	// response.setReason(eKYCConstant.INVALID_REQUEST);
+	// }
+	// } else {
+	// response.setStatus(eKYCConstant.FAILED_STATUS);
+	// response.setMessage(eKYCConstant.FAILED_MSG);
+	// response.setReason(eKYCConstant.INVALID_REQUEST);
+	// }
+	// return response;
+	// }
 
 	/**
 	 * @author GOWRI SANKAR R
@@ -1120,18 +1165,52 @@ public class AdminService {
 					&& !endDate.equalsIgnoreCase("") && !applicationStatus.equalsIgnoreCase("") && !startDate.isEmpty()
 					&& !endDate.isEmpty() && !applicationStatus.isEmpty()) {
 				result = new ArrayList<PersonalDetailsDTO>();
-				if (applicationStatus.equalsIgnoreCase("In Process") || applicationStatus.equalsIgnoreCase("Review")) {
-					result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto);
+				if (pDto.getRole() == 10 || pDto.getRole() == 20) {
+					if (applicationStatus.equalsIgnoreCase("In Process")
+							|| applicationStatus.equalsIgnoreCase("Review")) {
+						result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto, true, false, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Completed")) {
+						result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto, true, false, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rejected")) {
+						result = AdminDAO.getInstance().getRejectedListByTime(pDto, true, false, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+						result = AdminDAO.getInstance().getRetifyListByTime(pDto, true, false, false);
+					}
+				} else if (pDto.getRole() == 30) {
+					if (applicationStatus.equalsIgnoreCase("In Process")
+							|| applicationStatus.equalsIgnoreCase("Review")) {
+						result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto, false, true, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Completed")) {
+						result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto, false, true, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rejected")) {
+						result = AdminDAO.getInstance().getRejectedListByTime(pDto, false, true, false);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+						result = AdminDAO.getInstance().getRetifyListByTime(pDto, false, true, false);
+					}
+				} else if (pDto.getRole() == 40) {
+
+					if (applicationStatus.equalsIgnoreCase("In Process")
+							|| applicationStatus.equalsIgnoreCase("Review")) {
+						result = AdminDAO.getInstance().getInprogressRecordsByTime(pDto, false, false, true);
+					}
+					if (applicationStatus.equalsIgnoreCase("Completed")) {
+						result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto, false, false, true);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rejected")) {
+						result = AdminDAO.getInstance().getRejectedListByTime(pDto, false, false, true);
+					}
+					if (applicationStatus.equalsIgnoreCase("Rectifi")) {
+						result = AdminDAO.getInstance().getRetifyListByTime(pDto, false, false, true);
+					}
+
 				}
-				if (applicationStatus.equalsIgnoreCase("Completed")) {
-					result = AdminDAO.getInstance().getCompletedRecordsWithTime(pDto);
-				}
-				if (applicationStatus.equalsIgnoreCase("Rejected")) {
-					result = AdminDAO.getInstance().getRejectedListByTime(pDto);
-				}
-				if (applicationStatus.equalsIgnoreCase("Rectifi")) {
-					result = AdminDAO.getInstance().getRetifyListByTime(pDto);
-				}
+
 			}
 			if (result != null && result.size() > 0) {
 				String dummyFileName = System.currentTimeMillis() + "Reports.xlsx";
@@ -1257,30 +1336,95 @@ public class AdminService {
 					/*
 					 * Get the Report list for the given date
 					 */
-					result = AdminDAO.getInstance().getUserReportListByTime(pDto.getStartDate(), pDto.getEndDate());
-					if (result != null && result.size() > 0) {
-						response.setStatus(eKYCConstant.SUCCESS_STATUS);
-						response.setMessage(eKYCConstant.SUCCESS_MSG);
-						response.setResult(result);
-					} else {
-						response.setStatus(eKYCConstant.FAILED_STATUS);
-						response.setMessage(eKYCConstant.FAILED_MSG);
-						response.setReason(eKYCConstant.NO_RECORD_FOUND);
+					// result =
+					// AdminDAO.getInstance().getUserReportListByTime(pDto.getStartDate(),
+					// pDto.getEndDate());
+					// if (result != null && result.size() > 0) {
+					// response.setStatus(eKYCConstant.SUCCESS_STATUS);
+					// response.setMessage(eKYCConstant.SUCCESS_MSG);
+					// response.setResult(result);
+					// } else {
+					// response.setStatus(eKYCConstant.FAILED_STATUS);
+					// response.setMessage(eKYCConstant.FAILED_MSG);
+					// response.setReason(eKYCConstant.NO_RECORD_FOUND);
+					// }
+					if (pDto.getRole() == 10 || pDto.getRole() == 20) {
+						result = AdminDAO.getInstance().getUserReportListByTime(pDto, true, false, false);
+						if (result != null && result.size() > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setResult(result);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.NO_RECORD_FOUND);
+						}
+					} else if (pDto.getRole() == 30) {
+
+						result = AdminDAO.getInstance().getUserReportListByTime(pDto, false, true, false);
+						if (result != null && result.size() > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setResult(result);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.NO_RECORD_FOUND);
+						}
+
+					} else if (pDto.getRole() == 40) {
+
+						result = AdminDAO.getInstance().getUserReportListByTime(pDto, false, false, true);
+						if (result != null && result.size() > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setResult(result);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.NO_RECORD_FOUND);
+						}
+
 					}
 				} else {
 					/*
 					 * Send the last updated 100 member from data base
 					 */
-					result = AdminDAO.getInstance().getUserReportList();
-					if (result != null && result.size() > 0) {
-						response.setStatus(eKYCConstant.SUCCESS_STATUS);
-						response.setMessage(eKYCConstant.SUCCESS_MSG);
-						response.setResult(result);
-					} else {
-						response.setStatus(eKYCConstant.FAILED_STATUS);
-						response.setMessage(eKYCConstant.FAILED_MSG);
-						response.setReason(eKYCConstant.NO_RECORD_FOUND);
+					if (pDto.getRole() == 10 || pDto.getRole() == 20) {
+						result = AdminDAO.getInstance().getUserReportList(pDto, true, false, false);
+						if (result != null && result.size() > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setResult(result);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.NO_RECORD_FOUND);
+						}
+					} else if (pDto.getRole() == 30) {
+						result = AdminDAO.getInstance().getUserReportList(pDto, false, true, false);
+						if (result != null && result.size() > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setResult(result);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.NO_RECORD_FOUND);
+						}
+					} else if (pDto.getRole() == 40) {
+						result = AdminDAO.getInstance().getUserReportList(pDto, false, false, true);
+						if (result != null && result.size() > 0) {
+							response.setStatus(eKYCConstant.SUCCESS_STATUS);
+							response.setMessage(eKYCConstant.SUCCESS_MSG);
+							response.setResult(result);
+						} else {
+							response.setStatus(eKYCConstant.FAILED_STATUS);
+							response.setMessage(eKYCConstant.FAILED_MSG);
+							response.setReason(eKYCConstant.NO_RECORD_FOUND);
+						}
 					}
+
 				}
 			} else {
 				response.setStatus(eKYCConstant.FAILED_STATUS);
@@ -1289,6 +1433,106 @@ public class AdminService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the branch list from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getBranchList(BranchListDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null && pDto.getBranchCode() != null && !pDto.getBranchCode().isEmpty()) {
+			List<BranchListDTO> result = new ArrayList<BranchListDTO>();
+			result = AdminDAO.getInstance().getBranchList(pDto);
+			if (result != null && result.size() > 0) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.NO_RECORD_FOUND);
+			}
+
+		} else {
+			/*
+			 * Send response as the invalid request
+			 * 
+			 */
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INVALID_REQUEST);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to get the remishree code from the data base
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO getRemishreeList(BranchListDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null && pDto.getBranchCode() != null && !pDto.getBranchCode().isEmpty()) {
+			/*
+			 * Get the remishree list fot the given branch
+			 */
+			List<BranchListDTO> result = new ArrayList<BranchListDTO>();
+			result = AdminDAO.getInstance().getRemishreeList(pDto);
+			if (result != null && result.size() > 0) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setResult(result);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.NO_RECORD_FOUND);
+			}
+
+		} else {
+			/*
+			 * Send response as the invalid request
+			 * 
+			 */
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INVALID_REQUEST);
+		}
+		return response;
+	}
+
+	/**
+	 * Method to update the client code details for given application id
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	public ResponseDTO updateClientCodeDetails(BranchListDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto != null && pDto.getApplicationId() > 0 && pDto.getBranchCode() != null && pDto.getClientCode() != null
+				&& !pDto.getBranchCode().isEmpty() && !pDto.getClientCode().isEmpty()) {
+			boolean isUpdated = AdminDAO.getInstance().updateClientCodeDetails(pDto);
+			if (isUpdated) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+				response.setReason(eKYCConstant.SUCCESS_MSG);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+				response.setReason(eKYCConstant.INTERNAL_SERVER_ERROR);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setReason(eKYCConstant.INVALID_REQUEST);
 		}
 		return response;
 	}
