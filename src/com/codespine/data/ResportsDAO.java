@@ -63,17 +63,17 @@ public class ResportsDAO {
 					if (columnNames.contains("otp_verified_on")) {
 						reportDTO.setOtp_verified_on(rSet.getDate("tbl_application_master.otp_verified_on"));
 					}
-					if (columnNames.contains("documentSigned")) {
-						reportDTO.setDocumentSigned(rSet.getInt("documentSigned"));
+					if (columnNames.contains("document_signed")) {
+						reportDTO.setDocumentSigned(rSet.getInt("document_signed"));
 					}
-					if (columnNames.contains("documentDownloaded")) {
-						reportDTO.setDocumentDownloaded(rSet.getInt("documentDownloaded"));
+					if (columnNames.contains("document_downloaded")) {
+						reportDTO.setDocumentDownloaded(rSet.getInt("document_downloaded"));
 					}
 					if (columnNames.contains("pan_card")) {
 						reportDTO.setPan_card(rSet.getString("tbl_pancard_details.pan_card"));
 					}
 					if (columnNames.contains("aadhar_no")) {
-						reportDTO.setAadharNo(rSet.getLong("tbl_pancard_details.aadhar_no"));
+						reportDTO.setAadhar_no(rSet.getLong("tbl_pancard_details.aadhar_no"));
 					}
 					if (columnNames.contains("dob")) {
 						reportDTO.setDob(rSet.getString("tbl_pancard_details.dob"));
@@ -81,15 +81,15 @@ public class ResportsDAO {
 					if (columnNames.contains("pan_card_verified")) {
 						reportDTO.setPan_card_verified(rSet.getInt("tbl_pancard_details.pan_card_verified"));
 					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setPanIsAproved(rSet.getInt("is_approved"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setPanIsRejected(rSet.getInt("is_rejected"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setPanComments(rSet.getString("comments"));
-//					}
+					if (columnNames.contains("tbl_pancard_details_is_approved")) {
+						reportDTO.setPanIsAproved(rSet.getInt("tbl_pancard_details_is_approved"));
+					}
+					if (columnNames.contains("tbl_pancard_details_is_rejected")) {
+						reportDTO.setPanIsRejected(rSet.getInt("tbl_pancard_details_is_rejected"));
+					}
+					if (columnNames.contains("tbl_pancard_details_comments")) {
+						reportDTO.setPanComments(rSet.getString("tbl_pancard_details_comments"));
+					}
 					if (columnNames.contains("mothersName")) {
 						reportDTO.setMothersName(rSet.getString("tbl_account_holder_personal_details.mothersName"));
 					}
@@ -117,15 +117,15 @@ public class ResportsDAO {
 						reportDTO.setPolitically_exposed(
 								rSet.getString("tbl_account_holder_personal_details.politically_exposed"));
 					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setPersonalIsAproved(rSet.getInt("is_approved"));
-//				    }
-//				    if (columnNames.contains("")) {
-//					reportDTO.setPersonalIsRejected(rSet.getInt("is_rejected"));
-//				    }
-//				    if (columnNames.contains("")) {
-//					reportDTO.setPersonalComments(rSet.getString("comments"));
-//				    }
+					if (columnNames.contains("tbl_account_holder_personal_details_is_approved")) {
+						reportDTO.setPersonalIsAproved(rSet.getInt("tbl_account_holder_personal_details_is_approved"));
+					}
+					if (columnNames.contains("tbl_account_holder_personal_details_is_rejected")) {
+						reportDTO.setPersonalIsRejected(rSet.getInt("tbl_account_holder_personal_details_is_rejected"));
+					}
+					if (columnNames.contains("tbl_account_holder_personal_details_comments")) {
+						reportDTO.setPersonalComments(rSet.getString("tbl_account_holder_personal_details_comments"));
+					}
 					if (columnNames.contains("flat_no")) {
 						reportDTO.setFlat_no(rSet.getString("tbl_communication_address.flat_no"));
 					}
@@ -144,15 +144,15 @@ public class ResportsDAO {
 					if (columnNames.contains("district")) {
 						reportDTO.setDistrict(rSet.getString("tbl_communication_address.district"));
 					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setAddressIsAproved(rSet.getInt("is_approved"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setAddressIsRejected(rSet.getInt("is_rejected"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setAddresscomments(rSet.getString("comments"));
-//					}
+					if (columnNames.contains("tbl_communication_address_is_approved")) {
+						reportDTO.setAddressIsAproved(rSet.getInt("tbl_communication_address_is_approved"));
+					}
+					if (columnNames.contains("tbl_communication_address_is_rejected")) {
+						reportDTO.setAddressIsRejected(rSet.getInt("tbl_communication_address_is_rejected"));
+					}
+					if (columnNames.contains("tbl_communication_address_comments")) {
+						reportDTO.setAddresscomments(rSet.getString("tbl_communication_address_comments"));
+					}
 					if (columnNames.contains("flat_no")) {
 						reportDTO.setP_flat_no(rSet.getString("tbl_permanent_address.flat_no"));
 					}
@@ -171,15 +171,15 @@ public class ResportsDAO {
 					if (columnNames.contains("pin")) {
 						reportDTO.setP_pin(rSet.getInt("tbl_permanent_address.pin"));
 					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setP_addressIsAproved(rSet.getInt("is_approved"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setP_addressIsRejected(rSet.getInt("is_rejected"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setP_addresscomments(rSet.getString("comments"));
-//					}
+					if (columnNames.contains("tbl_permanent_address_is_approved")) {
+						reportDTO.setP_addressIsAproved(rSet.getInt("tbl_permanent_address_is_approved"));
+					}
+					if (columnNames.contains("tbl_permanent_address_is_rejected")) {
+						reportDTO.setP_addressIsRejected(rSet.getInt("tbl_permanent_address_is_rejected"));
+					}
+					if (columnNames.contains("tbl_permanent_address_comments")) {
+						reportDTO.setP_addresscomments(rSet.getString("tbl_permanent_address_comments"));
+					}
 					if (columnNames.contains("bank_account_no")) {
 						reportDTO.setBank_account_no(rSet.getString("tbl_bank_account_details.bank_account_no"));
 					}
@@ -191,23 +191,23 @@ public class ResportsDAO {
 						reportDTO.setIfsc_code(rSet.getString("tbl_bank_account_details.ifsc_code"));
 					}
 					if (columnNames.contains("bank_name")) {
-						reportDTO.setBankName(rSet.getString("tbl_bank_account_details.bank_name"));
+						reportDTO.setBank_name(rSet.getString("tbl_bank_account_details.bank_name"));
 					}
 					if (columnNames.contains("bank_address")) {
-						reportDTO.setBankAddress(rSet.getString("tbl_bank_account_details.bank_address"));
+						reportDTO.setBank_address(rSet.getString("tbl_bank_account_details.bank_address"));
 					}
 					if (columnNames.contains("micr_code")) {
-						reportDTO.setMicrCode(rSet.getString("tbl_bank_account_details.micr_code"));
+						reportDTO.setMicr_code(rSet.getString("tbl_bank_account_details.micr_code"));
 					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setBankIsAproved(rSet.getInt("is_approved"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setBankIsRejected(rSet.getInt("is_rejected"));
-//					}
-//					if (columnNames.contains("")) {
-//					reportDTO.setBankComments(rSet.getString("comments"));
-//					}
+					if (columnNames.contains("tbl_bank_account_details_is_approved")) {
+						reportDTO.setBankIsAproved(rSet.getInt("tbl_bank_account_details_is_approved"));
+					}
+					if (columnNames.contains("tbl_bank_account_details_is_rejected")) {
+						reportDTO.setBankIsRejected(rSet.getInt("tbl_bank_account_details_is_rejected"));
+					}
+					if (columnNames.contains("tbl_bank_account_details_comments")) {
+						reportDTO.setBankComments(rSet.getString("tbl_bank_account_details_comments"));
+					}
 					if (columnNames.contains("nse_eq")) {
 						reportDTO.setNse_eq(rSet.getInt("tbl_exch_segments.nse_eq"));
 					}
