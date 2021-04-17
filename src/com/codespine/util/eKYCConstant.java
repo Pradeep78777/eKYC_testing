@@ -99,7 +99,7 @@ public class eKYCConstant {
 	public static final String MESSAGE_USERNAME = "messageUserName";
 	public static final String MESSAGE_PASSWORD = "messagePassword";
 	public static final String MESSAGE_SENDER = "messageFrom";
-	public static final String MESSAGE_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins";
+	public static final String MESSAGE_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins. Zebu";
 	public static final String IPV_MESSAGE = " is your verification OTP for sign up, This OTP will be valid for next 30 mins";
 
 	/**
