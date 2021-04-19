@@ -50,13 +50,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getUserDetails()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tableApplicationMaster + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tableApplicationMaster + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -92,13 +93,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getPanDetails()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tablePanMaster + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tablePanMaster + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -119,13 +121,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getBasicInformation()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tableBasicInformation + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tableBasicInformation + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -146,13 +149,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getCommunicationAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tableCommunicationAddress + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tableCommunicationAddress + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -173,13 +177,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getPermananentAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tablePermanentAddress + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tablePermanentAddress + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -200,13 +205,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getBankDetails()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tableBankDetails + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tableBankDetails + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -227,13 +233,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getTradingPreferences()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tableEXCHSegment + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tableEXCHSegment + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -254,13 +261,14 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.geteSign()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(columnName[i]);
-									searchText += tableApplicationMaster + "." + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(columnName.get(i));
+									searchText += tableApplicationMaster + "." + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -282,14 +290,15 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminBankAccountDetail()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(tableBankDetails + "_" + columnName[i]);
-									searchText += tableBankDetails + "." + columnName[i] + " as " + tableBankDetails
-											+ "_" + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(tableBankDetails + "_" + columnName.get(i));
+									searchText += tableBankDetails + "." + columnName.get(i) + " as " + tableBankDetails
+											+ "_" + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -310,14 +319,15 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminBasicInfo()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(tableBasicInformation + "_" + columnName[i]);
-									searchText += tableBasicInformation + "." + columnName[i] + " as "
-											+ tableBasicInformation + "_" + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(tableBasicInformation + "_" + columnName.get(i));
+									searchText += tableBasicInformation + "." + columnName.get(i) + " as "
+											+ tableBasicInformation + "_" + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -339,14 +349,15 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminCommunicationAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(tableCommunicationAddress + "_" + columnName[i]);
-									searchText += tableCommunicationAddress + "." + columnName[i] + " as "
-											+ tableCommunicationAddress + "_" + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(tableCommunicationAddress + "_" + columnName.get(i));
+									searchText += tableCommunicationAddress + "." + columnName.get(i) + " as "
+											+ tableCommunicationAddress + "_" + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -368,14 +379,15 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminPermanentAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
+									",");
+							int size =  columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(tablePermanentAddress + "_" + columnName[i]);
-									searchText += tablePermanentAddress + "." + columnName[i] + " as "
-											+ tablePermanentAddress + "_" + columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(tablePermanentAddress + "_" + columnName.get(i));
+									searchText += tablePermanentAddress + "." + columnName.get(i) + " as "
+											+ tablePermanentAddress + "_" + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -396,14 +408,15 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminPanDetails()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							String[] columnName = StringUtil.split(reportColumnDTO.getColumns(), ",");
-							int size = columnName.length;
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
-								if (StringUtil.isNotNullOrEmpty(columnName[i])
-										&& !StringUtil.isEqual(columnName[i], "undefined")) {
-									columnNames.add(tablePanMaster + "_" + columnName[i]);
-									searchText += tablePanMaster + "." + columnName[i] + " as " + tablePanMaster + "_"
-											+ columnName[i];
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									columnNames.add(tablePanMaster + "_" + columnName.get(i));
+									searchText += tablePanMaster + "." + columnName.get(i) + " as " + tablePanMaster
+											+ "_" + columnName.get(i);
 									if ((i + 1) < size) {
 										searchText = searchText + ",";
 									}
@@ -676,4 +689,5 @@ public class ReportsService {
 		}
 		return response;
 	}
+
 }

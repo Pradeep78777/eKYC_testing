@@ -10,6 +10,9 @@ public class ReportOutputDTO {
 	private int email_activated;
 	private Date otp_verified_on;
 	private Date email_activated_on;
+	private String mob_owner;
+	private String email_owner;
+	private String ref_code;
 	// pan card details - pan card DTO
 	private String pan_card;
 	private long aadhar_no;
@@ -73,8 +76,8 @@ public class ReportOutputDTO {
 	private int nse_com;
 	private int bse_com;
 	// e sign
-	private int documentSigned;
-	private int documentDownloaded;
+	private int document_signed;
+	private int document_downloaded;
 
 	public long getMobile_number() {
 		return mobile_number;
@@ -564,28 +567,54 @@ public class ReportOutputDTO {
 		this.bse_com = bse_com;
 	}
 
-	public int getDocumentSigned() {
-		return documentSigned;
-	}
-
-	public void setDocumentSigned(int documentSigned) {
-		this.documentSigned = documentSigned;
-	}
-
-	public int getDocumentDownloaded() {
-		return documentDownloaded;
-	}
-
-	public void setDocumentDownloaded(int documentDownloaded) {
-		this.documentDownloaded = documentDownloaded;
-	}
-
 	public String getBank_name() {
 		return bank_name;
 	}
 
 	public void setBank_name(String bank_name) {
 		this.bank_name = bank_name;
+	}
+
+	public String getMob_owner() {
+		return mob_owner;
+	}
+
+	public void setMob_owner(String mob_owner) {
+		this.mob_owner = mob_owner;
+	}
+
+	public String getEmail_owner() {
+		return email_owner;
+	}
+
+	public void setEmail_owner(String email_owner) {
+		this.email_owner = email_owner;
+	}
+
+
+
+	public String getRef_code() {
+		return ref_code;
+	}
+
+	public void setRef_code(String ref_code) {
+		this.ref_code = ref_code;
+	}
+
+	public int getDocument_signed() {
+		return document_signed;
+	}
+
+	public void setDocument_signed(int document_signed) {
+		this.document_signed = document_signed;
+	}
+
+	public int getDocument_downloaded() {
+		return document_downloaded;
+	}
+
+	public void setDocument_downloaded(int document_downloaded) {
+		this.document_downloaded = document_downloaded;
 	}
 
 }

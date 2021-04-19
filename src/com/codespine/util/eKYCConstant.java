@@ -279,6 +279,7 @@ public class eKYCConstant {
 	public static final String PAYMENT_ALREADY_CREATED = "Payment already Created";
 	public static final String PAYMENT_FAILED_ID_NULL = "Payment Creation Failed ApplicationId is null!";
 	public static final String RAZORPAY_VALUES_ARE_NULL = "razorPay Values are Not fully arrived";
+	public static final String IFSC_ALREADY_CREATED = "IFSC code already Created";
 
 	public static final String BACKOFFICE_ERROR = "Error while pushing the data to back office";
 
