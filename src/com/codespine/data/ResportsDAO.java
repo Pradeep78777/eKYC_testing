@@ -63,11 +63,20 @@ public class ResportsDAO {
 					if (columnNames.contains("otp_verified_on")) {
 						reportDTO.setOtp_verified_on(rSet.getDate("tbl_application_master.otp_verified_on"));
 					}
+					if (columnNames.contains("mob_owner")) {
+						reportDTO.setMob_owner(rSet.getString("tbl_application_master.mob_owner"));
+					}
+					if (columnNames.contains("email_owner")) {
+						reportDTO.setEmail_owner(rSet.getString("tbl_application_master.email_owner"));
+					}
+					if (columnNames.contains("ref_code")) {
+						reportDTO.setRef_code(rSet.getString("tbl_application_master.ref_code"));
+					}
 					if (columnNames.contains("document_signed")) {
-						reportDTO.setDocumentSigned(rSet.getInt("document_signed"));
+						reportDTO.setDocument_signed(rSet.getInt("tbl_application_master.document_signed"));
 					}
 					if (columnNames.contains("document_downloaded")) {
-						reportDTO.setDocumentDownloaded(rSet.getInt("document_downloaded"));
+						reportDTO.setDocument_downloaded(rSet.getInt("tbl_application_master.document_downloaded"));
 					}
 					if (columnNames.contains("pan_card")) {
 						reportDTO.setPan_card(rSet.getString("tbl_pancard_details.pan_card"));
@@ -275,7 +284,7 @@ public class ResportsDAO {
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT mobile_number,email_id,email_activated,mobile_otp from tbl_application_master where created_date >= ? ");
+					"SELECT application_id,mobile_number,email_id,email_activated,mobile_otp from tbl_application_master where created_date >= ? ");
 			pStmt.setString(1, startDate + " 00:00:00");
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -286,6 +295,7 @@ public class ResportsDAO {
 					result.setEmail_id(rSet.getString("email_id"));
 					result.setEmail_activated(rSet.getInt("email_activated"));
 					result.setMobile_otp(rSet.getString("mobile_otp"));
+					result.setApplication_id(rSet.getInt("application_id"));
 					applicationMasterDTOs.add(result);
 				}
 			}

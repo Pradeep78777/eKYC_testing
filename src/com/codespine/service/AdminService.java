@@ -15,17 +15,20 @@ import com.codespine.data.AdminDAO;
 import com.codespine.data.eKYCDAO;
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.AdminDTO;
+import com.codespine.dto.AdminDetailsDTO;
 import com.codespine.dto.ApplicationAttachementsDTO;
 import com.codespine.dto.ApplicationLogDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.BranchListDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
+import com.codespine.dto.IfscCodeDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PerformanceDTO;
 import com.codespine.dto.PersonalDetailsDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.dto.eKYCDTO;
+import com.codespine.util.StringUtil;
 import com.codespine.util.Utility;
 import com.codespine.util.eKYCConstant;
 
@@ -117,8 +120,8 @@ public class AdminService {
 				}
 			}
 			/**
-			 * Respond back to the front end no action is required or giving
-			 * wrong parameter's
+			 * Respond back to the front end no action is required or giving wrong
+			 * parameter's
 			 */
 			else if ((pDto.getIsApprove() == 0 && pDto.getIsRejected() == 0)
 					|| (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 1)) {
@@ -182,8 +185,8 @@ public class AdminService {
 				}
 			}
 			/**
-			 * Respond back to the front end no action is required or giving
-			 * wrong parameter's
+			 * Respond back to the front end no action is required or giving wrong
+			 * parameter's
 			 */
 			else if ((pDto.getIsApprove() == 0 && pDto.getIsRejected() == 0)
 					|| (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 1)) {
@@ -247,8 +250,8 @@ public class AdminService {
 				}
 			}
 			/**
-			 * Respond back to the front end no action is required or giving
-			 * wrong parameter's
+			 * Respond back to the front end no action is required or giving wrong
+			 * parameter's
 			 */
 			else if ((pDto.getIsApprove() == 0 && pDto.getIsRejected() == 0)
 					|| (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 1)) {
@@ -266,8 +269,7 @@ public class AdminService {
 	}
 
 	/**
-	 * Method to respond to the communication address for the given application
-	 * id
+	 * Method to respond to the communication address for the given application id
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param pDto
@@ -280,8 +282,7 @@ public class AdminService {
 			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
 					eKYCConstant.COMMUNICATION_ADDRESS_VERIFIED);
 			/**
-			 * Aprrove the Communication address Details for the given
-			 * application id
+			 * Aprrove the Communication address Details for the given application id
 			 */
 			if (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 0) {
 				result = AdminDAO.getInstance().uploadAdminComments(true, "", pDto.getApplicationId(),
@@ -298,8 +299,7 @@ public class AdminService {
 				}
 			}
 			/**
-			 * reject the Communication address Details for the given
-			 * application id
+			 * reject the Communication address Details for the given application id
 			 */
 			else if (pDto.getIsApprove() == 0 && pDto.getIsRejected() == 1) {
 				result = AdminDAO.getInstance().uploadAdminComments(false, pDto.getComments(), pDto.getApplicationId(),
@@ -316,8 +316,8 @@ public class AdminService {
 				}
 			}
 			/**
-			 * Respond back to the front end no action is required or giving
-			 * wrong parameter's
+			 * Respond back to the front end no action is required or giving wrong
+			 * parameter's
 			 */
 			else if ((pDto.getIsApprove() == 0 && pDto.getIsRejected() == 0)
 					|| (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 1)) {
@@ -348,8 +348,7 @@ public class AdminService {
 			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(),
 					eKYCConstant.PERMANENT_ADDRESS_VERIFIED);
 			/**
-			 * Aprrove the permanent address Details for the given application
-			 * id
+			 * Aprrove the permanent address Details for the given application id
 			 */
 			if (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 0) {
 				result = AdminDAO.getInstance().uploadAdminComments(true, "", pDto.getApplicationId(),
@@ -383,8 +382,8 @@ public class AdminService {
 				}
 			}
 			/**
-			 * Respond back to the front end no action is required or giving
-			 * wrong parameter's
+			 * Respond back to the front end no action is required or giving wrong
+			 * parameter's
 			 */
 			else if ((pDto.getIsApprove() == 0 && pDto.getIsRejected() == 0)
 					|| (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 1)) {
@@ -414,8 +413,7 @@ public class AdminService {
 		if (pDto != null && pDto.getApplicationId() > 0) {
 			eKYCDAO.getInstance().updateApplicationStatus(pDto.getApplicationId(), eKYCConstant.ATTACHEMENT_VERIFIED);
 			/**
-			 * Aprrove the permanent address Details for the given application
-			 * id
+			 * Aprrove the permanent address Details for the given application id
 			 */
 			if (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 0) {
 				result = AdminDAO.getInstance().updateAdminCommentForAttachments(true, "", pDto.getApplicationId(),
@@ -450,8 +448,8 @@ public class AdminService {
 				}
 			}
 			/**
-			 * Respond back to the front end no action is required or giving
-			 * wrong parameter's
+			 * Respond back to the front end no action is required or giving wrong
+			 * parameter's
 			 */
 			else if ((pDto.getIsApprove() == 0 && pDto.getIsRejected() == 0)
 					|| (pDto.getIsApprove() == 1 && pDto.getIsRejected() == 1)) {
@@ -586,8 +584,7 @@ public class AdminService {
 					AdminDAO.getInstance().updateRetifyCount(pDto.getApplicationId(), 0);
 				}
 				/**
-				 * Get applicant name and email address for the given
-				 * application id
+				 * Get applicant name and email address for the given application id
 				 */
 				response.setStatus(eKYCConstant.SUCCESS_STATUS);
 				response.setMessage(eKYCConstant.SUCCESS_MSG);
@@ -1536,4 +1533,89 @@ public class AdminService {
 		}
 		return response;
 	}
+
+	/***
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+
+	public ResponseDTO addminAddBank(IfscCodeDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		List<IfscCodeDTO> oldIfscCodeDTO = AdminDAO.getInstance().getifsccodefind(dto);
+		if (StringUtil.isListNullOrEmpty(oldIfscCodeDTO)) {
+			boolean results = AdminDAO.getInstance().adminaddnewbank(dto);
+			if (results == true) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.IFSC_ALREADY_CREATED);
+		}
+		return response;
+	}
+
+	/****
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+
+	public ResponseDTO updateEmail(AdminDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		boolean results = AdminDAO.getInstance().emailUpdateadmin(dto);
+		if (results == true) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+		}
+		return response;
+	}
+
+	/***
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+
+	public ResponseDTO adminNewUserAdd(AdminDetailsDTO dto) {
+		ResponseDTO response = new ResponseDTO();
+		boolean results = AdminDAO.getInstance().addnewUser(dto);
+		if (results == true) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+		}
+		return response;
+	}
+
+	/***
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+
+	public ResponseDTO getAdminDetails(AdminDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		List<AdminDetailsDTO> results = new ArrayList<AdminDetailsDTO>();
+		results = AdminDAO.getInstance().getadminlist(pDto);
+		if (results != null && results.size() > 0) {
+			response.setStatus(eKYCConstant.SUCCESS_STATUS);
+			response.setMessage(eKYCConstant.SUCCESS_MSG);
+			response.setResult(results);
+		} else {
+			response.setStatus(eKYCConstant.FAILED_STATUS);
+			response.setMessage(eKYCConstant.FAILED_MSG);
+		}
+		return response;
+	}
+
 }

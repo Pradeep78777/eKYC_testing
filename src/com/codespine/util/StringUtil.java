@@ -134,16 +134,31 @@ public class StringUtil {
 		}
 		return stringConditions;
 	}
+
 	@SuppressWarnings("rawtypes")
-	public static boolean isListNullOrEmpty(List list){
+	public static boolean isListNullOrEmpty(List list) {
 		boolean isNullOrEmpty = false;
-		if(list == null || list.isEmpty()){
+		if (list == null || list.isEmpty()) {
 			isNullOrEmpty = true;
 		}
 		return isNullOrEmpty;
 	}
+
 	@SuppressWarnings("rawtypes")
-	public static boolean isListNotNullOrEmpty(List list){
+	public static boolean isListNotNullOrEmpty(List list) {
 		return !isListNullOrEmpty(list);
+	}
+
+	public static List<String> splitOnlyNonEmptyAndUndefined(String str, String seperator) {
+		List<String> values = new ArrayList<String>();
+		String strArray[] = split(str, seperator);
+		if (strArray != null) {
+			for (String val : strArray) {
+				if (StringUtil.isNotNullOrEmpty(val) && !StringUtil.isEqual(val, "undefined")) {
+					values.add(val);
+				}
+			}
+		}
+		return values;
 	}
 }

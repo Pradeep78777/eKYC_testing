@@ -13,7 +13,9 @@ import javax.ws.rs.core.MediaType;
 
 import com.codespine.dto.AccesslogDTO;
 import com.codespine.dto.AdminDTO;
+import com.codespine.dto.AdminDetailsDTO;
 import com.codespine.dto.BranchListDTO;
+import com.codespine.dto.IfscCodeDTO;
 import com.codespine.dto.PerformanceDTO;
 import com.codespine.dto.ResponseDTO;
 import com.codespine.service.AdminService;
@@ -510,4 +512,65 @@ public class AdminController {
 		ResponseDTO response = AdminService.getInstance().updateClientCodeDetails(pDto);
 		return response;
 	}
+	
+	/***  Method to Admin insert New Bank list
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+	
+	@POST
+	@Path("/addminAddBank")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO addminAddBank(IfscCodeDTO dto) {
+		ResponseDTO response = AdminService.getInstance().addminAddBank(dto);
+		return response;
+	}
+	
+	/***Method to Admin Update Email activation
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+	
+	@POST
+	@Path("/updateEmail")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO updateEmail(AdminDTO dto) {
+		ResponseDTO response = AdminService.getInstance().updateEmail(dto);
+		return response;
+	}
+	
+	/*** Method to Admin Add New User
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+
+	@POST
+	@Path("/adminNewUserAdd")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO adminNewUserAdd(AdminDetailsDTO dto) {
+		ResponseDTO response = AdminService.getInstance().adminNewUserAdd(dto);
+		return response;
+	}
+	
+	/*** Method to get Admin List from data base
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+	
+	@POST
+	@Path("/getAdminDetails")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO getAdminDetails(AdminDetailsDTO pDto) {
+		ResponseDTO response = AdminService.getInstance().getAdminDetails(pDto);
+		return response;
+	}
+	
+	
 }

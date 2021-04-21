@@ -18,6 +18,7 @@ public class AdminDTO {
 	private int role;
 	private String branchCode;
 	private String remishreeCode;
+	private int emailactive;
 
 	public int getApplicationId() {
 		return applicationId;
@@ -139,6 +140,14 @@ public class AdminDTO {
 		this.branchCode = branchCode;
 	}
 
+	public int getEmailactive() {
+		return emailactive;
+	}
+
+	public void setEmailactive(int emailactive) {
+		this.emailactive = emailactive;
+	}
+
 	public String getRemishreeCode() {
 		return remishreeCode;
 	}
@@ -146,5 +155,7 @@ public class AdminDTO {
 	public void setRemishreeCode(String remishreeCode) {
 		this.remishreeCode = remishreeCode;
 	}
+	
+	
 
 }

@@ -9,12 +9,14 @@ import java.util.List;
 
 import com.codespine.dto.AddressDTO;
 import com.codespine.dto.AdminDTO;
+import com.codespine.dto.AdminDetailsDTO;
 import com.codespine.dto.ApplicationAttachementsDTO;
 import com.codespine.dto.ApplicationLogDTO;
 import com.codespine.dto.BankDetailsDTO;
 import com.codespine.dto.BranchListDTO;
 import com.codespine.dto.ExchDetailsDTO;
 import com.codespine.dto.FileUploadDTO;
+import com.codespine.dto.IfscCodeDTO;
 import com.codespine.dto.PanCardDetailsDTO;
 import com.codespine.dto.PerformanceDTO;
 import com.codespine.dto.PersonalDetailsDTO;
@@ -214,8 +216,8 @@ public class AdminDAO {
 	}
 
 	/**
-	 * Method to update the application Attachements for the given application
-	 * id and proof type
+	 * Method to update the application Attachements for the given application id
+	 * and proof type
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param isApprove
@@ -717,7 +719,7 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT name, admin_email, admin_password, designation , branch_code , remishree_code , role FROM  tbl_admin_details where admin_email = ? ");
+					"SELECT name, admin_email, admin_password, designation, branch_code, remishree_code, role FROM  tbl_admin_details where admin_email = ? ");
 			pStmt.setString(paromPos++, pDto.getEmail());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -2639,6 +2641,219 @@ public class AdminDAO {
 			}
 		}
 		return issuccessfull;
+	}
+
+	/****
+	 * @author VICKY
+	 * @param dto
+	 * @return
+	 */
+
+	public boolean adminaddnewbank(IfscCodeDTO dto) {
+		int count = 0;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		boolean isSuccessful = false;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" INSERT INTO tbl_ifsccode_details (bank_id, micr_code, ifc_code , bank_name, bank_address_1, bank_address_2,"
+					+" bank_address_3, bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, bank_phone_2, unique_id, bank_email,"
+					+ " bank_contact_name, bank_contact_designation) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			int paramPos = 1;
+			pStmt.setInt(paramPos++, dto.getBank_id());
+			pStmt.setString(paramPos++, dto.getMicr_code());
+			pStmt.setString(paramPos++, dto.getIfc_code());
+			pStmt.setString(paramPos++, dto.getBank_name());
+			pStmt.setString(paramPos++, dto.getBank_address_1());
+			pStmt.setString(paramPos++, dto.getBank_address_2());
+			pStmt.setString(paramPos++, dto.getBank_address_3());
+			pStmt.setString(paramPos++, dto.getBank_city());
+			pStmt.setString(paramPos++, dto.getBank_state());
+			pStmt.setString(paramPos++, dto.getBank_country());
+			pStmt.setString(paramPos++, dto.getBank_zip_code());
+			pStmt.setString(paramPos++, dto.getBank_phone_1());
+			pStmt.setString(paramPos++, dto.getBank_phone_2());
+			pStmt.setString(paramPos++, dto.getUnique_id());
+			pStmt.setString(paramPos++, dto.getBank_email());
+			pStmt.setString(paramPos++, dto.getBank_contact_name());
+			pStmt.setString(paramPos++, dto.getBank_contact_designation());
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				isSuccessful = true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return isSuccessful;
+	}
+
+	/***
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+
+	public List<IfscCodeDTO> getifsccodefind(IfscCodeDTO pDto) {
+		List<IfscCodeDTO> response = new ArrayList<IfscCodeDTO>();
+		IfscCodeDTO result = null;
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement("SELECT ifc_code FROM ekyc.tbl_ifsccode_details where ifc_code = ? ");
+			pStmt.setString(1, pDto.getIfc_code());
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				while (rSet.next()) {
+					result = new IfscCodeDTO();
+					result.setIfc_code(rSet.getString("ifc_code"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+
+	}
+
+	/***
+	 * 
+	 * @param dto
+	 * @return
+	 */
+
+	public boolean emailUpdateadmin(AdminDTO dto) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		boolean issuccessfull = false;
+		int count = 0;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_application_master SET email_activated = ? where application_id = ?");
+			int parompos = 1;
+			pStmt.setLong(parompos++, dto.getEmailactive());
+			pStmt.setLong(parompos++, dto.getApplicationId());
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				issuccessfull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return issuccessfull;
+	}
+
+	/***
+	 * 
+	 * @param dto
+	 * @return
+	 */
+
+	public boolean addnewUser(AdminDetailsDTO dto) {
+		int count = 0;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		boolean isSuccessful = false;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"INSERT INTO tbl_admin_details(name, admin_email, admin_password, designation, branch_code, remishree_code,"
+							+ " role) " + " VALUES(?,?,?,?,?,?,?)");
+			int paramPos = 1;
+			pStmt.setString(paramPos++, dto.getName());
+			pStmt.setString(paramPos++, dto.getEmail());
+			pStmt.setString(paramPos++, dto.getPassword());
+			pStmt.setString(paramPos++, dto.getDesignation());
+			pStmt.setString(paramPos++, dto.getBranchCode());
+			pStmt.setString(paramPos++, dto.getRemishreeCode());
+			pStmt.setString(paramPos++, dto.getRole());
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				isSuccessful = true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return isSuccessful;
+	}
+
+	/***
+	 * 
+	 * @param dto
+	 * @return
+	 */
+
+	public List<AdminDetailsDTO> getadminlist(AdminDetailsDTO dto) {
+		List<AdminDetailsDTO> response = null;
+		AdminDetailsDTO result = null;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT name, admin_email, designation, branch_code, remishree_code, role FROM ekyc.tbl_admin_details ");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<AdminDetailsDTO>();
+				while (rSet.next()) {
+					result = new AdminDetailsDTO();
+					result.setName(rSet.getString("name"));
+					result.setEmail(rSet.getString("admin_email"));
+					result.setDesignation(rSet.getString("designation"));
+					result.setBranchCode(rSet.getString("branch_code"));
+					result.setRemishreeCode(rSet.getString("remishree_code"));
+					result.setRole(rSet.getString("role"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
 	}
 
 }
