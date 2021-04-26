@@ -2658,8 +2658,8 @@ public class AdminDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					" INSERT INTO tbl_ifsccode_details (bank_id, micr_code, ifc_code , bank_name, bank_address_1, bank_address_2,"
-					+" bank_address_3, bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, bank_phone_2, unique_id, bank_email,"
-					+ " bank_contact_name, bank_contact_designation) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+							+ " bank_address_3, bank_city, bank_state, bank_country, bank_zip_code, bank_phone_1, bank_phone_2, unique_id, bank_email,"
+							+ " bank_contact_name, bank_contact_designation) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			int paramPos = 1;
 			pStmt.setInt(paramPos++, dto.getBank_id());
 			pStmt.setString(paramPos++, dto.getMicr_code());
@@ -2785,7 +2785,7 @@ public class AdminDAO {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
 					"INSERT INTO tbl_admin_details(name, admin_email, admin_password, designation, branch_code, remishree_code,"
-							+ " role) " + " VALUES(?,?,?,?,?,?,?)");
+							+ " role, mobile_number)  VALUES(?,?,?,?,?,?,?,?)");
 			int paramPos = 1;
 			pStmt.setString(paramPos++, dto.getName());
 			pStmt.setString(paramPos++, dto.getEmail());
@@ -2794,6 +2794,8 @@ public class AdminDAO {
 			pStmt.setString(paramPos++, dto.getBranchCode());
 			pStmt.setString(paramPos++, dto.getRemishreeCode());
 			pStmt.setString(paramPos++, dto.getRole());
+			pStmt.setLong(paramPos++, dto.getMobile_number());
+
 			count = pStmt.executeUpdate();
 			if (count > 0) {
 				isSuccessful = true;
@@ -2814,31 +2816,25 @@ public class AdminDAO {
 
 	/***
 	 * 
-	 * @param dto
+	 * @param pDto
 	 * @return
 	 */
 
-	public List<AdminDetailsDTO> getadminlist(AdminDetailsDTO dto) {
-		List<AdminDetailsDTO> response = null;
+	public List<AdminDetailsDTO> geadminEmailfind(AdminDetailsDTO pDto) {
+		List<AdminDetailsDTO> response = new ArrayList<AdminDetailsDTO>();
 		AdminDetailsDTO result = null;
-		PreparedStatement pStmt = null;
 		Connection conn = null;
+		PreparedStatement pStmt = null;
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement(
-					"SELECT name, admin_email, designation, branch_code, remishree_code, role FROM ekyc.tbl_admin_details ");
+			pStmt = conn.prepareStatement("select admin_email from ekyc.tbl_admin_details where admin_email = ? ");
+			pStmt.setString(1, pDto.getEmail());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
-				response = new ArrayList<AdminDetailsDTO>();
 				while (rSet.next()) {
 					result = new AdminDetailsDTO();
-					result.setName(rSet.getString("name"));
 					result.setEmail(rSet.getString("admin_email"));
-					result.setDesignation(rSet.getString("designation"));
-					result.setBranchCode(rSet.getString("branch_code"));
-					result.setRemishreeCode(rSet.getString("remishree_code"));
-					result.setRole(rSet.getString("role"));
 					response.add(result);
 				}
 			}
@@ -2854,6 +2850,93 @@ public class AdminDAO {
 			}
 		}
 		return response;
+
+	}
+
+	/***
+	 * 
+	 * @param dto
+	 * @return
+	 */
+
+	public List<AdminDetailsDTO> getadminlist(AdminDetailsDTO dto) {
+		List<AdminDetailsDTO> response = null;
+		AdminDetailsDTO result = null;
+		PreparedStatement pStmt = null;
+		Connection conn = null;
+		ResultSet rSet = null;
+		try {
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					"SELECT name, admin_email, designation, branch_code, remishree_code, role, mobile_number, active_status FROM tbl_admin_details ");
+			rSet = pStmt.executeQuery();
+			if (rSet != null) {
+				response = new ArrayList<AdminDetailsDTO>();
+				while (rSet.next()) {
+					result = new AdminDetailsDTO();
+					result.setName(rSet.getString("name"));
+					result.setEmail(rSet.getString("admin_email"));
+					result.setDesignation(rSet.getString("designation"));
+					result.setBranchCode(rSet.getString("branch_code"));
+					result.setRemishreeCode(rSet.getString("remishree_code"));
+					result.setRole(rSet.getString("role"));
+					result.setMobile_number(rSet.getLong("mobile_number"));
+					result.setUserDelete(rSet.getInt("active_status"));
+					response.add(result);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeResultSet(rSet);
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return response;
+	}
+
+	/**
+	 * 
+	 * @param adminemail
+	 * @param isDelete
+	 * @return
+	 */
+
+	public boolean adminDeleteuser(String adminemail, boolean isDelete) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		boolean issuccessfull = false;
+		int count = 0;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(" UPDATE tbl_admin_details SET active_status = ? where admin_email = ?");
+			if (isDelete) {
+				pStmt.setInt(paramPos++, 0);
+				pStmt.setString(paramPos++, adminemail);
+			} else {
+				pStmt.setInt(paramPos++, 1);
+				pStmt.setString(paramPos++, adminemail);
+			}
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				issuccessfull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return issuccessfull;
 	}
 
 }

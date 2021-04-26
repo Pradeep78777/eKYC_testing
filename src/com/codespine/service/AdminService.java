@@ -1586,14 +1586,21 @@ public class AdminService {
 
 	public ResponseDTO adminNewUserAdd(AdminDetailsDTO dto) {
 		ResponseDTO response = new ResponseDTO();
-		boolean results = AdminDAO.getInstance().addnewUser(dto);
-		if (results == true) {
-			response.setStatus(eKYCConstant.SUCCESS_STATUS);
-			response.setMessage(eKYCConstant.SUCCESS_MSG);
+		List<AdminDetailsDTO> oldAdminEmailDTO = AdminDAO.getInstance().geadminEmailfind(dto);
+		if (StringUtil.isListNullOrEmpty(oldAdminEmailDTO)) {
+			boolean results = AdminDAO.getInstance().addnewUser(dto);
+			if (results == true) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
-			response.setMessage(eKYCConstant.FAILED_MSG);
+			response.setMessage(eKYCConstant.ADMIN_ALREADY_CREATED);
 		}
+
 		return response;
 	}
 
@@ -1614,6 +1621,43 @@ public class AdminService {
 		} else {
 			response.setStatus(eKYCConstant.FAILED_STATUS);
 			response.setMessage(eKYCConstant.FAILED_MSG);
+		}
+		return response;
+	}
+
+	/***
+	 * 
+	 * @param pDto
+	 * @return
+	 */
+
+	public ResponseDTO deleteadminUser(AdminDetailsDTO pDto) {
+		ResponseDTO response = new ResponseDTO();
+		if (pDto.getUserDelete() > 0) {
+			/*
+			 * Delete user
+			 */
+			boolean isUserDeleted = AdminDAO.getInstance().adminDeleteuser(pDto.getEmail(), true);
+			if (isUserDeleted) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+		} else {
+			/*
+			 * Enable user
+			 */
+			boolean isUserDeleted = AdminDAO.getInstance().adminDeleteuser(pDto.getEmail(), false);
+			if (isUserDeleted) {
+				response.setStatus(eKYCConstant.SUCCESS_STATUS);
+				response.setMessage(eKYCConstant.SUCCESS_MSG);
+			} else {
+				response.setStatus(eKYCConstant.FAILED_STATUS);
+				response.setMessage(eKYCConstant.FAILED_MSG);
+			}
+
 		}
 		return response;
 	}
