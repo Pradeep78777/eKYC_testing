@@ -90,6 +90,9 @@ public class ResportsDAO {
 					if (columnNames.contains("pan_card_verified")) {
 						reportDTO.setPan_card_verified(rSet.getInt("tbl_pancard_details.pan_card_verified"));
 					}
+					if (columnNames.contains("applicant_name")) {
+						reportDTO.setApplicant_name(rSet.getString("tbl_pancard_details.applicant_name"));
+					}
 					if (columnNames.contains("tbl_pancard_details_is_approved")) {
 						reportDTO.setPanIsAproved(rSet.getInt("tbl_pancard_details_is_approved"));
 					}

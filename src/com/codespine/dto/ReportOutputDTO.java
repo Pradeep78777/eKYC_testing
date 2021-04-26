@@ -21,6 +21,7 @@ public class ReportOutputDTO {
 	private int panIsAproved;
 	private int panIsRejected;
 	private String panComments;
+	private String applicant_name;
 	// personal details - personal Details DTO
 	private String mothersName;
 	private String fathersName;
@@ -78,6 +79,15 @@ public class ReportOutputDTO {
 	// e sign
 	private int document_signed;
 	private int document_downloaded;
+
+	
+	public String getApplicant_name() {
+		return applicant_name;
+	}
+
+	public void setApplicant_name(String applicant_name) {
+		this.applicant_name = applicant_name;
+	}
 
 	public long getMobile_number() {
 		return mobile_number;
