@@ -419,11 +419,11 @@ public class eKYCController {
 		/*
 		 * TO insert Access log into data base
 		 */
-		// accessLog.setDevice_ip(request.getRemoteAddr());
-		// accessLog.setUser_agent(request.getHeader("user-agent"));
-		// accessLog.setUri(requestContext.getUriInfo().getPath());
-		// accessLog.setCreated_on(created_on);
-		// Utility.inputAccessLogDetails(accessLog, "", "");
+		accessLog.setDevice_ip(request.getRemoteAddr());
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, proof, Integer.toString(applicationId));
 
 		response = eKYCService.getInstance().uploadProof(proof, proofType, applicationId, typeOfProof, pdfPassword);
 		return response;
