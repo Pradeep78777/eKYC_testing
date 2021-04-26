@@ -701,7 +701,8 @@ public class eKYCDAO {
 	}
 
 	/**
-	 * To check the basic information for the application is already inserted or not
+	 * To check the basic information for the application is already inserted or
+	 * not
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param applicationId
@@ -917,7 +918,8 @@ public class eKYCDAO {
 	}
 
 	/**
-	 * Method to update the Admin name who is started the application in data base
+	 * Method to update the Admin name who is started the application in data
+	 * base
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param applicationId
@@ -1931,13 +1933,16 @@ public class eKYCDAO {
 		boolean isSuccessFull = false;
 		Connection conn = null;
 		PreparedStatement pStmt = null;
+		java.sql.Timestamp timestamp = new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis());
 		try {
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					" UPDATE tbl_application_attachements SET attachement_url = ? , type_of_proof = ?   where application_id = ? and attachement_type = ? ");
+					" UPDATE tbl_application_attachements SET attachement_url = ? , type_of_proof = ? , last_update = ?  "
+							+ " where application_id = ? and attachement_type = ? ");
 			int paramPos = 1;
 			pStmt.setString(paramPos++, proofUrl);
 			pStmt.setString(paramPos++, typeOfProof);
+			pStmt.setTimestamp(paramPos++, timestamp);
 			pStmt.setInt(paramPos++, applicationId);
 			pStmt.setString(paramPos++, proofType);
 			count = pStmt.executeUpdate();
@@ -2789,27 +2794,33 @@ public class eKYCDAO {
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
-//					if (isNumeric(rSet.getString("email_id"))) {
-//						System.out.println("email_id - yes");
-//					}
-//					if (isNumeric(rSet.getString("mobile_number"))) {
-//						System.out.println("mobile_number - yes");
-//						 BigInteger number = new BigInteger(rSet.getString("mobile_number"));
-//						if(number.longValueExact() < Long.MAX_VALUE && number.longValue() > Long.MIN_VALUE) {
-//							System.out.println("mobile_number - nn");
-//						}
-//					 Integer number1 = new Integer(rSet.getString("application_id"));
-//						if(number1.longValue() < Integer.MAX_VALUE && number1.longValue() > Integer.MIN_VALUE) {
-//							System.out.println("app - mm");
-//						}
-//						Integer number2 = new Integer(rSet.getString("mobile_number"));
-//						if(number2.longValue() < Integer.MAX_VALUE && number2.longValue() > Integer.MIN_VALUE) {
-//							System.out.println("mobile_number - nnn");
-//						}
-//					}
-//					if (isNumeric(rSet.getString("application_id"))) {
-//						System.out.println("application_id - yes");
-//					}
+					// if (isNumeric(rSet.getString("email_id"))) {
+					// System.out.println("email_id - yes");
+					// }
+					// if (isNumeric(rSet.getString("mobile_number"))) {
+					// System.out.println("mobile_number - yes");
+					// BigInteger number = new
+					// BigInteger(rSet.getString("mobile_number"));
+					// if(number.longValueExact() < Long.MAX_VALUE &&
+					// number.longValue() > Long.MIN_VALUE) {
+					// System.out.println("mobile_number - nn");
+					// }
+					// Integer number1 = new
+					// Integer(rSet.getString("application_id"));
+					// if(number1.longValue() < Integer.MAX_VALUE &&
+					// number1.longValue() > Integer.MIN_VALUE) {
+					// System.out.println("app - mm");
+					// }
+					// Integer number2 = new
+					// Integer(rSet.getString("mobile_number"));
+					// if(number2.longValue() < Integer.MAX_VALUE &&
+					// number2.longValue() > Integer.MIN_VALUE) {
+					// System.out.println("mobile_number - nnn");
+					// }
+					// }
+					// if (isNumeric(rSet.getString("application_id"))) {
+					// System.out.println("application_id - yes");
+					// }
 					result = new PersonalDetailsDTO();
 					result.setApplication_id(rSet.getInt("application_id"));
 					result.setOtp(rSet.getInt("mobile_otp"));
@@ -2825,15 +2836,15 @@ public class eKYCDAO {
 		}
 		return result;
 	}
-//	public static boolean isNumeric(String strNum) {
-//	    if (strNum == null) {
-//	        return false;
-//	    }
-//	    try {
-//	        double d = Double.parseDouble(strNum);
-//	    } catch (NumberFormatException nfe) {
-//	        return false;
-//	    }
-//	    return true;
-//	}
+	// public static boolean isNumeric(String strNum) {
+	// if (strNum == null) {
+	// return false;
+	// }
+	// try {
+	// double d = Double.parseDouble(strNum);
+	// } catch (NumberFormatException nfe) {
+	// return false;
+	// }
+	// return true;
+	// }
 }

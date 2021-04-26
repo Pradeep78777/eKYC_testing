@@ -392,8 +392,9 @@ public class Utility {
 			message = message.replace(" ", "%20");
 			String tempUrl = CSEnvVariables.getProperty(eKYCConstant.MESSAGE_URL)
 					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_USERNAME) + "&password="
-					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_PASSWORD) + "&to=" + mobileNumber + "&text=Dear%20Customer%20" + otp
-					+ "%20" + message + "&from=" + CSEnvVariables.getProperty(eKYCConstant.MESSAGE_SENDER);
+					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_PASSWORD) + "&to=" + mobileNumber
+					+ "&text=Dear%20Customer%20" + otp + "%20" + message + "&from="
+					+ CSEnvVariables.getProperty(eKYCConstant.MESSAGE_SENDER);
 			URL url = new URL(tempUrl);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
