@@ -17,6 +17,8 @@ public class ReportsDTO {
 	private List<ReportColumnDTO> adminPermanentAddress;
 	private List<ReportColumnDTO> adminBankAccountDetail;
 	private List<ReportColumnDTO> eSign;
+	private String fromDate;
+	private String toDate;
 	
 	public List<ReportColumnDTO> getUserDetails() {
 		return userDetails;
@@ -121,4 +123,21 @@ public class ReportsDTO {
 	public void seteSign(List<ReportColumnDTO> eSign) {
 		this.eSign = eSign;
 	}
+
+	public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(String toDate) {
+		this.toDate = toDate;
+	}
+	
 }
