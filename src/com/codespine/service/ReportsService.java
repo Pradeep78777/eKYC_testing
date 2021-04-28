@@ -434,6 +434,17 @@ public class ReportsService {
 			}
 			String innerJoinCondition = generateInnerJoinCondition(tableNames);
 			queryString.append(innerJoinCondition);
+			String condition = "";
+			if(StringUtil.isNotNullOrEmpty(pObject.getFromDate())){
+				condition += " tbl_application_master.created_date >= '"+pObject.getFromDate()+ " 00:00:00' and";
+			}
+			if(StringUtil.isNotNullOrEmpty(pObject.getToDate())){
+				condition += " tbl_application_master.created_date <= '"+pObject.getToDate()+ " 23:59:59' ";
+			}
+			if(StringUtil.isNotNullOrEmpty(condition)){
+				queryString.append("where " + condition);
+//				query += "where " + condition + query;
+			}
 			System.out.println(queryString);
 			List<ReportOutputDTO> dtos = ResportsDAO.getInstance().reportGeneration(queryString, columnNames);
 			if (StringUtil.isListNotNullOrEmpty(dtos)) {
