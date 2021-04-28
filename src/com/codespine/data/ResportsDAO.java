@@ -253,6 +253,12 @@ public class ResportsDAO {
 					if (columnNames.contains("bse_com")) {
 						reportDTO.setBse_com(rSet.getInt("tbl_exch_segments.bse_com"));
 					}
+					if (columnNames.contains("last_update")) {
+						reportDTO.setDocumentDate(rSet.getString("tbl_application_attachements.last_update"));
+					}
+					if (columnNames.contains("signed_date")) {
+						reportDTO.setSignedDate(rSet.getString("signed_date"));
+					}
 					dtos.add(reportDTO);
 //					}
 				}

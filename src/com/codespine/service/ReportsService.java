@@ -44,14 +44,16 @@ public class ReportsService {
 		String tablePermanentAddress = "tbl_permanent_address";
 		String tableBankDetails = "tbl_bank_account_details";
 		String tableEXCHSegment = "tbl_exch_segments";
+		String tableattachement = "tbl_application_attachements";
+
 		if (pObject != null) {
 			if (StringUtil.isListNotNullOrEmpty(pObject.getUserDetails())) {
 				String searchText = "";
 				for (ReportColumnDTO reportColumnDTO : pObject.getUserDetails()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
 							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
@@ -93,9 +95,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getPanDetails()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -115,15 +117,53 @@ public class ReportsService {
 					}
 					queryString.append("," + searchText);
 				}
+			} // signed_date
+			if (StringUtil.isListNotNullOrEmpty(pObject.getAttachemntDetail())) {
+				String searchText = "";
+				for (ReportColumnDTO reportColumnDTO : pObject.getAttachemntDetail()) {
+					if (reportColumnDTO != null) {
+						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
+							for (int i = 0; i < size; i++) {
+								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
+										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
+									if (StringUtil.isEqual(columnName.get(i), "signed_date")) {
+										columnNames.add(columnName.get(i));
+										searchText += tableattachement + "1" + "." + "last_update" + " as "
+												+ columnName.get(i);
+										if ((i + 1) < size) {
+											searchText = searchText + ",";
+										}
+									} else {
+										columnNames.add(columnName.get(i));
+										searchText += tableattachement + "." + columnName.get(i);
+										if ((i + 1) < size) {
+											searchText = searchText + ",";
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				if (StringUtil.isNotNullOrEmpty(searchText)) {
+					if (!tableNames.contains(tableattachement)) {
+						tableNames.add(tableattachement);
+						tableNames.add(tableattachement + "1");
+					}
+					queryString.append("," + searchText);
+				}
 			}
 			if (StringUtil.isListNotNullOrEmpty(pObject.getBasicInformation())) {
 				String searchText = "";
 				for (ReportColumnDTO reportColumnDTO : pObject.getBasicInformation()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -149,9 +189,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getCommunicationAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -177,9 +217,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getPermananentAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -205,9 +245,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getBankDetails()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -233,9 +273,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getTradingPreferences()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -261,9 +301,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.geteSign()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -290,9 +330,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminBankAccountDetail()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -319,9 +359,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminBasicInfo()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -349,9 +389,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminCommunicationAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -379,9 +419,9 @@ public class ReportsService {
 				for (ReportColumnDTO reportColumnDTO : pObject.getAdminPermanentAddress()) {
 					if (reportColumnDTO != null) {
 						if (StringUtil.isNotNullOrEmpty(reportColumnDTO.getColumns())) {
-							List<String> columnName = StringUtil.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(),
-									",");
-							int size =  columnName.size();
+							List<String> columnName = StringUtil
+									.splitOnlyNonEmptyAndUndefined(reportColumnDTO.getColumns(), ",");
+							int size = columnName.size();
 							for (int i = 0; i < size; i++) {
 								if (StringUtil.isNotNullOrEmpty(columnName.get(i))
 										&& !StringUtil.isEqual(columnName.get(i), "undefined")) {
@@ -435,13 +475,13 @@ public class ReportsService {
 			String innerJoinCondition = generateInnerJoinCondition(tableNames);
 			queryString.append(innerJoinCondition);
 			String condition = "";
-			if(StringUtil.isNotNullOrEmpty(pObject.getFromDate())){
-				condition += " tbl_application_master.created_date >= '"+pObject.getFromDate()+ " 00:00:00' and";
+			if (StringUtil.isNotNullOrEmpty(pObject.getFromDate())) {
+				condition += " tbl_application_master.created_date >= '" + pObject.getFromDate() + " 00:00:00' and";
 			}
-			if(StringUtil.isNotNullOrEmpty(pObject.getToDate())){
-				condition += " tbl_application_master.created_date <= '"+pObject.getToDate()+ " 23:59:59' ";
+			if (StringUtil.isNotNullOrEmpty(pObject.getToDate())) {
+				condition += " tbl_application_master.created_date <= '" + pObject.getToDate() + " 23:59:59' ";
 			}
-			if(StringUtil.isNotNullOrEmpty(condition)){
+			if (StringUtil.isNotNullOrEmpty(condition)) {
 				queryString.append("where " + condition);
 //				query += "where " + condition + query;
 			}
@@ -640,6 +680,10 @@ public class ReportsService {
 				columnNames.set(i, "bankIsRejected");
 			} else if (StringUtil.isEqual(columnNames.get(i), "tbl_bank_account_details_comments")) {
 				columnNames.set(i, "bankComments");
+			} else if (StringUtil.isEqual(columnNames.get(i), "last_update")) {
+				columnNames.set(i, "documentDate");
+			} else if (StringUtil.isEqual(columnNames.get(i), "signed_date")) {
+				columnNames.set(i, "signedDate");
 			}
 		}
 
@@ -656,9 +700,20 @@ public class ReportsService {
 						firstTableName = tableNames.get(i);
 						innerjoins.append(" FROM " + tableNames.get(i) + " as " + tableNames.get(i));
 					} else {
-						innerjoins.append(" INNER JOIN " + tableNames.get(i) + " as " + tableNames.get(i) + " ON "
-								+ firstTableName + ".application_id = " + tableNames.get(i) + ".application_id ");
+						if (StringUtil.isEqual("tbl_application_attachements", tableNames.get(i))) {
+							innerjoins.append(" INNER JOIN " + tableNames.get(i) + " as " + tableNames.get(i) + " ON "
+									+ firstTableName + ".application_id = " + tableNames.get(i) + ".application_id and "
+									+ tableNames.get(i) + ".attachement_type = 'EKYC_DOCUMENT' ");
+						} else if (StringUtil.isEqual("tbl_application_attachements1", tableNames.get(i))) {
+							innerjoins.append(" INNER JOIN tbl_application_attachements as " + tableNames.get(i) + " ON "
+									+ firstTableName + ".application_id = " + tableNames.get(i)  + ".application_id and "
+									+ tableNames.get(i)  + ".attachement_type = 'SIGNED_EKYC_DOCUMENT' ");
+						} else {
+							innerjoins.append(" INNER JOIN " + tableNames.get(i) + " as " + tableNames.get(i) + " ON "
+									+ firstTableName + ".application_id = " + tableNames.get(i) + ".application_id ");
+						}
 					}
+
 				}
 				query = innerjoins.toString();
 			} else {

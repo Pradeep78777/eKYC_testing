@@ -2,6 +2,7 @@ package com.codespine.dto;
 
 import java.util.Date;
 
+
 public class ReportOutputDTO {
 	// Application master tables
 	private long mobile_number;
@@ -79,8 +80,10 @@ public class ReportOutputDTO {
 	// e sign
 	private int document_signed;
 	private int document_downloaded;
+	private String documentDate;
+	private String signedDate;
 
-	
+
 	public String getApplicant_name() {
 		return applicant_name;
 	}
@@ -626,5 +629,22 @@ public class ReportOutputDTO {
 	public void setDocument_downloaded(int document_downloaded) {
 		this.document_downloaded = document_downloaded;
 	}
+
+	public String getDocumentDate() {
+		return documentDate;
+	}
+
+	public void setDocumentDate(String documentDate) {
+		this.documentDate = documentDate;
+	}
+
+	public String getSignedDate() {
+		return signedDate;
+	}
+
+	public void setSignedDate(String signedDate) {
+		this.signedDate = signedDate;
+	}
+
 
 }
