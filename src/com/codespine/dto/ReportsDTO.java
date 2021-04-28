@@ -16,6 +16,8 @@ public class ReportsDTO {
 	private List<ReportColumnDTO> adminCommunicationAddress;
 	private List<ReportColumnDTO> adminPermanentAddress;
 	private List<ReportColumnDTO> adminBankAccountDetail;
+	private List<ReportColumnDTO> attachemntDetail;
+	private List<ReportColumnDTO> signedattachemntDetail;
 	private List<ReportColumnDTO> eSign;
 	private String fromDate;
 	private String toDate;
@@ -138,6 +140,22 @@ public class ReportsDTO {
 
 	public void setToDate(String toDate) {
 		this.toDate = toDate;
+	}
+
+	public List<ReportColumnDTO> getAttachemntDetail() {
+		return attachemntDetail;
+	}
+
+	public void setAttachemntDetail(List<ReportColumnDTO> attachemntDetail) {
+		this.attachemntDetail = attachemntDetail;
+	}
+
+	public List<ReportColumnDTO> getSignedattachemntDetail() {
+		return signedattachemntDetail;
+	}
+
+	public void setSignedattachemntDetail(List<ReportColumnDTO> signedattachemntDetail) {
+		this.signedattachemntDetail = signedattachemntDetail;
 	}
 	
 }
