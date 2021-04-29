@@ -522,11 +522,16 @@ public class AdminController {
 	 */
 
 	@POST
-	@Path("/addminAddBank")
+	@Path("/addNewBank")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO addminAddBank(IfscCodeDTO dto) {
-		ResponseDTO response = AdminService.getInstance().addminAddBank(dto);
+	public ResponseDTO addNewBank(@Context ContainerRequestContext requestContext, IfscCodeDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().addNewBank(pDto);
 		return response;
 	}
 
@@ -539,11 +544,16 @@ public class AdminController {
 	 */
 
 	@POST
-	@Path("/updateEmail")
+	@Path("/activateEmail")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO updateEmail(AdminDTO dto) {
-		ResponseDTO response = AdminService.getInstance().updateEmail(dto);
+	public ResponseDTO activateEmail(@Context ContainerRequestContext requestContext, AdminDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().activateEmail(pDto);
 		return response;
 	}
 
@@ -556,11 +566,16 @@ public class AdminController {
 	 */
 
 	@POST
-	@Path("/adminNewUserAdd")
+	@Path("/addNewUser")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO adminNewUserAdd(AdminDetailsDTO dto) {
-		ResponseDTO response = AdminService.getInstance().adminNewUserAdd(dto);
+	public ResponseDTO addNewUser(@Context ContainerRequestContext requestContext, AdminDetailsDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().addNewUser(pDto);
 		return response;
 	}
 
@@ -575,7 +590,12 @@ public class AdminController {
 	@POST
 	@Path("/getAdminDetails")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO getAdminDetails(AdminDetailsDTO pDto) {
+	public ResponseDTO getAdminDetails(@Context ContainerRequestContext requestContext, AdminDetailsDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().getAdminDetails(pDto);
 		return response;
 	}
@@ -589,8 +609,33 @@ public class AdminController {
 	@POST
 	@Path("/deleteadminUser")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseDTO deleteadminUser(AdminDetailsDTO pDto) {
+	public ResponseDTO deleteadminUser(@Context ContainerRequestContext requestContext, AdminDetailsDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
 		ResponseDTO response = AdminService.getInstance().deleteadminUser(pDto);
+		return response;
+	}
+
+	/**
+	 * Method to edit the admin Details
+	 * 
+	 * @author GOWRI SANKAR R
+	 * @param pDto
+	 * @return
+	 */
+	@POST
+	@Path("/editAdminDetails")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResponseDTO editAdminDetails(@Context ContainerRequestContext requestContext, AdminDetailsDTO pDto) {
+		accessLog.setDevice_ip(request.getHeader("X-Forwarded-For"));
+		accessLog.setUser_agent(request.getHeader("user-agent"));
+		accessLog.setUri(requestContext.getUriInfo().getPath());
+		accessLog.setCreated_on(created_on);
+		Utility.inputAccessLogDetails(accessLog, pDto, "");
+		ResponseDTO response = AdminService.getInstance().editAdminDetails(pDto);
 		return response;
 	}
 
