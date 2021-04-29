@@ -216,8 +216,8 @@ public class AdminDAO {
 	}
 
 	/**
-	 * Method to update the application Attachements for the given application id
-	 * and proof type
+	 * Method to update the application Attachements for the given application
+	 * id and proof type
 	 * 
 	 * @author GOWRI SANKAR R
 	 * @param isApprove
@@ -719,8 +719,9 @@ public class AdminDAO {
 			int paromPos = 1;
 			conn = DBUtil.getConnection();
 			pStmt = conn.prepareStatement(
-					"SELECT name, admin_email, admin_password, designation, branch_code, remishree_code, role FROM  tbl_admin_details where admin_email = ? ");
+					"SELECT name, admin_email, admin_password, designation, branch_code, remishree_code, role FROM  tbl_admin_details where admin_email = ? and active_status = ? ");
 			pStmt.setString(paromPos++, pDto.getEmail());
+			pStmt.setInt(paromPos++, 1);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -2649,7 +2650,7 @@ public class AdminDAO {
 	 * @return
 	 */
 
-	public boolean adminaddnewbank(IfscCodeDTO dto) {
+	public boolean addNewBank(IfscCodeDTO dto) {
 		int count = 0;
 		PreparedStatement pStmt = null;
 		Connection conn = null;
@@ -2702,7 +2703,7 @@ public class AdminDAO {
 	 * @return
 	 */
 
-	public List<IfscCodeDTO> getifsccodefind(IfscCodeDTO pDto) {
+	public List<IfscCodeDTO> checkWithIFSCcode(IfscCodeDTO pDto) {
 		List<IfscCodeDTO> response = new ArrayList<IfscCodeDTO>();
 		IfscCodeDTO result = null;
 		Connection conn = null;
@@ -2710,7 +2711,7 @@ public class AdminDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement("SELECT ifc_code FROM ekyc.tbl_ifsccode_details where ifc_code = ? ");
+			pStmt = conn.prepareStatement("SELECT ifc_code FROM tbl_ifsccode_details where ifc_code = ? ");
 			pStmt.setString(1, pDto.getIfc_code());
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
@@ -2741,7 +2742,7 @@ public class AdminDAO {
 	 * @return
 	 */
 
-	public boolean emailUpdateadmin(AdminDTO dto) {
+	public boolean activateEmail(AdminDTO dto) {
 		Connection conn = null;
 		PreparedStatement pStmt = null;
 		boolean issuccessfull = false;
@@ -2776,7 +2777,7 @@ public class AdminDAO {
 	 * @return
 	 */
 
-	public boolean addnewUser(AdminDetailsDTO dto) {
+	public boolean addNewUser(AdminDetailsDTO dto) {
 		int count = 0;
 		PreparedStatement pStmt = null;
 		Connection conn = null;
@@ -2787,12 +2788,13 @@ public class AdminDAO {
 					"INSERT INTO tbl_admin_details(name, admin_email, admin_password, designation, branch_code, remishree_code,"
 							+ " role, mobile_number)  VALUES(?,?,?,?,?,?,?,?)");
 			int paramPos = 1;
-			pStmt.setString(paramPos++, dto.getName());
+			String encryptedPassword = Utility.PasswordEncryption(dto.getPassword());
+			pStmt.setString(paramPos++, dto.getName().toUpperCase());
 			pStmt.setString(paramPos++, dto.getEmail());
-			pStmt.setString(paramPos++, dto.getPassword());
-			pStmt.setString(paramPos++, dto.getDesignation());
-			pStmt.setString(paramPos++, dto.getBranchCode());
-			pStmt.setString(paramPos++, dto.getRemishreeCode());
+			pStmt.setString(paramPos++, encryptedPassword);
+			pStmt.setString(paramPos++, dto.getDesignation().toUpperCase());
+			pStmt.setString(paramPos++, dto.getBranchCode().toUpperCase());
+			pStmt.setString(paramPos++, dto.getRemishreeCode().toUpperCase());
 			pStmt.setString(paramPos++, dto.getRole());
 			pStmt.setLong(paramPos++, dto.getMobile_number());
 
@@ -2820,7 +2822,7 @@ public class AdminDAO {
 	 * @return
 	 */
 
-	public List<AdminDetailsDTO> geadminEmailfind(AdminDetailsDTO pDto) {
+	public List<AdminDetailsDTO> getAdminDetailsByEmail(String email) {
 		List<AdminDetailsDTO> response = new ArrayList<AdminDetailsDTO>();
 		AdminDetailsDTO result = null;
 		Connection conn = null;
@@ -2828,8 +2830,8 @@ public class AdminDAO {
 		ResultSet rSet = null;
 		try {
 			conn = DBUtil.getConnection();
-			pStmt = conn.prepareStatement("select admin_email from ekyc.tbl_admin_details where admin_email = ? ");
-			pStmt.setString(1, pDto.getEmail());
+			pStmt = conn.prepareStatement("select admin_email from tbl_admin_details where admin_email = ? ");
+			pStmt.setString(1, email);
 			rSet = pStmt.executeQuery();
 			if (rSet != null) {
 				while (rSet.next()) {
@@ -2922,6 +2924,34 @@ public class AdminDAO {
 				pStmt.setInt(paramPos++, 1);
 				pStmt.setString(paramPos++, adminemail);
 			}
+			count = pStmt.executeUpdate();
+			if (count > 0) {
+				issuccessfull = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				DBUtil.closeStatement(pStmt);
+				DBUtil.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return issuccessfull;
+	}
+
+	public boolean updateAdminDetails(AdminDetailsDTO pDto) {
+		Connection conn = null;
+		PreparedStatement pStmt = null;
+		boolean issuccessfull = false;
+		int count = 0;
+		try {
+			int paramPos = 1;
+			conn = DBUtil.getConnection();
+			pStmt = conn.prepareStatement(
+					" UPDATE tbl_admin_details SET name = ? , designation = ? , branch_code = ? , remishree_code = ?,"
+							+ " role = ? , mobile_number = ?  where admin_email = ?");
 			count = pStmt.executeUpdate();
 			if (count > 0) {
 				issuccessfull = true;
